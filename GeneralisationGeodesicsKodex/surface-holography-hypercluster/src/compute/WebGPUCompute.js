@@ -39,7 +39,7 @@ export class WebGPUCompute {
     });
     this.uniform = this.device.createBuffer({
       label: 'hypercluster-param-uniform',
-      size: 4 * 16,
+      size: 4 * 32,
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
     });
     this.bindGroup = this.device.createBindGroup({
@@ -55,7 +55,7 @@ export class WebGPUCompute {
 
   async compute(t, tick, params) {
     if (params.resolution !== this.resolution) this.allocate(params.resolution);
-    const u = new Float32Array(16);
+    const u = new Float32Array(32);
     u[0] = t;
     u[1] = tick;
     u[2] = this.resolution;
@@ -72,6 +72,14 @@ export class WebGPUCompute {
     u[13] = params.wave;
     u[14] = params.thetaOperand;
     u[15] = params.df;
+    u[16] = params.rubidium;
+    u[17] = params.crystal;
+    u[18] = params.threadLag;
+    u[19] = params.timeslit;
+    u[20] = params.brane;
+    u[21] = params.chords;
+    u[22] = params.atomisation;
+    u[23] = params.stack;
     this.device.queue.writeBuffer(this.uniform, 0, u.buffer);
 
     const encoder = this.device.createCommandEncoder({ label: 'hypercluster-compute-encoder' });

@@ -11,12 +11,19 @@ const params = { ...DEFAULT_PARAMS };
 app.innerHTML = `
   <div id="scene"></div>
   <section id="hud">
-    <h1>_Agent|ik-nn HypergraphGraph Meta Cluster</h1>
-    <p>Hypercomplex surface holography mapped from Ax(t,s,p) into spherical coordinates, with entangled tick hashes, electromagnetic curl/divergence proxies, and cosmological local-cluster bubble symmetry.</p>
+    <div class="eyebrow">Rubiko Timeslit · Uniphilab</div>
+    <h1>Rubidium Alloid Pure Crystal</h1>
+    <p>WebGPU-threaded lagrangian solid controls for a modular holographic surface: rubidium lattice, pure crystal facets, brane stack atomisation, and cluster-chord generalisation.</p>
+    <div class="status-grid">
+      <span><b>Model</b> Rubiko</span>
+      <span><b>Plan</b> Permutive stack</span>
+      <span><b>Surface</b> Brane chords</span>
+    </div>
     <div class="grid" id="controls"></div>
     <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap">
       <button id="pause">Pause</button>
       <button id="randomize">Randomize field</button>
+      <button id="rubiko">Rubiko preset</button>
       <span class="pill" id="mode">booting…</span>
       <span class="pill" id="fps">0 fps</span>
     </div>
@@ -38,7 +45,15 @@ const controlSpec = [
   ['spin', 'Spin', 0, 2, 0.01],
   ['wave', 'Wave', 0, 2, 0.01],
   ['thetaOperand', 'operand θ', 0.1, 6, 0.01],
-  ['df', 'df/octonion fold', 0.25, 9, 0.01]
+  ['df', 'df/octonion fold', 0.25, 9, 0.01],
+  ['rubidium', 'Rubidium alloid Rb', 0, 1.5, 0.01],
+  ['crystal', 'Pure crystal facet', 0, 1.5, 0.01],
+  ['threadLag', 'Thread lagrangian solid', 0, 1.5, 0.01],
+  ['timeslit', 'Rubiko timeslit gate', 0, 1.5, 0.01],
+  ['brane', 'Brane cluster stack', 0, 1.5, 0.01],
+  ['chords', 'Modular surface chords', 0, 1.5, 0.01],
+  ['atomisation', 'Atomisation grain', 0, 1.5, 0.01],
+  ['stack', 'Holographic stack lift', 0, 1.5, 0.01]
 ];
 
 const controls = document.querySelector('#controls');
@@ -108,12 +123,45 @@ document.querySelector('#pause').addEventListener('click', (ev) => {
 });
 
 document.querySelector('#randomize').addEventListener('click', () => {
-  const keys = ['amplitude', 'holography', 'entanglement', 'supersymmetry', 'asymmetry', 'bubble', 'curl', 'divergence', 'spin', 'wave', 'thetaOperand', 'df'];
+  const keys = controlSpec.filter(([key]) => key !== 'resolution').map(([key]) => key);
   for (const key of keys) {
     const spec = controlSpec.find(s => s[0] === key);
     const min = spec[2], max = spec[3];
     params[key] = min + Math.random() * (max - min);
     if (outputs.has(key)) outputs.get(key).value = params[key].toFixed(2);
+    if (inputs.has(key)) inputs.get(key).value = params[key];
+  }
+  compute.setParams(params);
+});
+
+
+document.querySelector('#rubiko').addEventListener('click', () => {
+  const preset = {
+    amplitude: 0.46,
+    holography: 0.92,
+    entanglement: 0.74,
+    supersymmetry: 0.58,
+    asymmetry: 0.18,
+    bubble: 0.62,
+    curl: 0.78,
+    divergence: 0.31,
+    spin: 0.42,
+    wave: 1.12,
+    thetaOperand: 2.24,
+    df: 3.4,
+    rubidium: 1.18,
+    crystal: 1.04,
+    threadLag: 0.92,
+    timeslit: 1.08,
+    brane: 0.86,
+    chords: 0.94,
+    atomisation: 0.42,
+    stack: 0.88
+  };
+  Object.assign(params, preset);
+  for (const [key] of controlSpec) {
+    if (!Object.hasOwn(preset, key)) continue;
+    if (outputs.has(key)) outputs.get(key).value = key === 'resolution' ? params[key] : params[key].toFixed(2);
     if (inputs.has(key)) inputs.get(key).value = params[key];
   }
   compute.setParams(params);
