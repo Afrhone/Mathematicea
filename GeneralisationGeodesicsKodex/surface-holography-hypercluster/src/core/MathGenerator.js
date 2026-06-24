@@ -15,6 +15,14 @@ export const DEFAULT_PARAMS = {
   thetaOperand: 1.73,
   g: 0.61803398875,
   df: 2.0,
+  rubidium: 0.72,
+  crystal: 0.66,
+  threadLag: 0.58,
+  timeslit: 0.64,
+  brane: 0.52,
+  chords: 0.48,
+  atomisation: 0.36,
+  stack: 0.57,
   mode: 4,
   pointSize: 0.015,
   gpu: true,
@@ -75,6 +83,14 @@ export class MathGenerator {
         const em = divergenceCurlProxy(theta, phi, t, p);
         const curlMag = Math.hypot(em.curl[0], em.curl[1], em.curl[2]);
 
+        const rubidiumLattice = Math.cos(theta * 5 + phi * 3 + p.rubidium * t) * Math.cos(phi * 2 - theta * PHI);
+        const pureCrystal = Math.pow(Math.abs(Math.cos(theta * 4) * Math.sin(phi * 4)), 1.6) * 2 - 1;
+        const lagrangianThread = Math.sin((theta - phi) * p.df + t * (p.spin + p.threadLag) + octFlux) * Math.cos(theta * p.threadLag);
+        const timeSlit = Math.sin(theta * 2 + t * 0.7) * Math.sin(phi * 7 - t * p.timeslit);
+        const braneStack = Math.sin((Math.floor(v * 9) / 9) * TAU + theta * p.brane + t * 0.21);
+        const modularChord = Math.cos((theta * 3 + phi * 5) * p.chords + octFlux) * Math.sin((ix % 13) / 13 * TAU);
+        const atomized = (tickHash(tick, i, 191) * 2 - 1) * Math.sin(theta * 11 + phi * 7 + t);
+
         const radius = 1.0 + p.amplitude * (
           p.holography * ax +
           p.entanglement * entangled * 0.5 +
@@ -82,18 +98,26 @@ export class MathGenerator {
           p.asymmetry * Math.abs(hash) * 0.25 +
           p.bubble * localClusterBubble * 0.55 +
           p.curl * Math.tanh(curlMag) * 0.18 +
-          p.divergence * Math.tanh(em.div) * 0.12
+          p.divergence * Math.tanh(em.div) * 0.12 +
+          p.rubidium * rubidiumLattice * 0.22 +
+          p.crystal * pureCrystal * 0.16 +
+          p.threadLag * lagrangianThread * 0.18 +
+          p.timeslit * timeSlit * 0.14 +
+          p.brane * braneStack * 0.13 +
+          p.chords * modularChord * 0.12 +
+          p.atomisation * atomized * 0.08
         );
 
         const base = spherical(theta, phi, radius);
         const normal = normalize3(base);
         const swirl = normalize3(em.curl);
-        const x = base[0] + 0.04 * p.curl * swirl[0];
-        const y = base[1] + 0.04 * p.curl * swirl[1];
-        const z = base[2] + 0.04 * p.curl * swirl[2];
+        const threadBias = 0.025 * p.threadLag * lagrangianThread;
+        const x = base[0] + 0.04 * p.curl * swirl[0] + threadBias * Math.cos(theta);
+        const y = base[1] + 0.04 * p.curl * swirl[1] + 0.018 * p.stack * braneStack;
+        const z = base[2] + 0.04 * p.curl * swirl[2] + threadBias * Math.sin(theta);
 
-        const colorPhase = 0.5 + 0.5 * Math.sin(octFlux + superposed + theta * PHI);
-        const energy = Math.abs(superposed) + Math.abs(octFlux) + Math.abs(localClusterBubble);
+        const colorPhase = 0.5 + 0.5 * Math.sin(octFlux + superposed + theta * PHI + p.rubidium * rubidiumLattice);
+        const energy = Math.abs(superposed) + Math.abs(octFlux) + Math.abs(localClusterBubble) + 0.35 * Math.abs(pureCrystal) + 0.25 * Math.abs(modularChord);
         const idx = i * 10;
         this.data[idx + 0] = x;
         this.data[idx + 1] = y;
@@ -115,11 +139,14 @@ export class MathGenerator {
 x <operand_theta_g_df_octonion> |hypercomplex|
 Surface Holography:
   Ax(t,s,p) ↔ spherical(θ,φ,r)
-  r = 1 + A·[H·Ax + E·Ψpair + SUSY·Σψ - ASYM·|hash| + B·Λcluster + ∇×A + ∇·A]
+  r = 1 + A·[H·Ax + E·Ψpair + SUSY·Σψ - ASYM·|hash| + B·Λcluster + ∇×A + ∇·A + Rb·Cpure + Lthread + Tslit + brane/chord atomisation]
 Quantum field:
   Ψ = Σ sin(kθ + ωt + octonion_phase)
 Entangled tick hash:
   pair(i) = N - i + floor(N·φ);  ξ = hash(tick,pair)
+Rubiko timeslit modular surface plan:
+  Cpure = rubidium lattice · pure crystal facet; Lthread = lagrangian solid thread flow
+  brane/chord stack = floor(φ layers) ⊗ modular chord atomisation
 Cosmological local-cluster bubble:
   Λcluster = exp(-2.2·(sinφ-.66)²)·cos(6θ-.11t)`;
   }

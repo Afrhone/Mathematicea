@@ -19,6 +19,22 @@ struct Params {
   wave: f32,
   thetaOperand: f32,
   df: f32,
+  rubidium: f32,
+  crystal: f32,
+  threadLag: f32,
+  timeslit: f32,
+  brane: f32,
+  chords: f32,
+  atomisation: f32,
+  stack: f32,
+  _pad0: f32,
+  _pad1: f32,
+  _pad2: f32,
+  _pad3: f32,
+  _pad4: f32,
+  _pad5: f32,
+  _pad6: f32,
+  _pad7: f32,
 };
 
 @group(0) @binding(0) var<storage, read_write> outData: array<f32>;
@@ -82,6 +98,14 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
   let curlMag = length(curl);
   let div = cos(5.0 * theta + params.spin * tf) * cos(phi * PHI) - sin(5.0 * phi - params.wave * tf) * sin(theta / PHI) + params.df * cos((theta + phi) * params.df + tf * 0.23);
 
+  let rubidiumLattice = cos(theta * 5.0 + phi * 3.0 + params.rubidium * tf) * cos(phi * 2.0 - theta * PHI);
+  let pureCrystal = pow(abs(cos(theta * 4.0) * sin(phi * 4.0)), 1.6) * 2.0 - 1.0;
+  let lagrangianThread = sin((theta - phi) * params.df + tf * (params.spin + params.threadLag) + of) * cos(theta * params.threadLag);
+  let timeSlit = sin(theta * 2.0 + tf * 0.7) * sin(phi * 7.0 - tf * params.timeslit);
+  let braneStack = sin((floor(v * 9.0) / 9.0) * TAU + theta * params.brane + tf * 0.21);
+  let modularChord = cos((theta * 3.0 + phi * 5.0) * params.chords + of) * sin(f32(ix % 13u) / 13.0 * TAU);
+  let atomized = (tickHash(params.tick, fi, 191.0) * 2.0 - 1.0) * sin(theta * 11.0 + phi * 7.0 + tf);
+
   let radius = 1.0 + params.amplitude * (
     params.holography * ax +
     params.entanglement * entangled * 0.5 +
@@ -89,14 +113,22 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
     params.asymmetry * abs(h) * 0.25 +
     params.bubble * localClusterBubble * 0.55 +
     params.curl * tanh(curlMag) * 0.18 +
-    params.divergence * tanh(div) * 0.12
+    params.divergence * tanh(div) * 0.12 +
+    params.rubidium * rubidiumLattice * 0.22 +
+    params.crystal * pureCrystal * 0.16 +
+    params.threadLag * lagrangianThread * 0.18 +
+    params.timeslit * timeSlit * 0.14 +
+    params.brane * braneStack * 0.13 +
+    params.chords * modularChord * 0.12 +
+    params.atomisation * atomized * 0.08
   );
 
   let base = spherical(theta, phi, radius);
   let swirl = normalize(curl + vec3<f32>(0.0001));
-  let p = base + 0.04 * params.curl * swirl;
-  let energy = abs(superposed) + abs(of) + abs(localClusterBubble);
-  let colorPhase = 0.5 + 0.5 * sin(of + superposed + theta * PHI);
+  let threadBias = 0.025 * params.threadLag * lagrangianThread;
+  let p = base + 0.04 * params.curl * swirl + vec3<f32>(threadBias * cos(theta), 0.018 * params.stack * braneStack, threadBias * sin(theta));
+  let energy = abs(superposed) + abs(of) + abs(localClusterBubble) + 0.35 * abs(pureCrystal) + 0.25 * abs(modularChord);
+  let colorPhase = 0.5 + 0.5 * sin(of + superposed + theta * PHI + params.rubidium * rubidiumLattice);
   let start = u32(fi * 10.0);
   outData[start + 0u] = p.x;
   outData[start + 1u] = p.y;
