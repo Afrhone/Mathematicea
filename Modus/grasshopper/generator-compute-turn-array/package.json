@@ -1,0 +1,20 @@
+{
+  "name": "generator-compute-turn-array",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Function orchestration agent and compute-turn engine for U8 Grasshopper surface holography arrays.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "demo": "node src/index.js",
+    "check": "node --check src/index.js && node --check scripts/build.mjs"
+  },
+  "exports": {
+    ".": "./dist/generator-compute-turn-array.mjs"
+  },
+  "files": [
+    "dist",
+    "src",
+    "examples"
+  ]
+}
