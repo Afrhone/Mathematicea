@@ -1,0 +1,9 @@
+# LMCache scaffold for vLLM. Validate with your installed vLLM/LMCache versions.
+# Goal: offload/share KV across CPU/disk/object-network tier.
+chunk_size: 256
+local_cpu: true
+max_local_cpu_size: 8
+local_disk: "/state/lmcache"
+max_local_disk_size: 64
+remote_url: "redis://10.83.3.10:6379"
+# MinIO/S3 object state can be mounted or configured in LMCache version-specific format.

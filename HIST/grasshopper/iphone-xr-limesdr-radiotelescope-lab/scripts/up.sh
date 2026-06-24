@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+cd "$(dirname "$0")/.."
+docker compose -f compose/docker-compose.yml --env-file .env up --build -d
+docker compose -f compose/docker-compose.yml ps

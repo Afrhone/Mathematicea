@@ -1,0 +1,35 @@
+skills:
+  integrity:
+    label: Cognitive Superposition
+    source: https://mcpmarket.com/tools/skills/cognitive-superposition-1
+    install: npx skillfish add plurigrid/asi cognitive-superposition
+    role: meta_reasoning
+    hub_tools: [integrity_reasoning_pack, deployment_forecast]
+    gates: [compression_delta, causal_diversity, formalizable_invariant]
+  superforecasting:
+    label: Superforecasting Thinking Pattern
+    source: https://mcpmarket.com/tools/skills/superforecasting-thinking-pattern
+    install: npx skillfish add lev-os/agents superforecasting
+    role: probabilistic_risk
+    hub_tools: [deployment_forecast, premortem]
+    gates: [base_rate, bayesian_update, milestone_risk]
+  visio:
+    label: Scikit-Image Assistant
+    source: https://mcpmarket.com/tools/skills/scikit-image-assistant
+    install: npx skillfish add tondevrel/scientific-agent-skills scikit-image
+    role: image_processing
+    hub_tools: [vision_pipeline_plan]
+    gates: [dtype_safety, segmentation_quality, measurement_reproducibility]
+  simulation_holography:
+    label: Particles Router
+    source: https://mcpmarket.com/tools/skills/particles-router
+    install: npx skillfish add bbeierle12/skill-mcp-claude particles-router
+    role: gpu_particles_webgl
+    hub_tools: [particles_route, holography_manifest]
+    gates: [particle_count_tier, gpu_buffer_budget, frame_time_budget]
+  bitcoin:
+    label: Bitcoin MCP read-only
+    source: https://mcpmarket.com/server/bitcoin
+    role: bitcoin_core_readonly
+    hub_tools: [bitcoin_readonly]
+    gates: [no_wallet_rpc, no_private_keys, no_broadcast, local_node_preferred]

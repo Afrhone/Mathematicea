@@ -1,0 +1,1 @@
+{"name":"yetti-tree-search-node","version":"0.1.0","type":"module","scripts":{"start":"node src/server.js"},"dependencies":{"express":"^4.18.3","dotenv":"^16.4.5"}}

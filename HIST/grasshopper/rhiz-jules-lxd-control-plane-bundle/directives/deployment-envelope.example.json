@@ -1,0 +1,29 @@
+{
+  "kind": "rhiz.deployment-envelope",
+  "version": "2026.05.01",
+  "authority": {
+    "canonical_repo": "gitlab",
+    "jules_adapter": "github_mirror",
+    "gateway": "main-rhiz"
+  },
+  "task": {
+    "title": "example",
+    "base_branch": "main",
+    "automation_mode": "AUTO_CREATE_PR"
+  },
+  "target": {
+    "type": "lxc_container",
+    "host": "ark-rhiz",
+    "name": "jules-bridge"
+  },
+  "gates": {
+    "dry_run": true,
+    "allow_deploy": false,
+    "allow_lxd_mutation": false,
+    "operator_approval": false
+  },
+  "rollback": {
+    "required": true,
+    "path": "docs/ROLLBACK.md"
+  }
+}

@@ -1,0 +1,22 @@
+gateway:
+  host: exosystem
+  public_endpoint: rhiz-arch.afrho.net
+  public_iface: eno8403
+  vpn_iface: ceph-operator
+  configure_ip_forward: true
+  enable_masquerade: true
+  open_services: [http, https, ssh]
+  open_udp_ports: [51820]
+  forwards:
+    - proto: tcp
+      listen_port: 443
+      target_addr: 10.42.0.33
+      target_port: 443
+    - proto: tcp
+      listen_port: 8443
+      target_addr: 10.42.0.38
+      target_port: 8443
+    - proto: tcp
+      listen_port: 9090
+      target_addr: 10.42.0.33
+      target_port: 9090

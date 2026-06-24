@@ -1,0 +1,15 @@
+[Unit]
+Description=Axio-Mo-Hist Rhizome Dojo
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/axio-mo-hist-dojo/server
+EnvironmentFile=-/opt/axio-mo-hist-dojo/.env
+ExecStart=/usr/bin/env bash -lc 'npm install && npm start'
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

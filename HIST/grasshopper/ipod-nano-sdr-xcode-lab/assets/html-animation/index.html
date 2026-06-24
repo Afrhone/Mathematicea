@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nano Spectro Lab</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <canvas id="field"></canvas>
+      <div class="panel">
+        <h1>Nano Spectro Lab</h1>
+        <p>HTML animation + SDR spectrogram stream. Export as web assets, Xcode WebView bundle, MP4/GIF stills for iPod nano media sync.</p>
+        <div class="row">
+          <button id="pulse">pulse</button>
+          <button id="freeze">freeze</button>
+          <button id="audio">audio reactive</button>
+        </div>
+        <pre id="stats">connecting…</pre>
+      </div>
+    </section>
+    <section class="spectro">
+      <h2>Live SDR Spectrogram</h2>
+      <img id="spectrogram" src="http://localhost:8090/spectrogram.png" alt="SDR spectrogram" />
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+{
+  "schema": "afrho.genome.identity.v0",
+  "privacy_notice": "Genetic data is highly identifying. Do not publish raw DNA, VCF, FASTQ, or SNP files publicly. This JSON contains only visible ancestry summary data and synthetic example sequences.",
+  "limits": [
+    "Screenshots of ancestry maps cannot reveal an entire genome.",
+    "Actual genotype requires raw genotyping data such as a microarray file or VCF.",
+    "Phenotype cannot be reliably inferred from ancestry alone; environment and many variants matter."
+  ],
+  "visual_ancestry_summary": {
+    "source": {
+      "type": "user_provided_screenshots",
+      "note": "This is a visual transcription of the ancestry percentages visible in the screenshots, not a full genome, not medical data."
+    },
+    "prehistoric_origin": {
+      "non_european": 0.53,
+      "early_farmers": 0.26,
+      "indo_european": 0.13,
+      "hunter_gatherers": 0.08
+    },
+    "regional_origin": [
+      {
+        "region": "Sénégal, Gambie et Guinée-Bissau",
+        "percent": 25
+      },
+      {
+        "region": "Ghana, Togo et Bénin",
+        "percent": 7
+      },
+      {
+        "region": "Guinée et Sierra Leone",
+        "percent": 2
+      },
+      {
+        "region": "Bassin ouest du lac Victoria",
+        "percent": 3
+      },
+      {
+        "region": "Bassin oriental du lac Victoria",
+        "percent": 3
+      },
+      {
+        "region": "Érythrée, Éthiopie du Nord et Somalie",
+        "percent": 5
+      },
+      {
+        "region": "Afrique australe",
+        "percent": "<1"
+      },
+      {
+        "region": "Sud du bassin du Congo",
+        "percent": "<1"
+      },
+      {
+        "region": "Péninsule italienne",
+        "percent": 7
+      },
+      {
+        "region": "Péninsule ibérique",
+        "percent": 5
+      },
+      {
+        "region": "Europe de l’Ouest et centrale",
+        "percent": 10
+      },
+      {
+        "region": "Finlande",
+        "percent": 3
+      },
+      {
+        "region": "Juif ashkénaze",
+        "percent": 3
+      },
+      {
+        "region": "Inde de l’Est",
+        "percent": 20
+      },
+      {
+        "region": "Myanmar",
+        "percent": "<1"
+      },
+      {
+        "region": "Maghreb et Égypte",
+        "percent": 5
+      }
+    ]
+  },
+  "human_genome_reference_facts": {
+    "chromosome_pairs": 23,
+    "autosome_pairs": 22,
+    "sex_chromosome_pair": "XX or XY depending on individual karyotype; not inferable from these screenshots",
+    "base_pairs_per_haploid_genome_approx": 3000000000,
+    "protein_coding_genes_approx": 20000
+  },
+  "dna_model": {
+    "alphabet": [
+      "A",
+      "C",
+      "G",
+      "T"
+    ],
+    "codon_length": 3,
+    "codon_table": {
+      "TTT": "Phe",
+      "TTC": "Phe",
+      "TTA": "Leu",
+      "TTG": "Leu",
+      "CTT": "Leu",
+      "CTC": "Leu",
+      "CTA": "Leu",
+      "CTG": "Leu",
+      "ATT": "Ile",
+      "ATC": "Ile",
+      "ATA": "Ile",
+      "ATG": "Met/Start",
+      "GTT": "Val",
+      "GTC": "Val",
+      "GTA": "Val",
+      "GTG": "Val",
+      "TCT": "Ser",
+      "TCC": "Ser",
+      "TCA": "Ser",
+      "TCG": "Ser",
+      "CCT": "Pro",
+      "CCC": "Pro",
+      "CCA": "Pro",
+      "CCG": "Pro",
+      "ACT": "Thr",
+      "ACC": "Thr",
+      "ACA": "Thr",
+      "ACG": "Thr",
+      "GCT": "Ala",
+      "GCC": "Ala",
+      "GCA": "Ala",
+      "GCG": "Ala",
+      "TAT": "Tyr",
+      "TAC": "Tyr",
+      "TAA": "Stop",
+      "TAG": "Stop",
+      "CAT": "His",
+      "CAC": "His",
+      "CAA": "Gln",
+      "CAG": "Gln",
+      "AAT": "Asn",
+      "AAC": "Asn",
+      "AAA": "Lys",
+      "AAG": "Lys",
+      "GAT": "Asp",
+      "GAC": "Asp",
+      "GAA": "Glu",
+      "GAG": "Glu",
+      "TGT": "Cys",
+      "TGC": "Cys",
+      "TGA": "Stop",
+      "TGG": "Trp",
+      "CGT": "Arg",
+      "CGC": "Arg",
+      "CGA": "Arg",
+      "CGG": "Arg",
+      "AGT": "Ser",
+      "AGC": "Ser",
+      "AGA": "Arg",
+      "AGG": "Arg",
+      "GGT": "Gly",
+      "GGC": "Gly",
+      "GGA": "Gly",
+      "GGG": "Gly"
+    },
+    "synthetic_demo_sequence": {
+      "warning": "Synthetic toy DNA for visualization only. Not the user's genome.",
+      "dna_5_to_3": "ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG",
+      "codons": [
+        "ATG",
+        "GCC",
+        "ATT",
+        "GTA",
+        "ATG",
+        "GGC",
+        "CGC",
+        "TGA",
+        "AAG",
+        "GGT",
+        "GCC",
+        "CGA",
+        "TAG"
+      ],
+      "protein_translation_1_letter": "MAIVMGR*KGAR*",
+      "protein_translation_3_letter": [
+        "Met",
+        "Ala",
+        "Ile",
+        "Val",
+        "Met",
+        "Gly",
+        "Arg",
+        "Stop",
+        "Lys",
+        "Gly",
+        "Ala",
+        "Arg",
+        "Stop"
+      ]
+    }
+  },
+  "genotype_to_phenotype_pipeline": {
+    "steps": [
+      {
+        "id": "raw_data",
+        "label": "Raw genotype / VCF / FASTQ",
+        "available_now": false
+      },
+      {
+        "id": "variant_calling",
+        "label": "Variant calls: SNPs, indels, CNVs",
+        "available_now": false
+      },
+      {
+        "id": "annotation",
+        "label": "Gene and regulatory annotation",
+        "available_now": false
+      },
+      {
+        "id": "protein_effect",
+        "label": "Codon → amino acid → protein effect",
+        "available_now": false
+      },
+      {
+        "id": "trait_model",
+        "label": "Trait model / polygenic context",
+        "available_now": false
+      },
+      {
+        "id": "phenotype",
+        "label": "Observable traits; not deterministic from ancestry alone",
+        "available_now": false
+      }
+    ],
+    "example_variant": {
+      "warning": "Illustrative fake variant, not diagnostic.",
+      "chromosome": "chr7",
+      "position": 117559593,
+      "reference": "C",
+      "alternate": "T",
+      "gene": "EXAMPLE_GENE",
+      "codon_change": "GCC→GTC",
+      "protein_change": "Ala→Val",
+      "possible_effect": "example amino-acid substitution"
+    }
+  },
+  "brand_layer": {
+    "style": "minimal kinetic sketch, Tinguely-inspired, afrofuturist ancestry interface",
+    "keywords": [
+      "roots",
+      "migration",
+      "memory",
+      "code",
+      "chromosome",
+      "phenotype",
+      "tribe interface"
+    ]
+  }
+}

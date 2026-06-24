@@ -1,0 +1,20 @@
+swarm:
+  advertise_interface: eth0
+  managers:
+    - pi-rhiz
+    - factau-rhiz
+  workers:
+    - niurk-24
+    - niurk-43
+  labels:
+    manager: swarm-manager
+    worker: swarm-worker
+    gpu: swarm-gpu
+    edge: swarm-edge
+  stacks:
+    management-ui:
+      compose: stacks/management-ui/docker-compose.yml
+    app-gateway:
+      compose: stacks/app-gateway/docker-compose.yml
+    rhiz-cards:
+      compose: stacks/rhiz-cards/docker-compose.yml

@@ -1,0 +1,58 @@
+{
+  "namespace": "factory-rhizome-lab-studio",
+  "tribe": "Cyberphunk Dystopian Afrh\u00f4ne Tribe",
+  "sequence": [
+    "FUNCTOR_SPACE",
+    "METRIC_STATE",
+    "SWARM_ENTWINE",
+    "POLYFRACTAL_INTERWINE",
+    "GRAPH_INTERVIEW"
+  ],
+  "axioms": [
+    {
+      "id": "A0",
+      "name": "Gate before retry",
+      "predicate": "retry_allowed iff state_delta_proven"
+    },
+    {
+      "id": "A1",
+      "name": "Local invariance",
+      "predicate": "node_state satisfies socket/storage/network/sink contract"
+    },
+    {
+      "id": "A2",
+      "name": "Asymmetry is signal",
+      "predicate": "namespace_delta becomes diagnostic object"
+    },
+    {
+      "id": "A3",
+      "name": "Entropy budget",
+      "predicate": "mutation_allowed iff expected_entropy_delta <= threshold"
+    },
+    {
+      "id": "A4",
+      "name": "Sink discipline",
+      "predicate": "all gate evidence must be persisted"
+    },
+    {
+      "id": "A5",
+      "name": "GNN advisory",
+      "predicate": "graph_intelligence cannot bypass gates"
+    },
+    {
+      "id": "A6",
+      "name": "Stem principle",
+      "predicate": "root + flow-check + lineage preservation"
+    },
+    {
+      "id": "A7",
+      "name": "Polyfractal identity",
+      "predicate": "identity anchored by relative graph/context signature"
+    },
+    {
+      "id": "A8",
+      "name": "Handshake attestation",
+      "predicate": "operator identity attested by phrase hash and narrative comprehension"
+    }
+  ]
+}

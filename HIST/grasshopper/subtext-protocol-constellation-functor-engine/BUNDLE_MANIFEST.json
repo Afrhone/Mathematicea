@@ -1,0 +1,20 @@
+{
+  "name": "subtext-protocol-constellation-functor-engine",
+  "created": "2026-05-27T20:51:03Z",
+  "features": [
+    "subtext protocol engine",
+    "hypertext heuristics",
+    "synchronic search tree",
+    "expressive roots derivation",
+    "constellation functor graph",
+    "markdown compiler/lint/promote loop",
+    "MCP JSON-RPC tools",
+    "graph UI"
+  ],
+  "ports": {
+    "ui": 8099,
+    "api": 8100,
+    "compiler": 8101,
+    "mcp": 8102
+  }
+}

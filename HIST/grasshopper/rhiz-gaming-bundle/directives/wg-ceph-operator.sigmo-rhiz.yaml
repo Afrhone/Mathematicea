@@ -1,0 +1,27 @@
+interface:
+  name: ceph-operator
+  listen_port: 54744
+  mtu: 1420
+  address: 10.42.0.24/24
+  never_default: true
+peers:
+  - name: rhiz-loes
+    public_key:
+    endpoint: 192.168.0.38:54730
+    allowed_ips: 10.42.0.38/32
+    persistent_keepalive: 25
+  - name: rhiz-ueth
+    public_key:
+    endpoint: 192.168.0.2:54730
+    allowed_ips: 10.42.0.2/32
+    persistent_keepalive: 25
+  - name: rhiz-woute
+    public_key:
+    endpoint: 192.168.0.33:56745
+    allowed_ips: 10.42.0.33/32
+    persistent_keepalive: 25
+  - name: factau-rhiz
+    public_key:
+    endpoint: 192.168.0.4:54715
+    allowed_ips: 10.42.0.4/32
+    persistent_keepalive: 25

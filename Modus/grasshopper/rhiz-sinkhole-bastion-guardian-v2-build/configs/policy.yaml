@@ -1,0 +1,27 @@
+policy:
+  mode_default: dry-run
+  defensive_only: true
+  forbidden:
+    - credential_harvesting
+    - exploit_delivery
+    - stealth_persistence
+    - destructive_wipe
+    - unauthorized_access
+  allowed_actions:
+    - observe
+    - dns_sinkhole
+    - quarantine_lxd_instance_after_operator_approval
+    - label_risky_service
+    - open_readonly_shell_status
+    - generate_dry_run_plan
+  command_allowlist:
+    - lxc list
+    - lxc network list
+    - lxc profile list
+    - docker ps
+    - docker service ls
+    - systemctl status lxd
+    - ceph -s
+    - ip route
+    - ip addr
+    - wg show

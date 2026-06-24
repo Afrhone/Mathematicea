@@ -1,0 +1,8 @@
+services:
+  lissajous:
+    build: .
+    environment:
+      - PORT=8877
+    ports:
+      - "8877:8877"
+    restart: unless-stopped

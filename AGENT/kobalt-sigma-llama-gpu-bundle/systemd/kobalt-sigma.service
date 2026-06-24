@@ -1,0 +1,16 @@
+[Unit]
+Description=Kobalt Sigma LLM Chat
+After=network-online.target ollama.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/kobalt
+EnvironmentFile=/opt/kobalt/.env
+ExecStart=/usr/bin/npm start
+Restart=always
+RestartSec=3
+User=root
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,62 @@
+node:
+  name: eliosys-rhiz
+  class: raspberry-pi-5-edge
+  hardware:
+    ram_gb: 8
+    nvme_gb: 256
+    cooling: active-fan
+    camera_mount: true
+  roles:
+    - edge-integrity-ai
+    - metabolic-knowledge-compiler
+    - camera-sentinel
+    - model-consumer
+    - optional-swarm-worker
+
+principles:
+  stem:
+    noun: "main stalk: support growth and branching"
+    verb: "check unsafe flow before it becomes flood"
+    linguistics: "root of terms, affixes, provenance, namespace memory"
+  relativity_principle_law:
+    rule: "principles constrain actions before optimization"
+    lambda_exception: "manual exception must be explicit, scoped, reversible, and logged"
+  raven_reminder:
+    text: "breaking thrust; pull magnitude / Raven, tastes sweet"
+    interpretation: "detect overthrust, pull back magnitude, preserve beauty in safe signal"
+
+pass_tiers:
+  0_rag:
+    goal: "retrieve and ground"
+    output: "cited chunks and raw references"
+  1_self_supervised_polyfractal_signal_flow:
+    goal: "compile raw notes into chunked, linked, linted signal paths"
+    output: "compost chunks, embeddings placeholder, graph edges"
+  2_phi_os_contingency:
+    goal: "orchestrate PHI|OS, hypergraph, cloud-compute, rhiz applicative contexts"
+    output: "state-space functors and dashboard traces"
+  3_sequence_cascade:
+    goal: "vertical sequence following with abstract input alignment"
+    output: "ordered workflow cards and gates"
+  4_structured_interface_generation:
+    goal: "iterative knowledge-basis interface generation"
+    output: "human-machine signal-flow composer"
+  5_singularity_pass:
+    goal: "bounded superintelligence innovation posture without absolute claims"
+    output: "auditable promotion candidates only"
+
+namespaces:
+  rhiz_applicative: /rhiz
+  hypergraph_awareness: /hypergraph
+  cloud_compute_projection: /cloud-compute
+  phi_os_interface: /PH|OS
+  uniphi_ui: /uniphi
+
+security:
+  no_token_in_url: true
+  hash_one_time_tokens: true
+  direct_model_public_exposure: false
+  docker_socket_public_exposure: false
+  lxd_api_public_exposure: false
+  nvme_wipe_requires_explicit_gate: true
+  promotion_requires_integrity_score: 0.72

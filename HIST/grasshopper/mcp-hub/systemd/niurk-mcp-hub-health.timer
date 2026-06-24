@@ -1,0 +1,10 @@
+[Unit]
+Description=Run niurk MCP Hub health self-test periodically
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=15min
+Unit=niurk-mcp-hub-health.service
+
+[Install]
+WantedBy=timers.target

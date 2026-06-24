@@ -1,0 +1,10 @@
+<pool type='rbd'>
+  <name>ceph-vms</name>
+  <source>
+    <name>vms</name>
+    <host name='10.42.0.38' port='6789'/>
+    <auth type='ceph' username='libvirt'>
+      <secret uuid='11111111-2222-3333-4444-555555555555'/>
+    </auth>
+  </source>
+</pool>

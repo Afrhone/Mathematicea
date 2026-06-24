@@ -1,0 +1,301 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "uniphi.encoder.engine.schema.v1",
+  "title": "Uniphi Encoder Engine Schema v1",
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/$defs/EncodeRequest" },
+    { "$ref": "#/$defs/EncodeResponse" }
+  ],
+  "$defs": {
+    "Hex64": {
+      "type": "string",
+      "pattern": "^0x[0-9a-fA-F]{16}$",
+      "description": "64-bit hex pointer (16 hex bytes)."
+    },
+
+    "ZerothAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "t0": { "type": "integer", "default": 0 },
+        "system_id": { "type": "string", "default": "zeroth" },
+        "anchor_symbol": { "type": "string", "default": "Ø", "maxLength": 8 }
+      },
+      "required": ["t0", "system_id", "anchor_symbol"]
+    },
+
+    "ExportOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "include_graph": { "type": "boolean", "default": true },
+        "include_manifold": { "type": "boolean", "default": true },
+        "include_decision_tree": { "type": "boolean", "default": true }
+      },
+      "required": ["include_graph", "include_manifold", "include_decision_tree"]
+    },
+
+    "EncodeRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Cipher seed / key (string)."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["auto", "ipa"],
+          "default": "auto",
+          "description": "auto = g2p-lite French; ipa = tokenize provided IPA."
+        },
+        "text": {
+          "type": "string",
+          "description": "French natural language input (used when mode=auto)."
+        },
+        "ipa": {
+          "type": "string",
+          "description": "IPA tokens separated by spaces (used when mode=ipa)."
+        },
+        "zeroth": { "$ref": "#/$defs/ZerothAnchor" },
+        "export": { "$ref": "#/$defs/ExportOptions" },
+        "quant": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "delta": {
+              "type": "number",
+              "minimum": 0,
+              "default": 0,
+              "description": "Optional quantization step for downstream snapshot systems."
+            }
+          }
+        },
+        "directives": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Optional system directives metadata (versioning, tags, persona markers)."
+        }
+      },
+      "required": ["key"],
+      "allOf": [
+        {
+          "if": { "properties": { "mode": { "const": "ipa" } }, "required": ["mode"] },
+          "then": { "required": ["ipa"] }
+        }
+      ]
+    },
+
+    "Pointers": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kv_ptr64": { "$ref": "#/$defs/Hex64" },
+        "vram_ptr64": { "$ref": "#/$defs/Hex64" },
+        "bucket": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Shard/bucket index derived from kv_ptr64."
+        }
+      },
+      "required": ["kv_ptr64", "vram_ptr64", "bucket"]
+    },
+
+    "TransitionSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "density": { "type": "number", "minimum": 0, "maximum": 1 },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "a": { "type": "integer", "minimum": 0 },
+              "b": { "type": "integer", "minimum": 0 },
+              "w": { "type": "integer", "minimum": 1 }
+            },
+            "required": ["a", "b", "w"]
+          }
+        }
+      },
+      "required": ["density", "edges"]
+    },
+
+    "Metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "len_tokens": { "type": "integer", "minimum": 0 },
+        "alphabet_size": { "type": "integer", "minimum": 2 },
+        "entropy_bits_per_symbol": { "type": "number", "minimum": 0 },
+        "entropy_utilization": { "type": "number", "minimum": 0, "maximum": 1.5 },
+        "transition": { "$ref": "#/$defs/TransitionSummary" }
+      },
+      "required": [
+        "len_tokens",
+        "alphabet_size",
+        "entropy_bits_per_symbol",
+        "entropy_utilization",
+        "transition"
+      ]
+    },
+
+    "Invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "zeroth": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "t0": { "type": "integer" },
+            "system_id": { "type": "string" },
+            "anchor_symbol": { "type": "string" }
+          },
+          "required": ["t0", "system_id", "anchor_symbol"]
+        },
+        "radix_prime": { "type": "integer", "minimum": 2 },
+        "magnitude_bits": { "type": "integer", "minimum": 0 },
+        "kv_bucket": { "type": "integer", "minimum": 0 }
+      },
+      "required": ["zeroth", "radix_prime", "magnitude_bits", "kv_bucket"]
+    },
+
+    "DecisionTree": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "root": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "R": { "$ref": "#/$defs/TokenCounts" },
+            "N": { "$ref": "#/$defs/TokenCounts" },
+            "Z": { "$ref": "#/$defs/TokenCounts" }
+          },
+          "required": ["R", "N", "Z"]
+        }
+      },
+      "required": ["root"]
+    },
+
+    "TokenCounts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 1 },
+      "description": "Map token -> count."
+    },
+
+    "Manifold": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dim": { "type": "integer", "minimum": 0 },
+        "mean": { "type": "array", "items": { "type": "number" } },
+        "cov": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": { "type": "number" }
+          }
+        },
+        "pca2": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": { "type": "number" }
+          }
+        },
+        "labels": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["dim", "mean", "cov", "pca2", "labels"]
+    },
+
+    "Graph": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pts": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": { "type": "number" }
+          }
+        },
+        "closure": { "type": "number", "minimum": 0 },
+        "turns": { "type": "integer", "minimum": 0 },
+        "bbox": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "min": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": { "type": "number" }
+            },
+            "max": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": { "type": "number" }
+            }
+          },
+          "required": ["min", "max"]
+        }
+      },
+      "required": ["pts", "closure", "turns", "bbox"]
+    },
+
+    "EncodeResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ipa_tokens": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Normalized tokens used by the engine."
+        },
+        "symbol_ids": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0 },
+          "description": "Key-whitened symbol ids (post-mix)."
+        },
+        "radix": { "type": "integer", "minimum": 2 },
+        "integer_base10": { "type": "string", "pattern": "^[0-9]+$" },
+        "integer_base16": { "type": "string", "pattern": "^0x[0-9a-fA-F]+$" },
+        "magnitude_bits": { "type": "integer", "minimum": 0 },
+        "pointers": { "$ref": "#/$defs/Pointers" },
+        "metrics": { "$ref": "#/$defs/Metrics" },
+        "invariants": { "$ref": "#/$defs/Invariants" },
+        "decision_tree": {
+          "anyOf": [{ "$ref": "#/$defs/DecisionTree" }, { "type": "null" }]
+        },
+        "manifold": {
+          "anyOf": [{ "$ref": "#/$defs/Manifold" }, { "type": "null" }]
+        },
+        "graph": {
+          "anyOf": [{ "$ref": "#/$defs/Graph" }, { "type": "null" }]
+        }
+      },
+      "required": [
+        "ipa_tokens",
+        "symbol_ids",
+        "radix",
+        "integer_base10",
+        "integer_base16",
+        "magnitude_bits",
+        "pointers",
+        "metrics",
+        "invariants"
+      ]
+    }
+  }
+}

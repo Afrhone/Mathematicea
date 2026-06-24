@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+<defs>
+<style>
+  .bg{fill:#f7f0df} .ink{stroke:#141414;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+  .thin{stroke:#141414;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;opacity:.72}
+  .dash{stroke-dasharray:8 10} .txt{font-family:Arial, Helvetica, sans-serif;fill:#111;letter-spacing:2px}
+  .small{font-size:20px;letter-spacing:1px} .tiny{font-size:15px;letter-spacing:1px} .title{font-size:54px;font-weight:700}
+  .sub{font-size:24px;font-style:italic;letter-spacing:1px} .blue{fill:#1f63ff} .green{fill:#30a66a}
+  .red{fill:#e2433b} .gold{fill:#e0ad35} .violet{fill:#8f4ab8} .paper{fill:#fffaf0;stroke:#111;stroke-width:2}
+  .node{fill:#111} .ghost{opacity:.18}
+</style>
+</defs>
+<rect class="bg" x="0" y="0" width="1600" height="1000"/>
+<text x="80" y="90" class="txt title">GENOTYPE → PHENOTYPE</text>
+<text x="84" y="130" class="txt sub">Minimal kinetic ancestry / chromosome information machine</text>
+<path class="thin" d="M80 155 H1490"/>
+<g transform="translate(70,210)">
+  <rect class="paper" x="0" y="0" width="1450" height="230" rx="16"/>
+  <text class="txt small" x="35" y="45">1. VISUAL ANCESTRY SUMMARY — from screenshots only</text>
+  <g transform="translate(60,80)">
+    <text class="txt tiny" x="0" y="0">53% NON-EUROPEAN</text><rect x="0" y="20" width="424" height="28" fill="#999"/>
+    <text class="txt tiny" x="0" y="82">26% AGRICULTEURS</text><rect x="0" y="102" width="208" height="28" class="green"/>
+    <text class="txt tiny" x="520" y="0">13% INDO-EUROPÉEN</text><rect x="520" y="20" width="104" height="28" fill="#377dcc"/>
+    <text class="txt tiny" x="520" y="82">8% CHASSEURS-CUEILLEURS</text><rect x="520" y="102" width="64" height="28" class="red"/>
+  </g>
+  <g transform="translate(1040,70)">
+    <circle cx="60" cy="60" r="54" class="thin"/>
+    <path class="ink" d="M26 73 C55 28 90 34 104 65 C78 56 60 83 42 100"/>
+    <circle cx="60" cy="60" r="8" class="node"/>
+    <path class="thin" d="M60 6 L60 -34 M60 114 L60 150 M6 60 L-34 60 M114 60 L150 60"/>
+    <text class="txt tiny" x="-20" y="180">ROOT MEMORY ≠ FULL GENOME</text>
+  </g>
+</g>
+
+<g transform="translate(90,505)">
+  <text class="txt small" x="0" y="-35">2. CHROMOSOME → GENE → CODON → PROTEIN → TRAIT</text>
+  <g>
+    <path class="ink" d="M40 20 C110 100 110 170 40 250 M140 20 C70 100 70 170 140 250"/>
+    <path class="thin dash" d="M55 55 H125 M50 95 H130 M55 135 H125 M50 175 H130 M55 215 H125"/>
+    <text class="txt tiny" x="8" y="290">CHROMOSOME</text>
+  </g>
+  <path class="ink" d="M230 130 H360"/>
+  <polygon points="360,130 335,116 335,144" fill="#111"/>
+  <g transform="translate(410,20)">
+    <rect class="paper" x="0" y="0" width="260" height="250" rx="14"/>
+    <text class="txt tiny" x="25" y="38">GENE REGION</text>
+    <path class="thin" d="M35 90 H225 M35 120 H225 M35 150 H225"/>
+    <rect x="72" y="78" width="36" height="24" class="blue"/>
+    <rect x="126" y="108" width="42" height="24" class="gold"/>
+    <rect x="176" y="138" width="26" height="24" class="red"/>
+    <text class="txt tiny" x="35" y="210">exons / introns / regulation</text>
+  </g>
+  <path class="ink" d="M700 130 H830"/>
+  <polygon points="830,130 805,116 805,144" fill="#111"/>
+  <g transform="translate(880,20)">
+    <rect class="paper" x="0" y="0" width="260" height="250" rx="14"/>
+    <text class="txt tiny" x="28" y="38">CODONS</text>
+    <text class="txt small" x="38" y="95">ATG GCC ATT</text>
+    <text class="txt small" x="38" y="135">GTA ATG GGC</text>
+    <text class="txt small" x="38" y="175">CGC TGA …</text>
+    <circle cx="213" cy="68" r="16" class="red"/>
+    <path class="thin" d="M212 84 C230 126 216 162 238 210"/>
+  </g>
+  <path class="ink" d="M1170 130 H1290"/>
+  <polygon points="1290,130 1265,116 1265,144" fill="#111"/>
+  <g transform="translate(1320,20)">
+    <rect class="paper" x="0" y="0" width="180" height="250" rx="14"/>
+    <text class="txt tiny" x="25" y="38">PHENOTYPE</text>
+    <circle cx="88" cy="108" r="46" class="thin"/>
+    <path class="ink" d="M66 108 C70 88 107 88 112 108"/>
+    <path class="thin" d="M54 160 C86 185 124 166 132 138"/>
+    <text class="txt tiny" x="20" y="215">observed trait</text>
+  </g>
+</g>
+
+<g transform="translate(80,835)">
+  <rect class="paper" x="0" y="0" width="1440" height="95" rx="14"/>
+  <text class="txt tiny" x="30" y="38">IMPORTANT LIMIT</text>
+  <text class="txt small" x="30" y="72">An ancestry screenshot cannot expose your genome, codons, proteins, chromosomes, or medically valid phenotype predictions. Upload raw DNA/VCF for parsing.</text>
+</g>
+
+<!-- Tinguely-like margin machine -->
+<g transform="translate(1450,70)">
+  <circle cx="0" cy="0" r="54" class="thin"/><circle cx="0" cy="0" r="8" class="ink"/>
+  <path class="thin" d="M0 54 L0 250 C-22 280 -22 320 0 350 L0 570"/>
+  <circle cx="-20" cy="310" r="18" class="thin"/><circle cx="20" cy="390" r="24" class="thin"/>
+  <path class="ink" d="M0 570 C40 610 -40 650 0 690"/>
+</g>
+<text class="txt tiny" x="80" y="972">AFRHO-FUTURISM / RHIZOME GENOME IDENTITY — illustrative, non-medical</text>
+</svg>

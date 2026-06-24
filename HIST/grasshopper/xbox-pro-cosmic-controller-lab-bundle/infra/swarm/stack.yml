@@ -1,0 +1,40 @@
+
+version: "3.9"
+services:
+  dashboard:
+    image: xbox-cosmic-dashboard:local
+    ports:
+      - target: 80
+        published: 8096
+        mode: ingress
+    deploy:
+      replicas: 1
+      placement:
+        constraints: ["node.labels.xboxlab == true"]
+  gateway:
+    image: xbox-cosmic-gateway:local
+    environment:
+      MONGO_URL: mongodb://mongo:27017/xboxlab
+      REDIS_URL: redis://redis:6379/0
+      LLAMA_GPU_OPENAI_BASE_URL: ${LLAMA_GPU_OPENAI_BASE_URL:-http://192.168.0.125:8089/v1}
+    ports:
+      - target: 8097
+        published: 8097
+        mode: ingress
+    deploy:
+      replicas: 1
+  mcp:
+    image: xbox-cosmic-mcp:local
+    ports:
+      - target: 8098
+        published: 8098
+        mode: ingress
+  mongo:
+    image: mongo:7
+    volumes: [mongo_data:/data/db]
+  redis:
+    image: redis:7-alpine
+    volumes: [redis_data:/data]
+volumes:
+  mongo_data: {}
+  redis_data: {}

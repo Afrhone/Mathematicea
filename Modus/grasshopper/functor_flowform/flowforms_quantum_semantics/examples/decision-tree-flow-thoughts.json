@@ -1,0 +1,25 @@
+{
+  "tree": {
+    "metric": "semanticTension",
+    "lt": 0.55,
+    "then": {
+      "metric": "dominantState",
+      "equals": "Bridge relation",
+      "then": "compose-ligature",
+      "else": "smooth"
+    },
+    "else": {
+      "metric": "entropy",
+      "gt": 2.5,
+      "then": "ask-agent",
+      "else": "sample-latent"
+    }
+  },
+  "flowThoughts": [
+    "root perception anchors the trace",
+    "bridge seeks relation",
+    "rhythm stabilizes ambiguity",
+    "latent state proposes variation",
+    "BI layer explains the projection"
+  ]
+}

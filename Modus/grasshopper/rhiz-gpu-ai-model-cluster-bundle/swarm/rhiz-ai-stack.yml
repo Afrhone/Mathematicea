@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  model-gateway:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    environment:
+      MODEL_GATEWAY_PORT: "7181"
+      PRIMARY_MODEL_HOST: "192.168.0.125"
+      GPU_COMPUTE_HOST: "192.168.0.52"
+      LLAMA_CPP_PORT: "8080"
+      REQUIRE_TOKEN: "1"
+      MODEL_API_TOKEN: "${MODEL_API_TOKEN:-change-me-local-token}"
+    volumes:
+      - ./services/model_gateway:/app
+    ports:
+      - "7181:7181"
+    deploy:
+      replicas: 1
+  mcp-bridge:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    environment:
+      MCP_PORT: "7182"
+      PRIMARY_MODEL_HOST: "192.168.0.125"
+    volumes:
+      - ./services/mcp:/app
+    ports:
+      - "7182:7182"
+    deploy:
+      replicas: 1

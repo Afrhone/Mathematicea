@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "model": {
+      "name": "conceptual-transformer",
+      "n_layers": 24,
+      "n_heads": 16,
+      "d_head": 64,
+      "dtype_bytes": 2
+    },
+    "graph": {
+      "topk": 8
+    }
+  },
+  "tokens": [
+    {
+      "id": "t0",
+      "pos": 0,
+      "text": "Le"
+    },
+    {
+      "id": "t1",
+      "pos": 1,
+      "text": "monde"
+    },
+    {
+      "id": "t2",
+      "pos": 2,
+      "text": "est"
+    },
+    {
+      "id": "t3",
+      "pos": 3,
+      "text": "un"
+    },
+    {
+      "id": "t4",
+      "pos": 4,
+      "text": "théâtre"
+    },
+    {
+      "id": "t5",
+      "pos": 5,
+      "text": "la"
+    },
+    {
+      "id": "t6",
+      "pos": 6,
+      "text": "physique"
+    },
+    {
+      "id": "t7",
+      "pos": 7,
+      "text": "une"
+    },
+    {
+      "id": "t8",
+      "pos": 8,
+      "text": "scène"
+    },
+    {
+      "id": "t9",
+      "pos": 9,
+      "text": "et"
+    },
+    {
+      "id": "t10",
+      "pos": 10,
+      "text": "dieu"
+    },
+    {
+      "id": "t11",
+      "pos": 11,
+      "text": "joue"
+    },
+    {
+      "id": "t12",
+      "pos": 12,
+      "text": "au"
+    },
+    {
+      "id": "t13",
+      "pos": 13,
+      "text": "mathématicien"
+    }
+  ]
+}

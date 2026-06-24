@@ -1,0 +1,16 @@
+name: NanoSpectroLab
+options:
+  bundleIdPrefix: ch.uniphilabs
+settings:
+  IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+targets:
+  NanoSpectroLab:
+    type: application
+    platform: iOS
+    sources:
+      - NanoSpectroLab
+      - ../../assets/html-animation
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: ch.uniphilabs.NanoSpectroLab
+      INFOPLIST_FILE: NanoSpectroLab/Info.plist
+    dependencies: []

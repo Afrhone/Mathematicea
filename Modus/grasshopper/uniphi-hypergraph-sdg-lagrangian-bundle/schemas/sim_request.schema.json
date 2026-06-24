@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "uniphi.hypergraph.sdg.lagrangian.sim.v1",
+  "title": "Hypergraph SDG + Lagrangian Simulation Request",
+  "type": "object",
+  "properties": {
+    "n": {
+      "type": "integer",
+      "minimum": 2
+    },
+    "dim": {
+      "type": "integer",
+      "enum": [
+        2,
+        3
+      ],
+      "default": 2
+    },
+    "hyperedges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "nodes": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "minItems": 2
+          },
+          "w": {
+            "type": "number",
+            "minimum": 0,
+            "default": 1.0
+          }
+        },
+        "required": [
+          "nodes"
+        ]
+      },
+      "minItems": 1
+    },
+    "init": {
+      "type": "object",
+      "properties": {
+        "seed": {
+          "type": "integer",
+          "default": 7
+        }
+      }
+    },
+    "params": {
+      "type": "object",
+      "properties": {
+        "steps": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 20000,
+          "default": 1500
+        },
+        "dt": {
+          "type": "number",
+          "minimum": 0.0001,
+          "maximum": 0.2,
+          "default": 0.01
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "ode",
+            "sde"
+          ],
+          "default": "sde"
+        },
+        "mass": {
+          "type": "number",
+          "minimum": 1e-06,
+          "default": 1.0
+        },
+        "damping": {
+          "type": "number",
+          "minimum": 0.0,
+          "default": 0.25
+        },
+        "sigma": {
+          "type": "number",
+          "minimum": 0.0,
+          "default": 0.15
+        },
+        "soft_anchor": {
+          "type": "number",
+          "minimum": 0.0,
+          "default": 0.01
+        },
+        "goldilocks": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "target_energy": {
+              "type": "number",
+              "minimum": 0.0,
+              "default": 1.5
+            },
+            "k_sigma": {
+              "type": "number",
+              "minimum": 0.0,
+              "default": 0.08
+            },
+            "sigma_min": {
+              "type": "number",
+              "minimum": 0.0,
+              "default": 0.02
+            },
+            "sigma_max": {
+              "type": "number",
+              "minimum": 0.0,
+              "default": 0.4
+            }
+          },
+          "required": [
+            "enabled",
+            "target_energy",
+            "k_sigma",
+            "sigma_min",
+            "sigma_max"
+          ]
+        }
+      },
+      "required": [
+        "steps",
+        "dt",
+        "mode",
+        "mass",
+        "damping",
+        "sigma",
+        "soft_anchor",
+        "goldilocks"
+      ]
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "stride": {
+          "type": "integer",
+          "default": 2
+        },
+        "max_nodes": {
+          "type": "integer",
+          "default": 150
+        }
+      }
+    }
+  },
+  "required": [
+    "n",
+    "hyperedges",
+    "params"
+  ]
+}

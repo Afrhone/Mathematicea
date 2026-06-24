@@ -1,0 +1,11 @@
+<network>
+  <name>${LIBVIRT_NETWORK_NAME}</name>
+  <forward mode='nat'/>
+  <bridge name='${LIBVIRT_BRIDGE_NAME}' stp='on' delay='0'/>
+  <domain name='${LIBVIRT_DNS_DOMAIN}'/>
+  <ip address='${LIBVIRT_GATEWAY}' netmask='${LIBVIRT_NETMASK}'>
+    <dhcp>
+      <range start='${LIBVIRT_DHCP_START}' end='${LIBVIRT_DHCP_END}'/>
+    </dhcp>
+  </ip>
+</network>

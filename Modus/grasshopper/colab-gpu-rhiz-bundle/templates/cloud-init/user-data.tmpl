@@ -1,0 +1,39 @@
+#cloud-config
+hostname: ${VM_NAME}
+manage_etc_hosts: true
+ssh_pwauth: false
+
+users:
+  - default
+  - name: ${VM_GUEST_USER}
+    groups: sudo, adm, systemd-journal
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ${VM_SSH_PUBKEY}
+
+package_update: true
+package_upgrade: false
+packages:
+  - qemu-guest-agent
+  - curl
+  - jq
+  - ca-certificates
+  - gnupg
+  - wireguard
+  - python3-yaml
+  - docker.io
+
+write_files:
+  - path: /etc/sysctl.d/98-colab-gpu.conf
+    permissions: "0644"
+    content: |
+      net.ipv4.ip_forward = 1
+
+runcmd:
+  - [ sh, -lc, "mkdir -p ${COLAB_CONTENT_DIR} /srv/bootstrap /opt/google" ]
+  - [ systemctl, enable, --now, qemu-guest-agent ]
+  - [ systemctl, enable, --now, docker ]
+  - [ sysctl, --system ]
+final_message: "Cloud-init complete for ${VM_NAME}"

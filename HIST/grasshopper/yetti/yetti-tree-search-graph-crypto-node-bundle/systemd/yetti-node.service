@@ -1,0 +1,14 @@
+[Unit]
+Description=YETTI Tree Search Graph Crypto Node
+After=docker.service network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+WorkingDirectory=/opt/yetti-tree-search-graph-crypto-node-bundle
+EnvironmentFile=-/opt/yetti-tree-search-graph-crypto-node-bundle/.env
+ExecStart=/usr/bin/docker compose -f compose/compose.yetti-node.yml up
+ExecStop=/usr/bin/docker compose -f compose/compose.yetti-node.yml down
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=multi-user.target

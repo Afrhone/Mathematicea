@@ -1,0 +1,18 @@
+[Interface]
+Address = 10.45.70.34/24
+ListenPort = 54770
+PrivateKey = <SIGMO_PRIVATE_KEY>
+
+# llama-gpu
+[Peer]
+PublicKey = <LLAMA_GPU_PUBLIC_KEY>
+AllowedIPs = 10.45.70.125/32,192.168.0.125/32
+Endpoint = 192.168.0.125:54770
+PersistentKeepalive = 25
+
+# gpu-compute
+[Peer]
+PublicKey = <GPU_COMPUTE_PUBLIC_KEY>
+AllowedIPs = 10.45.70.52/32,192.168.0.52/32
+Endpoint = 192.168.0.52:54770
+PersistentKeepalive = 25

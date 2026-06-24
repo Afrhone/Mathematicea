@@ -1,0 +1,38 @@
+version: "3.9"
+services:
+  gateway:
+    image: registry.local/rhiz/infomaniak-gateway:latest
+    env_file: .env
+    ports: ["8066:8066"]
+    deploy:
+      replicas: 2
+      placement:
+        constraints: [node.labels.rhiz.agent == true]
+      restart_policy: {condition: on-failure}
+  web:
+    image: registry.local/rhiz/infomaniak-outpost-web:latest
+    env_file: .env
+    ports: ["3066:3000"]
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.labels.rhiz.frontend == true]
+  mongo:
+    image: mongo:7
+    volumes: [mongo_data:/data/db]
+    deploy:
+      placement:
+        constraints: [node.labels.rhiz.storage == true]
+  ollama:
+    image: ollama/ollama:latest
+    volumes: [ollama:/root/.ollama]
+    deploy:
+      placement:
+        constraints: [node.labels.rhiz.gpu == true]
+      resources:
+        reservations:
+          generic_resources:
+            - discrete_resource_spec: {kind: "NVIDIA-GPU", value: 1}
+volumes:
+  mongo_data: {}
+  ollama: {}

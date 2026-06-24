@@ -1,0 +1,35 @@
+services:
+  yetti-codex-api:
+    image: node:20-bookworm
+    working_dir: /bundle/services/api
+    command: sh -c "npm install && npm start"
+    env_file: ../.env
+    volumes:
+      - ../:/bundle
+      - ${DATA_ROOT:-/var/lib/yetti-codex}:${DATA_ROOT:-/var/lib/yetti-codex}
+    ports:
+      - "${API_PORT:-7225}:7225"
+    restart: unless-stopped
+
+  yetti-codex-mcp:
+    image: node:20-bookworm
+    working_dir: /bundle/services/mcp
+    command: sh -c "npm install && npm start"
+    env_file: ../.env
+    volumes:
+      - ../:/bundle
+    network_mode: "service:yetti-codex-api"
+    depends_on:
+      - yetti-codex-api
+    restart: unless-stopped
+
+  yetti-codex-dashboard:
+    image: node:20-bookworm
+    working_dir: /bundle/services/dashboard
+    command: sh -c "npm install && npm start"
+    env_file: ../.env
+    volumes:
+      - ../services/dashboard:/bundle/services/dashboard
+    ports:
+      - "${DASHBOARD_PORT:-7227}:7227"
+    restart: unless-stopped

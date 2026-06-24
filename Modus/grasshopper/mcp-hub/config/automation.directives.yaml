@@ -1,0 +1,23 @@
+automation_deployment:
+  phase_0_preflight:
+    - bin/cluster-preflight.sh
+    - bin/hub-selftest.sh
+  phase_1_install:
+    - bin/bootstrap-hub.sh
+    - bin/install-skills.sh
+  phase_2_deploy:
+    host_systemd: bin/deploy-systemd.sh
+    lxd_instance: bin/deploy-lxd-instance.sh
+  phase_3_integrate:
+    - bin/render-client-config.sh
+    - bin/render-deployment-env.sh
+    - bin/render-holography-manifest.sh
+  phase_4_observe:
+    - systemd/niurk-mcp-hub.service
+    - systemd/niurk-mcp-hub-health.timer
+  rollback:
+    - bin/rollback-systemd.sh
+safety:
+  default: dry_run
+  mutating_actions_require: [NIURK_ALLOW_DEPLOY=1, NIURK_DRY_RUN=0]
+  mcp_tools_are: read_only_or_plan_generating

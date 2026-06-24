@@ -1,0 +1,6 @@
+${PUBLIC_ENDPOINT} {
+  encode zstd gzip
+  reverse_proxy /portainer/* portainer:9000
+  reverse_proxy /api/* operator-api:8080
+  reverse_proxy /graph/* graph-ui:3000
+}

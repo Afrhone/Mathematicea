@@ -1,0 +1,88 @@
+newmtl cortex_left
+Kd 0.35000 0.80000 0.95000
+Ka 0.00000 0.00000 0.00000
+Ks 0.95 0.95 0.95
+Ns 220.0
+d 0.780
+illum 2
+
+newmtl cortex_right
+Kd 0.12000 0.95000 0.90000
+Ka 0.00000 0.00000 0.00000
+Ks 0.95 0.95 0.95
+Ns 220.0
+d 0.780
+illum 2
+
+newmtl limbic_core
+Kd 0.80000 0.30000 0.90000
+Ka 0.00000 0.00000 0.00000
+Ks 0.95 0.95 0.95
+Ns 220.0
+d 0.920
+illum 2
+
+newmtl cerebellum
+Kd 0.25000 0.80000 0.95000
+Ka 0.00000 0.00000 0.00000
+Ks 0.95 0.95 0.95
+Ns 220.0
+d 0.820
+illum 2
+
+newmtl brainstem
+Kd 0.15000 0.45000 0.90000
+Ka 0.00000 0.00000 0.00000
+Ks 0.95 0.95 0.95
+Ns 220.0
+d 0.880
+illum 2
+
+newmtl neural_tree
+Kd 0.95000 0.85000 0.25000
+Ka 0.00000 0.00000 0.00000
+Ks 0.95 0.95 0.95
+Ns 220.0
+d 0.700
+illum 2
+
+newmtl neuron_nodes
+Kd 1.00000 0.25000 0.75000
+Ka 0.00000 0.00000 0.00000
+Ks 0.95 0.95 0.95
+Ns 220.0
+d 0.970
+illum 2
+
+newmtl brainwave_shell_outer
+Kd 0.18000 0.45000 0.98000
+Ka 0.00000 0.00000 0.00000
+Ks 0.95 0.95 0.95
+Ns 220.0
+d 0.280
+illum 2
+
+newmtl brainwave_shell_mid
+Kd 0.10000 0.80000 0.85000
+Ka 0.00000 0.00000 0.00000
+Ks 0.95 0.95 0.95
+Ns 220.0
+d 0.380
+illum 2
+
+newmtl brainwave_shell_inner
+Kd 0.55000 0.30000 0.88000
+Ka 0.00000 0.00000 0.00000
+Ks 0.95 0.95 0.95
+Ns 220.0
+d 0.520
+illum 2
+
+newmtl energy_field
+Kd 0.05000 0.12000 0.35000
+Ka 0.00000 0.00000 0.00000
+Ks 0.95 0.95 0.95
+Ns 220.0
+d 0.650
+illum 2
+

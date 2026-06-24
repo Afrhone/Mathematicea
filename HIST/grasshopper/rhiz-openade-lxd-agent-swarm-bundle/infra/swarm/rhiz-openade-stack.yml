@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  redis:
+    image: redis:7-alpine
+    deploy: {replicas: 1, placement: {constraints: [node.role == manager]}}
+  mongo:
+    image: mongo:7
+    volumes: [mongo_data:/data/db]
+    deploy: {replicas: 1, placement: {constraints: [node.role == manager]}}
+  agent-gateway:
+    image: rhiz-openade-agent-gateway:local
+    ports: ["8091:8091"]
+    environment:
+      - PORT=8091
+      - REDIS_URL=redis://redis:6379/0
+      - MONGO_URL=mongodb://mongo:27017/rhiz_openade
+    deploy: {replicas: 1, placement: {constraints: [node.labels.rhiz.agent == true]}}
+volumes: {mongo_data: {}}

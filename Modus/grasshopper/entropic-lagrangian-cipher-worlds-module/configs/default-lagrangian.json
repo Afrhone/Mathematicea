@@ -1,0 +1,14 @@
+{
+  "mass": 1.0,
+  "stiffness": 0.8,
+  "damping": 0.045,
+  "curvature": 0.35,
+  "sdfNoise": 0.12,
+  "cipherFeedback": 0.45,
+  "entropyThreshold": 1.75,
+  "monteCarloTemperature": 0.35,
+  "markovBias": 0.55,
+  "worldCount": 7,
+  "stateDimension": 8,
+  "particleCount": 12000
+}

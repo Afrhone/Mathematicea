@@ -1,0 +1,6 @@
+[Unit]
+Description=Freebeings edge health snapshot
+
+[Service]
+Type=oneshot
+ExecStart=/opt/freebeings/bundle/bin/eliosys-bootstrap-pi5.sh status

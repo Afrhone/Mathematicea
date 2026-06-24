@@ -1,0 +1,154 @@
+[
+  {
+    "path": "octopuce/.DS_Store",
+    "size": 14340
+  },
+  {
+    "path": "octopuce/octopuce_brainfield/octopuce_brainfield_system_hires.obj",
+    "size": 7088691
+  },
+  {
+    "path": "octopuce/octopuce_brainfield/octopuce_brainfield_system_hires_README.txt",
+    "size": 836
+  },
+  {
+    "path": "octopuce/octopuce_brainfield/octopuce_brainfield_system_hires.mtl",
+    "size": 1315
+  },
+  {
+    "path": "octopuce/octopuce_brain_proteinfold/octopuce_brain_proteinfold_system_hires.mtl",
+    "size": 1445
+  },
+  {
+    "path": "octopuce/octopuce_brain_proteinfold/octopuce_brain_proteinfold_system_hires.obj",
+    "size": 7956367
+  },
+  {
+    "path": "octopuce/octopuce_brain_proteinfold/octopuce_brain_proteinfold_system_hires_README.txt",
+    "size": 2949
+  },
+  {
+    "path": "octopuce/octopuce_agents_organic_creatures/cam_eye_creature.mtl",
+    "size": 126
+  },
+  {
+    "path": "octopuce/octopuce_agents_organic_creatures/liquid_creature.mtl",
+    "size": 126
+  },
+  {
+    "path": "octopuce/octopuce_agents_organic_creatures/ladybug_creature.mtl",
+    "size": 126
+  },
+  {
+    "path": "octopuce/octopuce_agents_organic_creatures/mind_creature.obj",
+    "size": 69112
+  },
+  {
+    "path": "octopuce/octopuce_agents_organic_creatures/medusa_jellyfish_creature.mtl",
+    "size": 126
+  },
+  {
+    "path": "octopuce/octopuce_agents_organic_creatures/research_creature.mtl",
+    "size": 126
+  },
+  {
+    "path": "octopuce/octopuce_agents_organic_creatures/ladybug_creature.obj",
+    "size": 150516
+  },
+  {
+    "path": "octopuce/octopuce_agents_organic_creatures/mind_creature.mtl",
+    "size": 126
+  },
+  {
+    "path": "octopuce/octopuce_agents_organic_creatures/liquid_creature.obj",
+    "size": 103877
+  },
+  {
+    "path": "octopuce/octopuce_agents_organic_creatures/cam_eye_creature.obj",
+    "size": 95950
+  },
+  {
+    "path": "octopuce/octopuce_agents_organic_creatures/medusa_jellyfish_creature.obj",
+    "size": 399064
+  },
+  {
+    "path": "octopuce/octopuce_agents_organic_creatures/research_creature.obj",
+    "size": 29419
+  },
+  {
+    "path": "octopuce/octopuce_neurobio_system/octopuce_neurobio_system.obj",
+    "size": 1775240
+  },
+  {
+    "path": "octopuce/octopuce_neurobio_system/octopuce_neurobio_system_README.txt",
+    "size": 2830
+  },
+  {
+    "path": "octopuce/octopuce_neurobio_system/liquid_creature.obj",
+    "size": 103877
+  },
+  {
+    "path": "octopuce/octopuce_neurobio_system/octopuce_neurobio_system.mtl",
+    "size": 1067
+  },
+  {
+    "path": "octopuce/octopuce_brainfield_system/octopuce_brainfield_system.mtl",
+    "size": 1315
+  },
+  {
+    "path": "octopuce/octopuce_brainfield_system/octopuce_brainfield_system.obj",
+    "size": 2713706
+  },
+  {
+    "path": "octopuce/octopuce_brainfield_system/octopuce_brainfield_system_README.txt",
+    "size": 2923
+  },
+  {
+    "path": "octopuce/octopuce_agents_models/mind_agent.mtl",
+    "size": 126
+  },
+  {
+    "path": "octopuce/octopuce_agents_models/liquid_agent.mtl",
+    "size": 126
+  },
+  {
+    "path": "octopuce/octopuce_agents_models/jellyfish_agent.obj",
+    "size": 128135
+  },
+  {
+    "path": "octopuce/octopuce_agents_models/cam_agent.mtl",
+    "size": 126
+  },
+  {
+    "path": "octopuce/octopuce_agents_models/research_agent.obj",
+    "size": 22460
+  },
+  {
+    "path": "octopuce/octopuce_agents_models/ladybug_agent.mtl",
+    "size": 126
+  },
+  {
+    "path": "octopuce/octopuce_agents_models/ladybug_agent.obj",
+    "size": 65939
+  },
+  {
+    "path": "octopuce/octopuce_agents_models/research_agent.mtl",
+    "size": 126
+  },
+  {
+    "path": "octopuce/octopuce_agents_models/liquid_agent.obj",
+    "size": 63573
+  },
+  {
+    "path": "octopuce/octopuce_agents_models/jellyfish_agent.mtl",
+    "size": 126
+  },
+  {
+    "path": "octopuce/octopuce_agents_models/mind_agent.obj",
+    "size": 52620
+  },
+  {
+    "path": "octopuce/octopuce_agents_models/cam_agent.obj",
+    "size": 2766
+  }
+]

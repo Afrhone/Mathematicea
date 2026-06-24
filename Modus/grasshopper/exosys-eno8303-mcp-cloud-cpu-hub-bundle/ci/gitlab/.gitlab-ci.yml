@@ -1,0 +1,11 @@
+stages: [integrity]
+integrity:
+  stage: integrity
+  image: docker:27
+  services: [docker:27-dind]
+  script:
+    - apk add --no-cache bash python3 docker-cli-compose
+    - bash -n scripts/network/*.sh scripts/swap/*.sh scripts/cpu/*.sh scripts/cloud/*.sh scripts/lxd/*.sh
+    - python3 -m json.tool directives/exosys-hub.directive.json >/dev/null
+    - cp config/exosys.env.example .env
+    - docker compose -f compose/compose.exosys-hub.yml config >/dev/null

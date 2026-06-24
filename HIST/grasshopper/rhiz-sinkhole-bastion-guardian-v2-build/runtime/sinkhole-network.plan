@@ -1,0 +1,6 @@
+Target: exosys-rhiz 192.168.0.50
+LXD network: sinkhole0
+Bridge: rhiz-sink0
+Subnet: 10.45.3.0/24
+Gateway: 10.45.3.1
+DNS: 10.45.3.53

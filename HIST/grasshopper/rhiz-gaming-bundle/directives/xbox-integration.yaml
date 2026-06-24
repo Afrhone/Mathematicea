@@ -1,0 +1,27 @@
+xbox_integration:
+  local_console:
+    name: local-xbox-one
+    type: xbox-one
+    official_cloud_gaming: true
+    official_remote_play: true
+    self_hosted_vm_client: moonlight-xbox
+    install_mode: retail-store
+    notes:
+      - Use Xbox Cloud Gaming on the console for Xbox catalog titles.
+      - Use Moonlight on Xbox to reach the Sunshine-hosted Windows gaming VM.
+      - Do not treat the Xbox One itself as a cluster compute or GPU node.
+  sunshine:
+    web_ui_port: 47990
+    allowed_cidrs:
+      - 10.42.0.0/24
+      - 10.44.0.0/16
+      - 192.168.0.0/24
+    apps:
+      - name: Steam Big Picture
+        cmd: 'C:\Program Files (x86)\Steam\steam.exe'
+        args: '-bigpicture'
+      - name: Playnite Fullscreen
+        cmd: 'C:\Users\Administrator\AppData\Local\Programs\Playnite\Playnite.FullscreenApp.exe'
+        args: ''
+      - name: Desktop
+        desktop: true

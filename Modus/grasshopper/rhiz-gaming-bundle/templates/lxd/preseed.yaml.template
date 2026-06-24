@@ -1,0 +1,11 @@
+config: {}
+networks: []
+storage_pools:
+  - name: ceph-rbd
+    driver: ceph
+    config:
+      source: ${LXD_CPU_POOL_STORAGE:-vms}
+cluster:
+  enabled: true
+  server_name: __HOST__
+  member_config: []

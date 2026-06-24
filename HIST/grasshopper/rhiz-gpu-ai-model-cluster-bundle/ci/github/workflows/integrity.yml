@@ -1,0 +1,11 @@
+name: rhiz-ai-integrity
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bash syntax
+        run: bash -n scripts/*.sh scripts/fedora43/*.sh scripts/models/*.sh swarm/*.sh
+      - name: JSON manifests
+        run: python3 -m json.tool models/manifests/models.json >/dev/null

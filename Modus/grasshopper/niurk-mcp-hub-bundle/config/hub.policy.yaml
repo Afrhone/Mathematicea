@@ -1,0 +1,35 @@
+policy:
+  default_mode: plan_only
+  command_gate_env: NIURK_ALLOW_COMMANDS
+  deploy_gate_env: NIURK_ALLOW_DEPLOY
+  dry_run_env: NIURK_DRY_RUN
+  read_only_commands:
+    - lxc list
+    - lxc cluster list
+    - lxc storage list
+    - lxc info
+    - ceph -s
+    - ceph fs status
+    - rbd list
+    - bitcoin-cli getblockchaininfo
+    - bitcoin-cli getmempoolinfo
+    - bitcoin-cli getnetworkinfo
+  denied_bitcoin_rpc:
+    - sendrawtransaction
+    - walletprocesspsbt
+    - walletcreatefundedpsbt
+    - dumpprivkey
+    - importprivkey
+    - listwallets
+    - loadwallet
+    - unloadwallet
+    - encryptwallet
+  deployment_requires:
+    - NIURK_ALLOW_DEPLOY=1
+    - NIURK_DRY_RUN=0
+    - explicit script invocation
+  invariants:
+    - "never mutate LXD cluster DB from MCP tool calls"
+    - "never expose Bitcoin wallet RPC or keys"
+    - "default all deployment scripts to dry-run"
+    - "prefer host-level systemd hub for LXD socket access"

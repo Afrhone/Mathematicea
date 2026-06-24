@@ -1,0 +1,19 @@
+services:
+  validator_1:
+    platform: linux/amd64
+    container_name: validator_1
+    image: "${XRPL_IMAGE:-xrpllabsofficial/xrpld:latest}"
+    ports: ["8001:80", "5006:5005", "4001:6006", "9001:51235"]
+    volumes: ["./validator_1/config:/config/"]
+  validator_2:
+    platform: linux/amd64
+    container_name: validator_2
+    image: "${XRPL_IMAGE:-xrpllabsofficial/xrpld:latest}"
+    ports: ["8002:80", "5007:5005", "4002:6006", "9002:51235"]
+    volumes: ["./validator_2/config:/config/"]
+  validator_3:
+    platform: linux/amd64
+    container_name: validator_3
+    image: "${XRPL_IMAGE:-xrpllabsofficial/xrpld:latest}"
+    ports: ["8003:80", "5008:5005", "4003:6006", "9003:51235"]
+    volumes: ["./validator_3/config:/config/"]

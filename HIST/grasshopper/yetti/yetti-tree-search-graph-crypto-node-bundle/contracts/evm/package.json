@@ -1,0 +1,1 @@
+{"name":"yetti-snow-credits-evm","version":"0.1.0","scripts":{"test":"hardhat test","deploy":"hardhat run scripts/deploy.js --network localhost"},"devDependencies":{"@nomicfoundation/hardhat-toolbox":"^5.0.0","hardhat":"^2.22.17"}}

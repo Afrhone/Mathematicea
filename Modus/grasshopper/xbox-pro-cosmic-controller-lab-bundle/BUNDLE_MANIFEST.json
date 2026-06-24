@@ -1,0 +1,30 @@
+{
+  "name": "xbox-pro-cosmic-controller-lab-bundle",
+  "created": "2026-05-27T09:35:11.177605Z",
+  "uploaded_files_integrated": [
+    "Pasted text(36).txt",
+    "uniphiglow-sketch-multilens-gr-deepshield-v8h.html",
+    "munsellQ.html",
+    "relativistic_orbits-2.html",
+    "gravitationallensball2.html",
+    "uniphi-infinite-universe.html",
+    "README_uniphi-infinite-universe.md",
+    "kosm_asteroids_comets_risk-8.html",
+    "kosm_asteroids_comets_risk-10.html"
+  ],
+  "services": [
+    "dashboard",
+    "gateway",
+    "mcp",
+    "collector",
+    "mongo",
+    "redis"
+  ],
+  "ports": {
+    "dashboard": 8096,
+    "gateway": 8097,
+    "mcp": 8098,
+    "mongo": 27018,
+    "redis": 6381
+  }
+}

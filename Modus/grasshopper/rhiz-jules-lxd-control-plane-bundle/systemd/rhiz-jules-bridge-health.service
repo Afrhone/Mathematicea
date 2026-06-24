@@ -1,0 +1,6 @@
+[Unit]
+Description=RHIZ Jules bridge health check
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/rhiz-jules-lxd-control-plane
+ExecStart=/opt/rhiz-jules-lxd-control-plane/bin/rhiz-control.sh verify

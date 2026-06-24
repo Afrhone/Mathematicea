@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quantum Möbius Meditation – Combined with Color Pickers & Audio</title>
+  <style>
+    body {
+      margin: 0; 
+      overflow: hidden; 
+      background: #000;
+      font-family: Helvetica, Arial, sans-serif;
+    }
+    /* The hidden camera feed so we can sample pixel data */
+    #camfeed {
+      position: absolute;
+      top: 0; left: 0;
+      width: 120px; 
+      height: 90px; 
+      opacity: 0; 
+      pointer-events: none; 
+      z-index: -1;
+    }
+    .drifting-text {
+      position: absolute;
+      color: #fff;
+      font-size: 1.5em;
+      pointer-events: none;
+      opacity: 0.0;
+      font-family: Helvetica Neue, sans-serif;
+    }
+    /* UI for color inputs */
+    #ui-container {
+      position: absolute;
+      top: 10px; 
+      left: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 8px;
+      z-index: 10;
+    }
+    .color-input {
+      margin-bottom: 5px;
+    }
+    label {
+      display: inline-block;
+      width: 70px;
+      color: #fff;
+    }
+    button {
+      cursor: pointer;
+      margin: 5px 0;
+    }
+  </style>
+  <!-- Load Three.js from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.min.js"></script>
+  <!-- Load Munsell.js from CDN -->
+
+</head>
+<body>
+  <!-- Hidden camera feed for synergy with the quantum system -->
+  <video id="camfeed" autoplay playsinline muted></video>
+
+  <!-- UI for color pickers + a button to update + a button to start audio -->
+  <div id="ui-container">
+    <h3 style="color:#fff;margin:0;font-size:1.1em;">Pick 6 Colors</h3>
+    <div class="color-input">
+      <label>Color 1:</label>
+      <input type="color" id="color1" value="#FF0000" />
+    </div>
+    <div class="color-input">
+      <label>Color 2:</label>
+      <input type="color" id="color2" value="#00FF00" />
+    </div>
+    <div class="color-input">
+      <label>Color 3:</label>
+      <input type="color" id="color3" value="#0000FF" />
+    </div>
+    <div class="color-input">
+      <label>Color 4:</label>
+      <input type="color" id="color4" value="#FFFF00" />
+    </div>
+    <div class="color-input">
+      <label>Color 5:</label>
+      <input type="color" id="color5" value="#FF00FF" />
+    </div>
+    <div class="color-input">
+      <label>Color 6:</label>
+      <input type="color" id="color6" value="#00FFFF" />
+    </div>
+    <button id="updateColorsBtn">Update Colors</button>
+    <button id="startAudioBtn">Start Audio</button>
+  </div>
+
+<script type="module">
+/*
+===================================================================================================
+ COMBINED QUANTUM MÖBIUS MEDITATION with:
+   - 6 color pickers
+   - Munsell-based PaletteGenerator
+   - Microphone input + multiple oscillators
+   - Camera feed synergy
+   - Drifting text illusions
+===================================================================================================
+*/
+import munsell from 'https://cdn.jsdelivr.net/npm/munsell@1.1.6/+esm'
+
+// --------------------------- QuantumColor / PaletteGenerator ------------------------------
+class QuantumColor {
+  constructor(hex) {
+    this.hex = hex;
+    this.rgb = this.hexToRgb(hex);
+    this.munsell = this.rgbToMunsell(this.rgb);
+
+    // Example quantum attributes
+    this.waveAmplitude = Math.random();
+    this.wavePhase = Math.random() * Math.PI * 2;
+  }
+
+  hexToRgb(hex) {
+    const cleanHex = hex.replace(/^#/, '');
+    let r, g, b;
+    if (cleanHex.length === 3) {
+      r = parseInt(cleanHex.charAt(0) + cleanHex.charAt(0), 16);
+      g = parseInt(cleanHex.charAt(1) + cleanHex.charAt(1), 16);
+      b = parseInt(cleanHex.charAt(2) + cleanHex.charAt(2), 16);
+    } else {
+      r = parseInt(cleanHex.substring(0, 2), 16);
+      g = parseInt(cleanHex.substring(2, 4), 16);
+      b = parseInt(cleanHex.substring(4, 6), 16);
+    }
+    return { r, g, b };
+  }
+
+  rgbToMunsell({ r, g, b }) {
+    // Munsell wants [0..1], so:
+    return munsell.rgbToMunsell(r / 255, g / 255, b / 255);
+  }
+
+  toString() {
+    return `QuantumColor(hex=${this.hex}, munsell=${this.munsell})`;
+  }
+}
+
+class PaletteGenerator {
+  constructor(hexColors = []) {
+    this.quantumColors = hexColors.map((hex) => new QuantumColor(hex));
+  }
+
+  sortByMunsellValue() {
+    this.quantumColors.sort((a, b) => {
+      const aVal = a.munsell ? a.munsell[1] : 0; 
+      const bVal = b.munsell ? b.munsell[1] : 0;
+      return aVal - bVal;
+    });
+  }
+
+  groupByQuarkComponent() {
+    // Just a silly grouping example
+    const groups = { red: [], green: [], blue: [] };
+    this.quantumColors.forEach((qc) => {
+      const comp = ['red','green','blue'][Math.floor(Math.random()*3)];
+      groups[comp].push(qc);
+    });
+    return groups;
+  }
+
+  getPalette() {
+    return this.quantumColors;
+  }
+}
+
+// --------------------------- The Big Sketch Classes (QuantumEggSystem, EggMobius, AudioSystem, etc.) ------------------------------
+
+class QuantumEggSystem {
+  constructor(rootGroup){
+    this.root= rootGroup;
+    this.bands= [];
+    this.numBands= 6;
+    for(let i=0; i<this.numBands; i++){
+      let band= new EggMobius(i);
+      this.bands.push(band);
+      this.root.add(band.group);
+    }
+    this.waveX=0.1; 
+    this.waveY=0; 
+    this.waveZ=0;
+  }
+
+  update(dt, camSeed){
+    this.rk4Step(dt, camSeed);
+    for(let b of this.bands){
+      b.update(dt, this.waveX, this.waveY, this.waveZ);
+    }
+    // collisions => expansions
+    for(let i=0; i<this.bands.length; i++){
+      for(let j=i+1; j<this.bands.length; j++){
+        this.bands[i].onCollision();
+        this.bands[j].onCollision();
+      }
+    }
+  }
+
+  applyAudioFeedback(dt, audioSystem){
+    // read frequency data from each analyzer
+    for(let i=0; i<this.bands.length; i++){
+      let band= this.bands[i];
+      let analyzer= audioSystem.analyzers[i];
+      if(!analyzer) analyzer= audioSystem.analyzers["mic"];
+      if(!analyzer) continue;
+
+      let data= new Uint8Array(analyzer.frequencyBinCount);
+      analyzer.getByteFrequencyData(data);
+      let startBin= i*8;
+      let endBin= Math.min(startBin+8, data.length);
+      let sum=0, count=0;
+      for(let b=startBin; b<endBin; b++){
+        sum+= data[b];
+        count++;
+      }
+      let avg= (count>0)? sum/count: 0;
+      let amplitude= avg/128.0; 
+      band.audioAmplitude= amplitude;
+    }
+  }
+
+  rk4Step(dt, camSeed){
+    let x=this.waveX, y=this.waveY, z=this.waveZ;
+    function deriv(x,y,z,cS){
+      let dx= y + cS*0.5;
+      let dy= -x + z*0.3;
+      let dz= x*y*0.1 -z*0.2;
+      return {dx,dy,dz};
+    }
+    let {dx:a1, dy:b1, dz:c1}= deriv(x,y,z, camSeed);
+    let {dx:a2, dy:b2, dz:c2}= deriv(x+a1*dt*0.5,y+b1*dt*0.5,z+c1*dt*0.5, camSeed);
+    let {dx:a3, dy:b3, dz:c3}= deriv(x+a2*dt*0.5,y+b2*dt*0.5,z+c2*dt*0.5, camSeed);
+    let {dx:a4, dy:b4, dz:c4}= deriv(x+a3*dt,y+b3*dt,z+c3*dt, camSeed);
+
+    let dx= (a1+2*a2+2*a3+a4)/6;
+    let dy= (b1+2*b2+2*b3+b4)/6;
+    let dz= (c1+2*c2+2*c3+c4)/6;
+
+    x+= dx*dt; 
+    y+= dy*dt; 
+    z+= dz*dt;
+    this.waveX=x; 
+    this.waveY=y; 
+    this.waveZ=z;
+  }
+}
+
+class EggMobius {
+  constructor(index){
+    this.index= index;
+    this.group= new THREE.Group();
+    this.group.position.set(0,0,0);
+
+    this.quat= new THREE.Quaternion();
+    let eul= new THREE.Euler(
+      Math.random()*Math.PI*2,
+      Math.random()*Math.PI*2,
+      Math.random()*Math.PI*2
+    );
+    this.quat.setFromEuler(eul);
+    this.group.quaternion.copy(this.quat);
+
+    this.axis= new THREE.Vector3(
+      Math.random()-0.5,
+      Math.random()-0.5,
+      Math.random()-0.5
+    ).normalize();
+    this.angularVel= 0.1+ Math.random()*0.2;
+
+    this.energy=0; 
+    this.entropy=0; 
+    this.audioAmplitude=0; 
+    this.inertia=0;
+
+    let major= 50 + Math.random()*10;
+    let minor= 10 + Math.random()*5;
+
+    // Smooth param Möbius
+    this.geometry= createMobiusBufferGeometry(128,64, major, minor);
+
+    this.uniforms= {
+      u_time:      { value:0.0 },
+      u_phase:     { value:0.0 },
+      u_thickness: { value:1.0 },
+      u_entropy:   { value:0.0 },
+      u_energy:    { value:0.0 },
+      u_inertia:   { value:0.0 },
+      u_alpha:     { value:0.4 },
+      u_waveX:     { value:0.0 },
+      u_waveY:     { value:0.0 },
+      u_waveZ:     { value:0.0 },
+      // We'll also store "u_userColorA" and "u_userColorB"
+      // so we can mix in the color pickers:
+      u_userColorA: { value: new THREE.Color(0xffffff) },
+      u_userColorB: { value: new THREE.Color(0xff00ff) }
+    };
+
+    let mat= new THREE.ShaderMaterial({
+      side: THREE.DoubleSide,
+      uniforms: this.uniforms,
+      vertexShader: VSHADER,
+      fragmentShader: FSHADER,
+      transparent:true,
+      depthWrite:false
+    });
+
+    this.mesh= new THREE.Mesh(this.geometry, mat);
+    this.group.add(this.mesh);
+  }
+
+  update(dt, wX, wY, wZ){
+    this.uniforms.u_time.value += dt;
+
+    let chaosMag= Math.sqrt(wX*wX+ wY*wY+ wZ*wZ);
+    let speedFactor= 1.0 + this.entropy*0.05 + chaosMag*0.02;
+    let dq= new THREE.Quaternion();
+    dq.setFromAxisAngle(this.axis, this.angularVel*dt*speedFactor);
+    this.quat.multiply(dq);
+    this.group.quaternion.copy(this.quat);
+
+    let thick= 1.0 + 0.8 * this.audioAmplitude;
+    this.uniforms.u_thickness.value= thick;
+
+    this.uniforms.u_phase.value= this.uniforms.u_time.value + this.audioAmplitude*3.0;
+
+    // Decay energy + entropy
+    this.energy *= 0.95;
+    this.entropy*= 0.98;
+
+    this.uniforms.u_energy.value= this.energy*0.01;
+    this.uniforms.u_entropy.value= this.entropy + chaosMag*0.01;
+
+    // Inertia
+    this.inertia += this.audioAmplitude*dt;
+    this.inertia *= 0.98;
+    this.uniforms.u_inertia.value= Math.min(this.inertia,3.0);
+
+    this.uniforms.u_waveX.value= wX;
+    this.uniforms.u_waveY.value= wY;
+    this.uniforms.u_waveZ.value= wZ;
+  }
+
+    // Apply color from the color pickers to the shader
+    applyColorPickers(colorInputs) {
+    // Convert color inputs to THREE.Color
+    const colorA = new THREE.Color(colorInputs[0].value);
+    const colorB = new THREE.Color(colorInputs[1].value);
+    const colorC = new THREE.Color(colorInputs[2].value);
+    const colorD = new THREE.Color(colorInputs[3].value);
+    const colorE = new THREE.Color(colorInputs[4].value);
+    const colorF = new THREE.Color(colorInputs[5].value);
+    // Set the uniforms for user colors
+    this.uniforms.u_userColorA.value = colorA;
+    this.uniforms.u_userColorB.value = colorB;
+    // You can also set colorC, colorD, etc. if needed
+    // For now, we'll just use colorA and colorB
+    this.uniforms.u_userColorA.value = colorA;
+    this.uniforms.u_userColorB.value = colorB;
+    }
+
+
+  onCollision(){
+    this.energy+=15;
+    this.entropy+=1.0;
+  }
+}
+
+const VSHADER=/* glsl */`
+precision highp float;
+
+uniform float u_time;
+uniform float u_phase;
+uniform float u_thickness;
+uniform float u_entropy;
+uniform float u_energy;
+uniform float u_inertia;
+uniform float u_waveX;
+uniform float u_waveY;
+uniform float u_waveZ;
+
+varying vec3 vPos;
+varying float vColorFactor;
+
+float quantumRand(vec2 co){
+  return fract(sin(dot(co, vec2(12.9898,78.233))) * 43758.5453);
+}
+
+float waveEgg(vec3 pos, float wx, float wy, float wz){
+  return sin(pos.x*wx*0.1 + pos.y*wy*0.1 + pos.z*wz*0.1)*0.4;
+}
+
+void main(){
+  vec3 p= position;
+
+  // thickness expansion
+  p += normal*(u_thickness-1.0);
+
+  // swirl wave
+  float wave= sin(u_phase + p.x*0.07 + p.y*0.07)*0.5;
+  p += normal*wave;
+
+  // egg wave
+  float eggW= waveEgg(p, u_waveX, u_waveY, u_waveZ);
+  p += normal*eggW;
+
+  // quantum random pulses
+  float q= quantumRand(p.xy*0.05 + vec2(u_time, wave));
+  p += normal*(q-0.5)*0.3*(0.5 + u_entropy*0.03);
+
+  // collisions => expansions
+  p *= (1.0 + 0.02*u_energy);
+
+  // entropy => expansions
+  p *= (1.0 + 0.005*u_entropy);
+
+  vColorFactor= wave*(q-0.5 + eggW);
+  vPos= p;
+
+  gl_Position= projectionMatrix * modelViewMatrix * vec4(p,1.0);
+}
+`;
+
+const FSHADER=/* glsl */`
+precision highp float;
+
+uniform float u_time;
+uniform float u_inertia;
+uniform float u_entropy;
+uniform float u_alpha;
+
+// Additional uniforms for user color picks
+uniform vec3 u_userColorA;
+uniform vec3 u_userColorB;
+
+varying vec3 vPos;
+varying float vColorFactor;
+
+float plasma(vec2 p){
+  float val=0.0;
+  val+= sin(p.x*10.0)+ cos(p.y*10.0);
+  val+= sin((p.x+ p.y)*5.0);
+  return val*0.5;
+}
+
+// swirl color approach
+vec3 swirlPalette(vec3 pos, float ent, float t){
+  float seed= fract((pos.x+ pos.y+ pos.z + t*ent)*0.001);
+  if(seed<0.25) return vec3(0.6,0.0,0.9);
+  if(seed<0.5)  return vec3(0.0,0.8,0.8);
+  if(seed<0.75) return vec3(0.2,0.2,0.8);
+  return vec3(0.0,0.9,0.6);
+}
+
+void main(){
+  vec3 color= swirlPalette(vPos, u_entropy, u_time);
+  // apply some plasma effect and color shift
+  color= mix(color, vec3(0.5,0.5,0.5), 0.2);
+
+
+  float plas= plasma(vPos.xy*0.03+ vec2(u_time*0.3, u_entropy*0.3));
+  color.r+= 0.2*plas;
+
+  // apply colors based on wave and entropy and inertia from the
+  color.r+= 0.3*u_inertia*vColorFactor;
+  color.g+= 0.1*sin(u_inertia + vColorFactor*3.0 + u_entropy);
+  color.b+= 0.15*u_entropy;
+
+  // Now incorporate user colors
+  // Blend swirl color with user picks:
+  float userFactor = 0.4; // how strongly we blend user colors
+  // We'll do a simple blend factor from vColorFactor:
+  vec3 userMixed = mix(u_userColorA, u_userColorB, (sin(vColorFactor*5.0)+1.0)*0.5);
+
+  // Mix
+  color = mix(color, userMixed, userFactor);
+
+  color= clamp(color,0.0,1.0);
+
+  gl_FragColor= vec4(color, u_alpha);
+}
+`;
+
+// Audio
+class AudioSystem {
+  constructor(){
+    this.ctx= null;
+    this.gainNode= null;
+    this.delayNode= null;
+    this.analyzers= {};
+    this.oscillators= [];
+    this.whiteNoise= null;
+    this.bassOsc= null;
+    this.singingBowlOsc= null;
+    this.micStream= null;
+    this.micSource= null;
+
+    this.oscFreqs= [230, 260, 300];
+    this.oscNodes= [];
+  }
+
+  async prepareMicrophone(){
+    if(!navigator.mediaDevices) return;
+    this.micStream= await navigator.mediaDevices.getUserMedia({ audio:true });
+  }
+
+  async start(){
+    if(!this.ctx){
+      this.ctx= new AudioContext();
+    }
+    if(!this.micStream){
+      await this.prepareMicrophone();
+    }
+    // main gain
+    this.gainNode= this.ctx.createGain();
+    this.gainNode.gain.value= 0.7;
+
+    // simple delay
+    this.delayNode= this.ctx.createDelay(3.0);
+    this.delayNode.delayTime.value= 0.6;
+    let fb= this.ctx.createGain();
+    fb.gain.value= 0.5;
+    this.delayNode.connect(fb);
+    fb.connect(this.delayNode);
+
+    this.gainNode.connect(this.delayNode);
+    this.delayNode.connect(this.ctx.destination);
+
+    // standard oscillators
+    let waveTypes= ["sine","triangle","sawtooth"];
+    for(let i=0; i<this.oscFreqs.length; i++){
+      let freq= this.oscFreqs[i];
+      let osc= this.ctx.createOscillator();
+      osc.type= waveTypes[i%waveTypes.length];
+      osc.frequency.value= freq;
+      osc.start();
+
+      let analyzer= this.ctx.createAnalyser();
+      analyzer.fftSize=256;
+      osc.connect(analyzer);
+      analyzer.connect(this.gainNode);
+
+      this.oscillators.push(osc);
+      this.oscNodes.push(osc);
+      this.analyzers[i]= analyzer;
+    }
+
+    // white noise
+    this.whiteNoise= this.createWhiteNoise();
+    let wnAnalyzer= this.ctx.createAnalyser();
+    wnAnalyzer.fftSize=256;
+    this.whiteNoise.connect(wnAnalyzer);
+    wnAnalyzer.connect(this.gainNode);
+    this.analyzers[3]= wnAnalyzer;
+
+    // dub bass
+    this.bassOsc= this.ctx.createOscillator();
+    this.bassOsc.type="sine";
+    this.bassOsc.frequency.value=60;
+    let bassFilter= this.ctx.createBiquadFilter();
+    bassFilter.type="lowpass";
+    bassFilter.frequency.value=220;
+    this.bassOsc.connect(bassFilter);
+    let bassAnalyzer= this.ctx.createAnalyser();
+    bassAnalyzer.fftSize=256;
+    bassFilter.connect(bassAnalyzer);
+    bassAnalyzer.connect(this.gainNode);
+    this.bassOsc.start();
+    this.analyzers[4]= bassAnalyzer;
+
+    // singing bowl
+    this.singingBowlOsc= this.ctx.createOscillator();
+    this.singingBowlOsc.type="triangle";
+    this.singingBowlOsc.frequency.value=220;
+    let bowlGain= this.ctx.createGain();
+    bowlGain.gain.value=0.3;
+    let bowlAnalyzer= this.ctx.createAnalyser();
+    bowlAnalyzer.fftSize=256;
+    this.singingBowlOsc.connect(bowlGain);
+    bowlGain.connect(bowlAnalyzer);
+    bowlAnalyzer.connect(this.gainNode);
+    this.singingBowlOsc.start();
+    this.analyzers[5]= bowlAnalyzer;
+
+    // microphone
+    if(this.micStream){
+      this.micSource= this.ctx.createMediaStreamSource(this.micStream);
+      let micAnalyzer= this.ctx.createAnalyser();
+      micAnalyzer.fftSize=256;
+      this.micSource.connect(micAnalyzer);
+      micAnalyzer.connect(this.gainNode);
+      this.analyzers["mic"]= micAnalyzer;
+    }
+  }
+
+  createWhiteNoise(){
+    let bufferSize= 2*this.ctx.sampleRate;
+    let noiseBuffer= this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    let out= noiseBuffer.getChannelData(0);
+    for(let i=0; i<bufferSize; i++){
+      out[i]= Math.random()*2-1;
+    }
+    let whiteNoise= this.ctx.createBufferSource();
+    whiteNoise.buffer= noiseBuffer;
+    whiteNoise.loop= true;
+    whiteNoise.start(0);
+    return whiteNoise;
+  }
+
+  update(dt, quantumEgg, camSeed){
+    let waveX= quantumEgg.waveX;
+    let waveMag= Math.abs(waveX);
+
+    // oscillator 0 => re-tune freq
+    let band0= this.analyzers[0];
+    if(band0){
+      let data= new Uint8Array(band0.frequencyBinCount);
+      band0.getByteFrequencyData(data);
+      let sum=0;
+      for(let i=0; i<16; i++){ sum+= data[i]; }
+      let avg= sum/16/128.0;
+      let newFreq= 200 + avg*80+ camSeed*30+ waveMag*10;
+      this.oscNodes[0].frequency.value= newFreq;
+    }
+
+    // oscillator 1
+    let band1= this.analyzers[1];
+    if(band1){
+      let data= new Uint8Array(band1.frequencyBinCount);
+      band1.getByteFrequencyData(data);
+      let sum=0;
+      for(let i=16; i<32; i++){ sum+= data[i]; }
+      let avg= sum/16/128.0;
+      let newFreq= 220+ avg*50+ camSeed*15+ waveMag*5;
+      this.oscNodes[1].frequency.value= newFreq;
+    }
+
+    // oscillator 2
+    let band2= this.analyzers[2];
+    if(band2){
+      let data= new Uint8Array(band2.frequencyBinCount);
+      band2.getByteFrequencyData(data);
+      let sum=0; 
+      for(let i=32; i<48;i++){ sum+= data[i]; }
+      let avg= sum/16/128.0;
+      let newFreq= 250+ avg*40+ camSeed*25+ waveMag*10;
+      this.oscNodes[2].frequency.value= newFreq;
+    }
+
+    // bass
+    if(this.bassOsc){
+      let newBass= 60 + waveMag*5+ camSeed*10;
+      this.bassOsc.frequency.value= newBass;
+    }
+
+    // singing bowl
+    if(this.singingBowlOsc){
+      let bandBowl= this.analyzers[5];
+      if(bandBowl){
+        let data= new Uint8Array(bandBowl.frequencyBinCount);
+        bandBowl.getByteFrequencyData(data);
+        let sum=0; 
+        for(let i=48; i<64; i++){ sum+= data[i]; }
+        let avg= sum/16/128.0;
+        let newFreq= 220+ avg*30+ camSeed*20+ waveMag*10;
+        this.singingBowlOsc.frequency.value= newFreq;
+      }
+    }
+  }
+}
+
+// ------------------------------ Scene Setup & Global Variables ------------------------------
+let scene, mainCamera, renderer, clock;
+let rootGroup;        
+let quantumEgg;       
+let audioSystem;      
+let started = false;  
+
+let camVideo=null, camCanvas=null, camCtx=null;
+let words = [];
+const WORD_LIST = [
+  "OM", "PEACE", "CALM", "HARMONY", "TIBET", "BOWL", 
+  "MEDITATE", "HYPNOSIS", "ENTROPY", "QUANTUM", "SPIRIT",
+  "DOPPLER", "FRACTAL", "WAVES", "BRAINWAVE", "PHASE", "ZEN"
+];
+
+// For color pickers & palette
+const colorInputs = [
+  document.getElementById('color1') || "#FF0000",
+  document.getElementById('color2') || "#00FF00",
+  document.getElementById('color3') || "#0000FF",
+  document.getElementById('color4') || "#FFFF00",
+  document.getElementById('color5') || "#FF00FF",
+  document.getElementById('color6') || "#00FFFF"
+];
+
+document.getElementById('updateColorsBtn').addEventListener('click', handleColorUpdate);
+document.getElementById('startAudioBtn').addEventListener('click', startAudio);
+
+init();
+animate();
+
+async function init(){
+  // Scene
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x000000);
+
+  mainCamera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight,0.1,3000);
+  mainCamera.position.set(0,0,800);
+
+  renderer = new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  clock = new THREE.Clock();
+
+  // Root group
+  rootGroup = new THREE.Group();
+  scene.add(rootGroup);
+
+  // quantum system
+  quantumEgg = new QuantumEggSystem(rootGroup);
+
+  // Audio
+  audioSystem = new AudioSystem();
+
+  // Camera feed
+  camVideo= document.getElementById("camfeed");
+  camCanvas= document.createElement("canvas");
+  camCanvas.width=120; 
+  camCanvas.height=90;
+  camCtx= camCanvas.getContext("2d");
+  try{
+    let stream= await navigator.mediaDevices.getUserMedia({video:true, audio:false});
+    camVideo.srcObject= stream;
+    camVideo.play();
+    console.log("Camera feed started.");
+  }catch(e){
+    console.warn("No camera or permission denied. Skipping feed synergy.");
+  }
+
+  // drifting text illusions
+  for(let i=0; i<5; i++){
+    spawnWord();
+  }
+
+  window.addEventListener("resize", onResize,false);
+  document.addEventListener("click", onClickCanvas,false);
+}
+
+// Kick off audio (must be user-triggered in many browsers)
+async function startAudio(){
+  if(!started){
+    started=true;
+    await audioSystem.start();
+    console.log("Audio system started.");
+  }
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+  let dt= clock.getDelta();
+
+  let camSeed= readCamRandom();
+
+  quantumEgg.update(dt, camSeed);
+
+  if(started){
+    audioSystem.update(dt, quantumEgg, camSeed);
+    quantumEgg.applyAudioFeedback(dt, audioSystem);
+  }
+
+  // rotate entire system
+  rootGroup.rotation.y += 0.05*dt;
+  rootGroup.rotation.x += 0.02*dt;
+
+    // update camera position
+    let camPos= new THREE.Vector3(0,0,800);
+    camPos.applyQuaternion(rootGroup.quaternion);
+    mainCamera.position.copy(camPos);
+    mainCamera.lookAt(rootGroup.position);
+    
+    // update colors mapping the palette to the bands
+    for(let i=0; i<quantumEgg.bands.length; i++){
+      let band= quantumEgg.bands[i];
+      let colorA= new THREE.Color(colorInputs[i].value);
+      let colorB= new THREE.Color(colorInputs[(i+1)%colorInputs.length].value);
+      band.uniforms.u_userColorA.value= colorA;
+      band.uniforms.u_userColorB.value= colorB;
+    }
+  // update the quantum system
+  quantumEgg.update(dt, camSeed);
+  // update the audio system
+  audioSystem.update(dt, quantumEgg, camSeed);
+
+
+  updateWords(dt);
+
+  renderer.render(scene, mainCamera);
+}
+
+function onResize(){
+  mainCamera.aspect= window.innerWidth/window.innerHeight;
+  mainCamera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+// If user clicks anywhere => try starting audio if not started
+async function onClickCanvas(){
+  if(!started){
+    await startAudio();
+  }
+}
+
+function readCamRandom(){
+  if(!camVideo || camVideo.readyState<2) return 0.0;
+  camCtx.drawImage(camVideo,0,0, camCanvas.width, camCanvas.height);
+  let frame= camCtx.getImageData(0,0, camCanvas.width, camCanvas.height).data;
+  let sum=0;
+  for(let i=0; i<frame.length; i+=4){
+    sum+= frame[i]+ frame[i+1]+ frame[i+2];
+  }
+  let avg= sum/(frame.length/4)/3;
+  return avg/255.0;
+}
+
+// drifting text illusions
+function spawnWord(){
+  let wEl= document.createElement("div");
+  wEl.className="drifting-text";
+  wEl.innerText= WORD_LIST[Math.floor(Math.random()*WORD_LIST.length)];
+  wEl.style.left= (Math.random()*window.innerWidth|0)+"px";
+  wEl.style.top= (Math.random()*window.innerHeight|0)+"px";
+  wEl.style.opacity="0.0";
+  document.body.appendChild(wEl);
+
+  words.push({
+    el:wEl,
+    x: parseFloat(wEl.style.left),
+    y: parseFloat(wEl.style.top),
+    life:0,
+    maxLife: 5+ Math.random()*5,
+    colorCycle:0
+  });
+}
+
+function updateWords(dt){
+  for(let i=0; i<words.length; i++){
+    let w= words[i];
+    w.life+= dt;
+    if(w.life> w.maxLife){
+      document.body.removeChild(w.el);
+      words.splice(i,1);
+      i--;
+      spawnWord();
+      continue;
+    }
+    w.y -= 8*dt;
+    w.x += (Math.random()-0.5)*30*dt;
+    w.el.style.top= w.y+"px";
+    w.el.style.left= w.x+"px";
+
+    let lifeFrac= w.life/w.maxLife;
+    let op= (lifeFrac<0.3)? (lifeFrac/0.3) : ((1.0-lifeFrac)/0.7);
+    op= Math.max(0,Math.min(1,op));
+    w.el.style.opacity= op;
+
+    w.colorCycle += dt*0.5;
+    let hue= (w.colorCycle*60)%360;
+    w.el.style.color= `hsl(${hue},80%,70%)`;
+  }
+}
+
+// create Möbius geometry
+function createMobiusBufferGeometry(uSegments,vSegments, majorR, minorR){
+  const positions=[], normals=[], uvs=[], indices=[];
+  for(let i=0; i<=uSegments; i++){
+    let u= i/uSegments;
+    let U= u*Math.PI*2.0;
+    for(let j=0; j<=vSegments; j++){
+      let vFrac= j/vSegments;
+      // shift from [0..1] -> [-1..1] for thickness
+      let V= vFrac*2.0 -1.0;
+      let phi= U/2.0;
+
+      let x= (majorR + V*Math.cos(phi))* Math.cos(U);
+      let y= (majorR + V*Math.cos(phi))* Math.sin(U);
+      let z= V*Math.sin(phi)* minorR;
+
+      positions.push(x,y,z);
+      normals.push(0,0,1);
+      uvs.push(u,vFrac);
+    }
+  }
+
+  for(let i=0; i<uSegments; i++){
+    for(let j=0; j<vSegments; j++){
+      let a= i*(vSegments+1)+ j;
+      let b= i*(vSegments+1)+ j+1;
+      let c= (i+1)*(vSegments+1)+ j;
+      let d= (i+1)*(vSegments+1)+ j+1;
+      indices.push(a,b,c);
+      indices.push(b,d,c);
+    }
+  }
+
+  let geom= new THREE.BufferGeometry();
+  geom.setIndex(indices);
+  geom.setAttribute('position', new THREE.Float32BufferAttribute(positions,3));
+  geom.setAttribute('normal', new THREE.Float32BufferAttribute(normals,3));
+  geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs,2));
+  geom.computeVertexNormals();
+  return geom;
+}
+
+// ------------------------------- Handle Color Update (Pickers) -------------------------------
+function handleColorUpdate() {
+  const hexColors = colorInputs.map(inp => inp.value);
+
+  // Build a palette
+  const paletteGenerator = new PaletteGenerator(hexColors);
+  paletteGenerator.sortByMunsellValue();
+  const grouped = paletteGenerator.groupByQuarkComponent();
+  const palette = paletteGenerator.getPalette();
+
+  console.log("User updated colors. Sorted palette:", palette);
+  console.log("Groupings:", grouped);
+
+  // We'll just take the first 2 colors from the palette
+  // and set them to each band's "u_userColorA/B"
+  // (Alternatively, you could do something more elaborate for all 6.)
+  if (palette.length >= 2) {
+    const colA = new THREE.Color(palette[0].hex);
+    const colB = new THREE.Color(palette[1].hex);
+    for (let band of quantumEgg.bands) {
+      band.uniforms.u_userColorA.value = colA;
+      band.uniforms.u_userColorB.value = colB;
+    }
+  } else if (palette.length === 1) {
+    const colA = new THREE.Color(palette[0].hex);
+    for (let band of quantumEgg.bands) {
+      band.uniforms.u_userColorA.value = colA;
+      // Keep colorB the same
+    }
+  }
+}
+</script>
+</body>
+</html>

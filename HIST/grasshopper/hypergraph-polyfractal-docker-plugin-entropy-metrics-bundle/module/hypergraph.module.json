@@ -1,0 +1,29 @@
+{
+  "id": "uniphi.hypergraph.polyfractal",
+  "name": "Hypergraph Polyfractal Plugin",
+  "version": "0.3.0",
+  "description": "Docker module providing a WebGL polyfractal backdrop + hypergraph explorer + plugin loader + entropy metrics.",
+  "ports": [
+    {
+      "container": 8787,
+      "host": 8787,
+      "proto": "tcp"
+    }
+  ],
+  "endpoints": {
+    "ui": "/",
+    "api": "/api",
+    "ws": "/ws"
+  },
+  "storage": {
+    "mount": "/data",
+    "files": [
+      "graph.json",
+      "metrics.json"
+    ]
+  },
+  "healthcheck": {
+    "path": "/api/health",
+    "interval_s": 10
+  }
+}

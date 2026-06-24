@@ -1,0 +1,23 @@
+# Run manually from an elevated PowerShell prompt after Windows setup.
+Set-ExecutionPolicy Bypass -Scope Process -Force
+Write-Host "Installing Windows guest tools and gaming host utilities..."
+
+# Example only: adjust drive letters after setup.
+# VirtIO guest tools and drivers should be installed from the virtio ISO.
+# GPU vendor driver should be installed from the official package for your passed-through GPU.
+
+try {
+  winget --version | Out-Null
+} catch {
+  Write-Warning "winget not detected; install Sunshine manually."
+}
+
+if (Get-Command winget -ErrorAction SilentlyContinue) {
+  winget install --id LizardByte.Sunshine -e --accept-source-agreements --accept-package-agreements
+}
+
+Write-Host "Next steps:"
+Write-Host "  1) install GPU driver"
+Write-Host "  2) install virtio guest agent/tools"
+Write-Host "  3) open Sunshine web UI and pair Moonlight clients"
+Write-Host "  4) add Steam / Playnite / Desktop apps to Sunshine"

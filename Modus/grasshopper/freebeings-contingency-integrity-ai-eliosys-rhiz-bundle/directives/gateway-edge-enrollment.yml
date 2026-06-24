@@ -1,0 +1,29 @@
+# Mirrors the main-cluster gateway doctrine: gateway is a cryptographic boundary, not a bare reverse proxy.
+gateway_edge_enrollment:
+  node_name: eliosys-rhiz
+  allowed_role: model-consumer
+  optional_role: swarm-worker
+  ingress:
+    public_allowed:
+      - 443/tcp
+      - 51872/udp
+    public_denied:
+      - 2377/tcp
+      - 7946/tcp
+      - 7946/udp
+      - 4789/udp
+      - 11434/tcp
+      - docker.sock
+      - lxd-api
+      - ceph-mon
+      - ceph-mgr
+      - ceph-osd
+  token_flow:
+    one_time_token: true
+    token_in_url: false
+    store_hash_only: true
+    ttl_seconds: 900
+  routes:
+    mcp: /mcp
+    ollama: /api/ollama
+    llama: /api/llama

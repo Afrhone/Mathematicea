@@ -1,0 +1,20 @@
+services:
+  hypergraph-polyfractal:
+    build: .
+    ports:
+      - "8787:8787"
+    environment:
+      - PORT=8787
+      - DATA_DIR=/data
+      - ECOSYSTEM_CONFIG_PATH=/app/config/ecosystem.modules.json
+      - CIPHER_SCHEMA_PATH=/app/config/numeral.encoder.cipher.json
+      - ECOSYSTEM_URL_MODE=external
+      - ADMIN_TOKEN=${ADMIN_TOKEN:-admin-change-me}
+      - IBM_QUANTUM_ENDPOINT=${IBM_QUANTUM_ENDPOINT:-}
+      - IBM_QUANTUM_API_KEY=${IBM_QUANTUM_API_KEY:-}
+    volumes:
+      - hp_data:/data
+    restart: unless-stopped
+
+volumes:
+  hp_data:

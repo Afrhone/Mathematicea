@@ -1,0 +1,78 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-arduino}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-change-me-strong}
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+
+  mqtt:
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    ports:
+      - "${MQTT_PORT:-1883}:1883"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
+  iot-api:
+    build:
+      context: ../apps/iot-api
+    restart: unless-stopped
+    privileged: true
+    devices:
+      - /dev:/dev
+    environment:
+      IOT_API_TOKEN: ${IOT_API_TOKEN:-change-me-token}
+      RUN_REV2_HOST: ${RUN_REV2_HOST:-arduino-run.local}
+      RUN_REV2_PORT: ${RUN_REV2_PORT:-80}
+    ports:
+      - "${IOT_API_PORT:-8060}:8060"
+    depends_on:
+      - redis
+      - mongo
+      - mqtt
+
+  ui:
+    build:
+      context: ../apps/ui
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_IOT_API: ${NEXT_PUBLIC_IOT_API:-http://localhost:8060}
+    ports:
+      - "${IOT_UI_PORT:-8061}:8061"
+    depends_on:
+      - iot-api
+
+  mcp-kicad:
+    build:
+      context: ../apps/mcp-kicad
+    restart: unless-stopped
+    environment:
+      KICAD_PROJECT_ROOT: ${KICAD_PROJECT_ROOT:-/workspace/kicad-projects}
+    volumes:
+      - kicad_projects:${KICAD_PROJECT_ROOT:-/workspace/kicad-projects}
+    ports:
+      - "${KICAD_MCP_PORT:-8070}:8070"
+
+  kicad-gui:
+    image: ${KICAD_CONTAINER_IMAGE:-kicad/kicad:latest}
+    profiles: ["kicad-gui"]
+    volumes:
+      - kicad_projects:/root/Documents
+    environment:
+      DISPLAY: ${DISPLAY:-:0}
+    network_mode: host
+
+volumes:
+  mongo_data:
+  kicad_projects:

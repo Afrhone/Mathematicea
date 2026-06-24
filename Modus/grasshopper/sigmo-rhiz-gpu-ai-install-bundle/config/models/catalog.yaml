@@ -1,0 +1,136 @@
+# Model catalog. Pull operations are opt-in. Huge/risky entries are disabled by default.
+models:
+  - id: smollm2-dmr-test
+    display: Docker Model Runner smoke test
+    source: dockerhub
+    ref: ai/smollm2:360M-Q4_K_M
+    engine: docker-model-runner
+    format: dmr
+    auto_pull: true
+    safety_profile: normal
+    lane: sigmo-rhiz
+
+  - id: mistral-medium-3.5-128b-gguf
+    display: unsloth/Mistral-Medium-3.5-128B-GGUF
+    source: huggingface
+    ref: https://huggingface.co/unsloth/Mistral-Medium-3.5-128B-GGUF
+    engine: llama.cpp
+    format: gguf
+    lane: gpu-compute
+    auto_pull: false
+    notes: Huge; use selective file pull with huggingface-cli or git-lfs include patterns.
+    safety_profile: normal
+
+  - id: glm-4.7-flash-neo-code-gguf
+    display: DavidAU/GLM-4.7-Flash-NEO-CODE-Imatrix-MAX-GGUF
+    source: huggingface
+    ref: https://huggingface.co/DavidAU/GLM-4.7-Flash-NEO-CODE-Imatrix-MAX-GGUF
+    engine: llama.cpp
+    format: gguf
+    lane: llama-gpu
+    auto_pull: false
+    safety_profile: code
+
+  - id: gpt-oss-20b-heretic
+    display: p-e-w/gpt-oss-20b-heretic
+    source: huggingface
+    ref: https://huggingface.co/p-e-w/gpt-oss-20b-heretic
+    engine: llama.cpp
+    format: gguf-or-safetensors
+    lane: gpu-compute
+    auto_pull: false
+    safety_profile: risky-disabled
+
+  - id: crow-9b-heretic
+    display: Crownelius/Crow-9B-HERETIC-4.6
+    source: huggingface
+    ref: https://huggingface.co/Crownelius/Crow-9B-HERETIC-4.6
+    engine: llama.cpp
+    format: gguf-or-safetensors
+    lane: llama-gpu
+    auto_pull: false
+    safety_profile: risky-disabled
+
+  - id: qwen3.5-40b-deckard-heretic
+    display: DavidAU/Qwen3.5-40B-Claude-4.6-Opus-Deckard-Heretic-Uncensored-Thinking
+    source: huggingface
+    ref: https://huggingface.co/DavidAU/Qwen3.5-40B-Claude-4.6-Opus-Deckard-Heretic-Uncensored-Thinking
+    engine: llama.cpp
+    format: gguf
+    lane: gpu-compute
+    auto_pull: false
+    safety_profile: risky-disabled
+
+  - id: qwen3.5-9b-uncensored-hauhaucs
+    display: HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive
+    source: huggingface
+    ref: https://huggingface.co/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive
+    engine: llama.cpp
+    format: gguf-or-safetensors
+    lane: llama-gpu
+    auto_pull: false
+    safety_profile: risky-disabled
+
+  - id: rogue-creative-7b-gguf
+    display: DavidAU/L3.2-Rogue-Creative-Instruct-7B-GGUF
+    source: huggingface
+    ref: https://huggingface.co/DavidAU/L3.2-Rogue-Creative-Instruct-7B-GGUF
+    engine: llama.cpp
+    format: gguf
+    lane: llama-gpu
+    auto_pull: false
+    safety_profile: creative
+
+  - id: rogue-creative-abliterated-7b-gguf
+    display: DavidAU/L3.2-Rogue-Creative-Instruct-Uncensored-Abliterated-7B-GGUF
+    source: huggingface
+    ref: https://huggingface.co/DavidAU/L3.2-Rogue-Creative-Instruct-Uncensored-Abliterated-7B-GGUF
+    engine: llama.cpp
+    format: gguf
+    lane: llama-gpu
+    auto_pull: false
+    safety_profile: risky-disabled
+
+  - id: nsfw-reddit-gguf
+    display: featherless-ai-quants/athirdpath-Llama-3.1-Instruct_NSFW-pretrained_e1-plus_reddit-GGUF
+    source: huggingface
+    ref: https://huggingface.co/featherless-ai-quants/athirdpath-Llama-3.1-Instruct_NSFW-pretrained_e1-plus_reddit-GGUF
+    engine: llama.cpp
+    format: gguf
+    lane: isolated
+    auto_pull: false
+    safety_profile: risky-disabled
+
+  - id: gemma-4-31b-it
+    display: google/gemma-4-31B-it
+    source: huggingface
+    ref: https://huggingface.co/google/gemma-4-31B-it
+    engine: vllm
+    format: safetensors
+    lane: gpu-compute
+    auto_pull: false
+    safety_profile: normal
+
+  - id: flux-schnell
+    display: FLUX schnell / Diffusers lane
+    source: huggingface
+    ref: black-forest-labs/FLUX.1-schnell
+    engine: diffusers
+    format: safetensors
+    lane: gpu-compute
+    auto_pull: false
+    safety_profile: image
+
+external_repos:
+  - id: uncensored-ai-reference
+    ref: https://github.com/0xSojalSec/Uncensored-AI
+    auto_clone: false
+    safety_profile: reference-only-risky-disabled
+  - id: heretic-reference
+    ref: https://github.com/p-e-w/heretic
+    auto_clone: false
+    safety_profile: reference-only-risky-disabled
+  - id: karpathy-llm-notes
+    ref: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+    auto_clone: false
+    safety_profile: education

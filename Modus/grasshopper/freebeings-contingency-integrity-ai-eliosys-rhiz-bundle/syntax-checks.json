@@ -1,0 +1,3 @@
+{
+  "note": "Generated bundle. Run target checks: bash -n bin/*.sh; python3 -m py_compile bin/*.py."
+}

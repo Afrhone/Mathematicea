@@ -1,0 +1,34 @@
+windows_gaming:
+  defaults:
+    profile: win11-gaming
+    storage_pool: vms
+    bridge: br0
+    os_variant: win11
+    cpu_mode: host-passthrough
+    machine: q35
+    secure_boot: true
+    tpm: true
+    video_fallback: virtio
+    start_after_define: false
+    network_model: virtio
+    disk_bus: virtio
+    ovmf_secureboot: true
+  guests:
+    valkyrie-win11:
+      host: sigmo-rhiz
+      profile: win11-gaming
+      rbd_image: valkyrie-win11-os
+      disk_size: 220G
+      bridge: br0
+      gpu_video_bdf: 0000:0f:00.0
+      gpu_audio_bdf: 0000:0f:00.1
+      vcpus: 12
+      ram_mb: 32768
+      cpuset: "2,3,4,5,6,7,8,9,10,11,12,13"
+      emulatorpin: "0-1"
+      iothreadpin: "14"
+      windows_iso: /srv/isos/Win11_24H2_English_x64.iso
+      virtio_iso: /srv/isos/virtio-win.iso
+      notes:
+        - Dedicated gaming VM pinned on sigmo-rhiz.
+        - Ceph provides the boot disk; GPU is local passthrough.

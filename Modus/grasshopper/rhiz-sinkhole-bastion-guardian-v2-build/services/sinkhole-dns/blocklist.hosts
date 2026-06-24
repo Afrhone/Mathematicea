@@ -1,0 +1,4 @@
+# Defensive sinkhole blocklist template. Add known-bad domains you are legally authorized to block.
+10.45.3.53 malware.test.local
+10.45.3.53 tracker.test.local
+10.45.3.53 exfil.test.local

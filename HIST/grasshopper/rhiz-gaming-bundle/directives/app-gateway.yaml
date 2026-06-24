@@ -1,0 +1,9 @@
+app_gateway:
+  public_endpoint: rhiz-arch.afrho.net
+  callback_path: /api/enroll
+  reverse_proxy: caddy
+  tls_mode: letsencrypt
+  upstreams:
+    portainer: http://portainer:9000
+    card_ui: http://graph-ui:3000
+    operator_api: http://operator-api:8080

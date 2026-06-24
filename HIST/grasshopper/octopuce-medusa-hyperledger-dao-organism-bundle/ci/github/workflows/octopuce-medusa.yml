@@ -1,0 +1,28 @@
+name: octopuce-medusa
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shell syntax
+        run: |
+          bash -n automation/gates/*.sh
+          bash -n automation/scripts/*.sh
+          bash -n cluster/lxd/*.sh
+      - name: Compose config
+        run: docker compose config
+      - name: Solidity compile shape
+        run: |
+          test -f contracts/ethereum/contracts/NamespaceAuthority.sol
+          test -f contracts/ethereum/contracts/OctopuceDAO.sol
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: octopuce-medusa-hyperledger-dao-organism
+          path: .

@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "uniphi.phoneme_cipher.encode_response.v1",
+  "title": "EncodeResponse",
+  "type": "object",
+  "properties": {
+    "ipa_tokens": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "symbol_ids": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "radix": {
+      "type": "integer"
+    },
+    "integer_base10": {
+      "type": "string"
+    },
+    "integer_base16": {
+      "type": "string"
+    },
+    "magnitude_bits": {
+      "type": "integer"
+    },
+    "pointers": {
+      "type": "object",
+      "properties": {
+        "kv_ptr64": {
+          "type": "string"
+        },
+        "vram_ptr64": {
+          "type": "string"
+        },
+        "bucket": {
+          "type": "integer"
+        }
+      }
+    },
+    "metrics": {
+      "type": "object"
+    },
+    "invariants": {
+      "type": "object"
+    },
+    "decision_tree": {
+      "type": "object"
+    },
+    "manifold": {
+      "type": "object"
+    },
+    "graph": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "ipa_tokens",
+    "symbol_ids",
+    "radix",
+    "integer_base10",
+    "magnitude_bits",
+    "pointers",
+    "metrics",
+    "invariants"
+  ]
+}

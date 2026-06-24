@@ -1,0 +1,39 @@
+{
+  "presets": [
+    {
+      "id": "phi-root-lens",
+      "degree": 8,
+      "dimension": 8,
+      "stochasticity": 0.22,
+      "lensMass": 1.8
+    },
+    {
+      "id": "binary-cycle",
+      "degree": 10,
+      "dimension": 8,
+      "stochasticity": 0.08,
+      "lensMass": 0.9
+    },
+    {
+      "id": "lagrange-operand",
+      "degree": 6,
+      "dimension": 5,
+      "stochasticity": 0.35,
+      "lensMass": 2.5
+    },
+    {
+      "id": "pnq-cloud",
+      "degree": 12,
+      "dimension": 10,
+      "stochasticity": 0.65,
+      "lensMass": 1.1
+    },
+    {
+      "id": "tenth-eighth",
+      "degree": 10,
+      "dimension": 8,
+      "stochasticity": 0.18,
+      "lensMass": 3.2
+    }
+  ]
+}

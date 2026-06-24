@@ -1,0 +1,46 @@
+control_plane:
+  name: rhiz-jules-lxd
+  mode: advisory_first
+  canonical_repo: gitlab
+  jules_adapter_repo: github_mirror
+  local_execution: lxd_lxc
+
+jules:
+  source_type: github
+  session_mode: AUTO_CREATE_PR
+  api_key_env: JULES_API_KEY
+  source_env: JULES_SOURCE
+  allowed_tasks:
+    - bugfix
+    - test_generation
+    - docs
+    - refactor_small
+    - ci_repair
+  denied_tasks:
+    - secret_rotation_without_operator
+    - destructive_migration
+    - production_cutover
+
+gitlab:
+  mirror_direction: gitlab_to_github
+  branch_policy:
+    jules_import_prefix: jules/pr-
+    merge_back_requires: manual_review
+
+lxd:
+  bridge_container: jules-bridge
+  supported_dev_targets:
+    - lxc_container
+    - lxd_vm
+  default_image: images:fedora/43
+  workspace_mount: /workspace
+  mutation_gate: ALLOW_LXD_MUTATION
+
+gates:
+  dry_run_default: true
+  require_operator_for:
+    - deploy
+    - gateway_firewall_change
+    - swarm_join_token_render
+    - source_stop
+    - secret_render

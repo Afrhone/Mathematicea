@@ -1,0 +1,9 @@
+{
+  "name": "Octopuce Medusa",
+  "short_name": "MedusaDAO",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050510",
+  "theme_color": "#00d5ff",
+  "icons": []
+}

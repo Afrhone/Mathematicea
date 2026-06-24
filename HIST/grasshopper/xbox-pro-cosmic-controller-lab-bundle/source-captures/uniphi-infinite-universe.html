@@ -1,0 +1,1236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>Uniphi Infinite Universe — Immersive Fly / Orbit / Wormhole</title>
+<style>
+  :root{
+    --accent:#ffb84d;
+    --panel:rgba(0,0,0,.55);
+    --panel2:rgba(0,0,0,.35);
+    --fg:#cfe3ff;
+    --bd:rgba(150,200,255,.25);
+  }
+  html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#fff;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto}
+  canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+  #hudTop{
+    position:fixed;left:10px;top:10px;z-index:5;
+    padding:8px 10px;border-radius:10px;background:var(--panel2);backdrop-filter:blur(6px);
+    border:1px solid var(--bd); font-size:12px; user-select:none; pointer-events:none;
+    max-width:min(520px, calc(100vw - 20px));
+    line-height:1.25;
+  }
+  #hudTop .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+  #hudBottom{
+    position:fixed;left:10px;right:10px;bottom:10px;z-index:6;
+    display:grid;gap:10px 14px; grid-template-columns:1fr 1fr 1fr;
+    align-items:center;padding:10px 12px;border-radius:14px;
+    background:var(--panel);backdrop-filter:blur(8px);
+    border:1px solid var(--bd); font-size:12px; user-select:none;
+  }
+  #hudBottom h4{grid-column:1/-1;margin:2px 0 4px;color:#ffd17a;font-weight:650;letter-spacing:.03em}
+  .sl{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .chk{display:inline-flex;align-items:center;gap:.45rem}
+  input[type=range]{width:100%}
+  select,button{
+    all:unset;background:rgba(14,22,36,.6);
+    padding:6px 8px;border-radius:10px;border:1px solid var(--bd);cursor:pointer;
+  }
+  button.primary{background:var(--accent);color:#111;font-weight:700;border:0}
+  #hint{grid-column:1/-1;opacity:.85}
+  #hint kbd{font:12px ui-monospace,monospace;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);padding:.1em .35em;border-radius:.4em}
+  /* touch pads & buttons (mobile) */
+  .pad{position:fixed;width:36vmin;height:36vmin;border-radius:50%;
+       border:1px solid var(--bd); background:rgba(12,18,28,.35);
+       left:3vmin;bottom:3vmin;z-index:7;touch-action:none}
+  .pad.r{left:auto;right:3vmin}
+  .thumb{position:absolute;width:28%;height:28%;border-radius:50%;left:36%;top:36%;
+         background:rgba(120,180,255,.35);border:1px solid rgba(150,200,255,.35)}
+  .btnset{position:fixed;right:3vmin;bottom:42vmin;display:grid;gap:.6vmin;z-index:7}
+  .btn{all:unset;padding:.7em 1em;border-radius:.9em;border:1px solid var(--bd);
+       background:rgba(12,18,28,.45);color:var(--fg);font-size:12px;min-width:4.5em;text-align:center}
+  @media (pointer:fine){ .pad,.btnset{display:none} }
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+
+<div id="hudTop">
+  <div><b>Uniphi Infinite Universe</b> · <span class="mono" id="modeOut">Cockpit</span> · seed=<span class="mono" id="seedOut">—</span></div>
+  <div class="mono" id="statOut">…</div>
+  <div style="opacity:.85;margin-top:4px">
+    Gamepad: <span class="mono" id="gpOut">none</span> · PointerLock: <span class="mono" id="plOut">off</span>
+  </div>
+</div>
+
+<div id="hudBottom">
+  <h4>Cosmo‑Cockpit — Fly / Orbit / Flyby · Warp & Wormhole</h4>
+
+  <div class="sl">
+    <strong>Camera</strong>
+    <select id="cameraMode">
+      <option>Cockpit</option>
+      <option>Orbit</option>
+      <option>Flyby</option>
+    </select>
+    <span id="camVal">Cockpit</span>
+  </div>
+
+  <div class="sl">
+    <strong>Speed</strong>
+    <input id="speed" type="range" min="0.05" max="12" step="0.05" value="1"/>
+    <span id="speedVal">×1.00</span>
+  </div>
+
+  <div class="sl">
+    <strong>Trails</strong>
+    <input id="trail" type="range" min="0" max="0.30" step="0.005" value="0.06"/>
+    <span id="trailVal">fade 0.060</span>
+  </div>
+
+  <div class="sl">
+    <strong>Warp</strong>
+    <input id="warp" type="range" min="0" max="2.5" step="0.02" value="0.45"/>
+    <span id="warpVal">0.45</span>
+  </div>
+
+  <div class="sl">
+    <strong>Nebula</strong>
+    <input id="nebula" type="range" min="0" max="1.25" step="0.01" value="0.60"/>
+    <span id="nebVal">0.60</span>
+  </div>
+
+  <div class="sl">
+    <strong>Wormhole</strong>
+    <input id="worm" type="range" min="0" max="2.2" step="0.02" value="0.75"/>
+    <span id="wormVal">0.75</span>
+  </div>
+
+  <div class="row">
+    <label class="chk"><input id="showStars" type="checkbox" checked> Stars</label>
+    <label class="chk"><input id="showOrbits" type="checkbox" checked> Orbits</label>
+    <label class="chk"><input id="showBelts" type="checkbox" checked> Kuiper/Oort</label>
+    <label class="chk"><input id="lensOn" type="checkbox" checked> Lens</label>
+    <label class="chk"><input id="wormOn" type="checkbox" checked> Wormhole</label>
+  </div>
+
+  <div class="sl">
+    <strong>Stars</strong>
+    <input id="starCount" type="range" min="20000" max="240000" step="5000" value="120000"/>
+    <span id="starVal">120k</span>
+  </div>
+
+  <div class="sl">
+    <strong>Zoom/FOV</strong>
+    <input id="fov" type="range" min="25" max="120" step="1" value="70"/>
+    <span id="fovVal">70°</span>
+  </div>
+
+  <div class="sl">
+    <strong>Portal Size</strong>
+    <input id="wormRad" type="range" min="0.04" max="0.55" step="0.005" value="0.22"/>
+    <span id="wormRadVal">0.220</span>
+  </div>
+
+  <div class="row" style="justify-content:flex-end;gap:8px">
+    <button id="lockBtn">Lock Pointer</button>
+    <button id="reseedBtn">Reseed ✨</button>
+    <button class="primary" id="pngBtn">PNG ⤓</button>
+  </div>
+
+  <div id="hint">
+    Mouse: drag (orbit) · wheel zoom · <kbd>L</kbd> lock pointer (look) · <kbd>C</kbd> cycle camera · <kbd>Shift</kbd> boost · <kbd>P</kbd> png<br/>
+    Cockpit keys: <kbd>WASD</kbd> thrust/strafe · <kbd>R/F</kbd> up/down · <kbd>Q/E</kbd> roll · <kbd>Space</kbd> brake · <kbd>G</kbd> toggle wormhole<br/>
+    Gamepad (standard): LS strafe/thrust · RS look · LT brake/reverse · RT throttle · D‑pad L/R time‑speed · D‑pad U/D up/down · LB/RB roll · <kbd>A</kbd> boost · <kbd>B</kbd> brake · <kbd>X</kbd> wormhole · <kbd>Y</kbd> camera · Start pointer‑lock
+  </div>
+</div>
+
+<!-- touch controls -->
+<div class="pad" id="padL"><div class="thumb" id="thumbL"></div></div>
+<div class="pad r" id="padR"><div class="thumb" id="thumbR"></div></div>
+<div class="btnset" id="btns">
+  <button class="btn" data-act="rollL">⟲ Roll</button>
+  <button class="btn" data-act="rollR">⟳ Roll</button>
+  <button class="btn" data-act="up">↑ Up</button>
+  <button class="btn" data-act="down">↓ Down</button>
+  <button class="btn" data-act="boost">⚡ Boost</button>
+</div>
+
+<script>
+(() => {
+  // ========= DOM =========
+  const canvas = document.getElementById('gl');
+  /** @type {WebGLRenderingContext} */
+  const gl = canvas.getContext('webgl', { antialias:true, alpha:false, preserveDrawingBuffer:true });
+  if(!gl){ alert('WebGL not supported'); return; }
+  const $ = (id)=>document.getElementById(id);
+  const ui = {
+    cameraMode:$('cameraMode'), camVal:$('camVal'),
+    speed:$('speed'), speedVal:$('speedVal'),
+    trail:$('trail'), trailVal:$('trailVal'),
+    warp:$('warp'), warpVal:$('warpVal'),
+    nebula:$('nebula'), nebVal:$('nebVal'),
+    worm:$('worm'), wormVal:$('wormVal'),
+    showStars:$('showStars'),
+    showOrbits:$('showOrbits'),
+    showBelts:$('showBelts'),
+    lensOn:$('lensOn'),
+    wormOn:$('wormOn'),
+    starCount:$('starCount'), starVal:$('starVal'),
+    fov:$('fov'), fovVal:$('fovVal'),
+    wormRad:$('wormRad'), wormRadVal:$('wormRadVal'),
+    pngBtn:$('pngBtn'),
+    reseedBtn:$('reseedBtn'),
+    lockBtn:$('lockBtn'),
+    modeOut:$('modeOut'),
+    seedOut:$('seedOut'),
+    statOut:$('statOut'),
+    gpOut:$('gpOut'),
+    plOut:$('plOut'),
+  };
+
+  function syncHUD(){
+    ui.camVal.textContent = ui.cameraMode.value;
+    ui.speedVal.textContent = '×' + (+ui.speed.value).toFixed(2);
+    ui.trailVal.textContent = 'fade ' + (+ui.trail.value).toFixed(3);
+    ui.warpVal.textContent = (+ui.warp.value).toFixed(2);
+    ui.nebVal.textContent  = (+ui.nebula.value).toFixed(2);
+    ui.wormVal.textContent = (+ui.worm.value).toFixed(2);
+    const sc = +ui.starCount.value; ui.starVal.textContent = (sc/1000|0) + 'k';
+    ui.fovVal.textContent = ui.fov.value + '°';
+    ui.wormRadVal.textContent = (+ui.wormRad.value).toFixed(3);
+    ui.modeOut.textContent = ui.cameraMode.value;
+  }
+  [ui.cameraMode,ui.speed,ui.trail,ui.warp,ui.nebula,ui.worm,ui.starCount,ui.fov,ui.wormRad].forEach(el=>el.addEventListener('input', syncHUD));
+  syncHUD();
+
+  // ========= Math =========
+  const V3 = {
+    add:(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],
+    sub:(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],
+    mul:(a,s)=>[a[0]*s,a[1]*s,a[2]*s],
+    dot:(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],
+    len:(a)=>Math.hypot(a[0],a[1],a[2]),
+    norm:(a)=>{const l=V3.len(a)||1; return [a[0]/l,a[1]/l,a[2]/l];},
+    cross:(a,b)=>[a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]],
+  };
+  const Mat4 = {
+    ident:()=>new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]),
+    mul:(a,b)=>{const o=new Float32Array(16);
+      for(let r=0;r<4;r++) for(let c=0;c<4;c++)
+        o[c*4+r]=a[0*4+r]*b[c*4+0]+a[1*4+r]*b[c*4+1]+a[2*4+r]*b[c*4+2]+a[3*4+r]*b[c*4+3];
+      return o;},
+    perspective:(fovy,aspect,near,far)=>{const f=1/Math.tan(fovy/2), nf=1/(near-far);
+      const o=new Float32Array(16); o[0]=f/aspect; o[5]=f; o[10]=(far+near)*nf; o[11]=-1; o[14]=(2*far*near)*nf; return o;},
+    lookAt:(eye,center,up)=>{
+      const [ex,ey,ez]=eye,[cx,cy,cz]=center,[ux,uy,uz]=up;
+      let zx=ex-cx, zy=ey-cy, zz=ez-cz; let zl=Math.hypot(zx,zy,zz)||1; zx/=zl; zy/=zl; zz/=zl;
+      let xx=uy*zz-uz*zy, xy=uz*zx-ux*zz, xz=ux*zy-uy*zx; let xl=Math.hypot(xx,xy,xz)||1; xx/=xl; xy/=xl; xz/=xl;
+      let yx=zy*xz-zz*xy, yy=zz*xx-zx*xz, yz=zx*xy-zy*xx;
+      const o=Mat4.ident();
+      o[0]=xx;o[4]=yx;o[8]=zx;
+      o[1]=xy;o[5]=yy;o[9]=zy;
+      o[2]=xz;o[6]=yz;o[10]=zz;
+      o[12]=-(xx*ex+yx*ey+zx*ez);
+      o[13]=-(xy*ex+yy*ey+zy*ez);
+      o[14]=-(xz*ex+yz*ey+zz*ez);
+      return o;
+    }
+  };
+
+  function clamp(x,a,b){ return Math.max(a, Math.min(b,x)); }
+  function lerp(a,b,t){ return a + (b-a)*t; }
+
+  // ========= Deterministic RNG (xorshift32) =========
+  function u32(x){ return x>>>0; }
+  function hash3(x,y,z){
+    // mix 3 ints into one 32-bit hash
+    let h = u32(x*374761393) ^ u32(y*668265263) ^ u32(z*2147483647);
+    h = u32((h ^ (h>>>13)) * 1274126177);
+    return u32(h ^ (h>>>16));
+  }
+  function makeRng(seed){
+    let s = u32(seed||1);
+    return {
+      nextU32(){ s ^= (s<<13); s = u32(s); s ^= (s>>>17); s = u32(s); s ^= (s<<5); s=u32(s); return s; },
+      next01(){ return (this.nextU32() / 4294967296); },
+      nextSigned(){ return this.next01()*2-1; }
+    };
+  }
+
+  // ========= GL utils =========
+  function compile(type, src){
+    const sh = gl.createShader(type);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    if(!gl.getShaderParameter(sh, gl.COMPILE_STATUS)){
+      console.warn(gl.getShaderInfoLog(sh));
+      throw new Error('Shader compile failed');
+    }
+    return sh;
+  }
+  function link(vs, fs){
+    const pr = gl.createProgram();
+    gl.attachShader(pr, vs);
+    gl.attachShader(pr, fs);
+    gl.linkProgram(pr);
+    if(!gl.getProgramParameter(pr, gl.LINK_STATUS)){
+      console.warn(gl.getProgramInfoLog(pr));
+      throw new Error('Program link failed');
+    }
+    return pr;
+  }
+
+  // ========= Shaders =========
+  const starVS = `
+    precision mediump float;
+    uniform mat4 uVP;
+    attribute vec3 aPos;
+    attribute vec3 aCol;
+    attribute float aSize;
+    varying vec3 vCol;
+    varying float vTw;
+    void main(){
+      vec4 p = uVP * vec4(aPos, 1.0);
+      gl_Position = p;
+      float w = max(0.0001, -p.w);
+      gl_PointSize = max(1.0, aSize * (60.0 / w));
+      vCol = aCol;
+      // subtle time-ish flicker from position (no uniform needed)
+      vTw = fract(sin(dot(aPos.xyz, vec3(12.9898,78.233,45.164))) * 43758.5453);
+    }
+  `;
+  const starFS = `
+    precision mediump float;
+    varying vec3 vCol;
+    varying float vTw;
+    void main(){
+      vec2 uv = gl_PointCoord.xy - 0.5;
+      float r = dot(uv,uv);
+      float a = exp(-r*18.0);
+      float tw = 0.75 + 0.25*sin(6.2831*vTw);
+      gl_FragColor = vec4(vCol * tw, a);
+    }
+  `;
+
+  const quadVS = `
+    attribute vec2 aPos;
+    attribute vec2 aUV;
+    varying vec2 vUV;
+    void main(){ gl_Position = vec4(aPos,0.0,1.0); vUV=aUV; }
+  `;
+
+  // Lens + nebula + wormhole composite
+  // (Lens equation approximation + ring) inspired by your lens ball sketch.
+  const compFS = `
+    precision mediump float;
+    varying vec2 vUV;
+    uniform sampler2D uScene;
+    uniform vec2  uRes;
+    uniform float uTime;
+
+    uniform float uTrail;     // used for warp streak modulation
+    uniform float uWarp;      // warp amount
+    uniform float uNeb;       // nebula amount
+    uniform float uLensOn;    // 0/1
+    uniform float uWormOn;    // 0/1
+    uniform float uWorm;      // worm strength
+    uniform float uWormRad;   // worm radius
+
+    // lens controls
+    uniform float uLensRad;
+    uniform float uLensInner;
+    uniform float uLensStr;
+
+    float hash21(vec2 p){
+      p = fract(p*vec2(123.34, 345.45));
+      p += dot(p, p+34.345);
+      return fract(p.x*p.y);
+    }
+    float noise(vec2 p){
+      vec2 i=floor(p), f=fract(p);
+      float a=hash21(i);
+      float b=hash21(i+vec2(1,0));
+      float c=hash21(i+vec2(0,1));
+      float d=hash21(i+vec2(1,1));
+      vec2 u=f*f*(3.0-2.0*f);
+      return mix(a,b,u.x) + (c-a)*u.y*(1.0-u.x) + (d-b)*u.x*u.y;
+    }
+
+    vec3 nebula(vec2 uv){
+      // layered interference-ish fog
+      vec2 p = (uv-0.5) * vec2(uRes.x/uRes.y,1.0);
+      float t = uTime*0.035;
+      float n = 0.0;
+      float amp = 0.55;
+      vec2 q = p*2.2;
+      for(int i=0;i<4;i++){
+        n += amp * noise(q + vec2(0.0, t));
+        q = mat2(1.2,1.1,-1.1,1.2)*q + 0.15;
+        amp *= 0.55;
+      }
+      float m = smoothstep(0.65, -0.05, length(p));
+      float g = pow(clamp(n,0.0,1.0), 1.6) * m;
+      vec3 col = vec3(0.12,0.22,0.45) + vec3(0.35,0.18,0.55)*g;
+      col += vec3(0.35,0.28,0.12)*pow(g,2.2);
+      return col * (0.7 + 0.3*sin(6.2831*(n+t)));
+    }
+
+    vec2 lensDistort(vec2 uv, vec2 c, float rad, float inner, float str, out float ringGlow){
+      vec2 d = uv - c;
+      float r = length(d);
+      ringGlow = 0.0;
+      if(r >= rad) return uv;
+
+      float theta = max(r, 1e-6);
+      float thetaE = rad;
+      float beta = theta - (thetaE*thetaE)/theta; // Einstein approx
+      vec2 duv = c + (beta / theta) * d;
+
+      // ring glow around thetaE
+      float ringW = 0.0022;
+      ringGlow = exp(-pow((r-thetaE)/ringW,2.0)) * (0.3 + 0.7*str);
+
+      // "event horizon" absorbs
+      if(r < inner) return c;
+      return clamp(duv, vec2(0.0), vec2(1.0));
+    }
+
+    vec2 wormholeDistort(vec2 uv, vec2 c, float rad, float str, out float edge){
+      vec2 d = uv - c;
+      float r = length(d);
+      edge = 0.0;
+      if(r > rad) return uv;
+
+      float rn = r / max(rad, 1e-5);
+      float fall = pow(1.0 - rn, 2.0);
+      float ang = atan(d.y, d.x);
+
+      // swirl + radial tunnel mapping
+      float spin = 3.5*str + 1.25*sin(uTime*0.5);
+      ang += spin * fall;
+
+      // "tunnel" pulls towards center with non-linear mapping
+      float pull = 0.45*str * fall;
+      float rr = mix(rn, rn*rn, 0.65) * (1.0 - pull);
+
+      vec2 nd = vec2(cos(ang), sin(ang)) * rr * rad;
+      edge = exp(-pow((rn-1.0)/0.06,2.0));
+      return c + nd;
+    }
+
+    vec3 warpStreaks(vec2 uv){
+      // simple radial streaks during warp (cheap)
+      vec2 p = uv - 0.5;
+      p.x *= uRes.x/uRes.y;
+      float a = atan(p.y,p.x);
+      float r = length(p);
+      float s = noise(vec2(a*3.0, uTime*0.12)) * noise(vec2(a*8.0, uTime*0.25));
+      float streak = pow(s, 6.0) * smoothstep(0.0, 0.65, uWarp) * (0.35 + 0.65*r);
+      return vec3(streak);
+    }
+
+    void main(){
+      vec2 uv = vUV;
+      vec2 c = vec2(0.5, 0.5);
+
+      // Wormhole first (so lens can "ring" around it if desired)
+      float wormEdge = 0.0;
+      if(uWormOn > 0.5){
+        uv = wormholeDistort(uv, c, uWormRad, uWorm, wormEdge);
+      }
+
+      float ring = 0.0;
+      vec2 lUV = uv;
+      if(uLensOn > 0.5){
+        lUV = lensDistort(uv, c, uLensRad, uLensInner, uLensStr, ring);
+      }
+
+      vec4 scene = texture2D(uScene, lUV);
+
+      // Nebula fog
+      vec3 neb = nebula(vUV);
+      scene.rgb = mix(scene.rgb, scene.rgb + neb, clamp(uNeb, 0.0, 1.5));
+
+      // Warp streaks & glow
+      scene.rgb += warpStreaks(vUV) * (0.8*uWarp);
+
+      // Lens ring tint
+      if(uLensOn > 0.5){
+        scene.rgb += vec3(1.0,0.7,0.25) * ring;
+      }
+
+      // Wormhole edge shimmer
+      if(uWormOn > 0.5){
+        vec3 edgeCol = vec3(0.25,0.75,1.0) * wormEdge;
+        scene.rgb += edgeCol * (0.65 + 0.35*sin(uTime*2.2));
+        // slight chroma shift near portal
+        float cr = wormEdge * 0.0035 * uWorm;
+        vec3 sh;
+        sh.r = texture2D(uScene, lUV + vec2(cr,0.0)).r;
+        sh.g = texture2D(uScene, lUV).g;
+        sh.b = texture2D(uScene, lUV - vec2(cr,0.0)).b;
+        scene.rgb = mix(scene.rgb, sh, wormEdge*0.65);
+      }
+
+      // gentle vignette
+      vec2 p = (vUV-0.5)*vec2(uRes.x/uRes.y,1.0);
+      float vig = smoothstep(1.15, 0.2, dot(p,p));
+      scene.rgb *= (0.6 + 0.4*vig);
+
+      gl_FragColor = vec4(scene.rgb, 1.0);
+    }
+  `;
+
+  // ========= Programs =========
+  const starProg = link(compile(gl.VERTEX_SHADER, starVS), compile(gl.FRAGMENT_SHADER, starFS));
+  const compProg = link(compile(gl.VERTEX_SHADER, quadVS), compile(gl.FRAGMENT_SHADER, compFS));
+
+  // ========= Buffers =========
+  const starBuf = gl.createBuffer();
+  const colBuf  = gl.createBuffer();
+  const sizeBuf = gl.createBuffer();
+
+  const aPos = gl.getAttribLocation(starProg, 'aPos');
+  const aCol = gl.getAttribLocation(starProg, 'aCol');
+  const aSize = gl.getAttribLocation(starProg, 'aSize');
+  const uVP = gl.getUniformLocation(starProg, 'uVP');
+
+  // fullscreen quad
+  const quad = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    -1,-1,  0,0,
+     1,-1,  1,0,
+    -1, 1,  0,1,
+     1, 1,  1,1
+  ]), gl.STATIC_DRAW);
+
+  const uComp = {
+    scene: gl.getUniformLocation(compProg,'uScene'),
+    res: gl.getUniformLocation(compProg,'uRes'),
+    time: gl.getUniformLocation(compProg,'uTime'),
+    trail: gl.getUniformLocation(compProg,'uTrail'),
+    warp: gl.getUniformLocation(compProg,'uWarp'),
+    neb: gl.getUniformLocation(compProg,'uNeb'),
+    lensOn: gl.getUniformLocation(compProg,'uLensOn'),
+    wormOn: gl.getUniformLocation(compProg,'uWormOn'),
+    worm: gl.getUniformLocation(compProg,'uWorm'),
+    wormRad: gl.getUniformLocation(compProg,'uWormRad'),
+    lensRad: gl.getUniformLocation(compProg,'uLensRad'),
+    lensInner: gl.getUniformLocation(compProg,'uLensInner'),
+    lensStr: gl.getUniformLocation(compProg,'uLensStr'),
+  };
+
+  // ========= FBO (scene) =========
+  let fbo=null, colorTex=null, depthRb=null, W=0, H=0;
+  function createFBO(){
+    if(colorTex) gl.deleteTexture(colorTex);
+    if(depthRb) gl.deleteRenderbuffer(depthRb);
+    if(fbo) gl.deleteFramebuffer(fbo);
+
+    colorTex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, colorTex);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,W,H,0,gl.RGBA,gl.UNSIGNED_BYTE,null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    depthRb = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, depthRb);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, W, H);
+
+    fbo = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, colorTex, 0);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthRb);
+
+    const ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    if(ok !== gl.FRAMEBUFFER_COMPLETE) console.warn('FBO incomplete', ok);
+  }
+
+  function resize(){
+    const dpr = Math.max(1, Math.min(2.5, devicePixelRatio||1));
+    const w = Math.floor(innerWidth*dpr), h=Math.floor(innerHeight*dpr);
+    if(w===W && h===H) return;
+    W=w; H=h;
+    canvas.width=W; canvas.height=H;
+    gl.viewport(0,0,W,H);
+    createFBO();
+  }
+  addEventListener('resize', resize);
+  resize();
+
+  // ========= Camera =========
+  const cam = {
+    pos:[0,0,26],
+    yaw:0, pitch:0, roll:0,
+    orbitYaw:0, orbitPitch:0.25, orbitR:60,
+    flyT:0,
+    vel:[0,0,0],
+  };
+  function basisFromYawPitchRoll(yaw,pitch,roll){
+    // forward from yaw/pitch
+    const cy=Math.cos(yaw), sy=Math.sin(yaw);
+    const cp=Math.cos(pitch), sp=Math.sin(pitch);
+    let f = [sy*cp, sp, cy*cp]; // z forward
+    f = V3.norm(f);
+    let r = V3.norm(V3.cross([0,1,0], f));
+    let u = V3.cross(f, r);
+    // roll rotates r/u around f
+    if(Math.abs(roll)>1e-6){
+      const s=Math.sin(roll), c=Math.cos(roll);
+      const r2 = V3.add(V3.mul(r,c), V3.mul(u,s));
+      const u2 = V3.sub(V3.mul(u,c), V3.mul(r,s));
+      r=r2; u=u2;
+    }
+    return {f,r,u};
+  }
+
+  // ========= Pointer lock & mouse =========
+  let pointerLocked=false;
+  function setPointerLocked(on){
+    pointerLocked = on;
+    ui.plOut.textContent = pointerLocked ? 'on' : 'off';
+    if(pointerLocked) ui.lockBtn.textContent='Unlock';
+    else ui.lockBtn.textContent='Lock Pointer';
+  }
+  document.addEventListener('pointerlockchange', ()=>{
+    setPointerLocked(document.pointerLockElement === canvas);
+  });
+  ui.lockBtn.addEventListener('click', ()=>{
+    if(document.pointerLockElement === canvas) document.exitPointerLock();
+    else canvas.requestPointerLock();
+  });
+
+  // mouse orbit + look
+  let dragging=false, lastX=0, lastY=0;
+  canvas.addEventListener('mousedown',(e)=>{ dragging=true; lastX=e.clientX; lastY=e.clientY; });
+  addEventListener('mouseup',()=>dragging=false);
+  addEventListener('mousemove',(e)=>{
+    const dx=e.clientX-lastX, dy=e.clientY-lastY;
+    lastX=e.clientX; lastY=e.clientY;
+    const mode = ui.cameraMode.value;
+    if(pointerLocked){
+      const sx = 0.0025, sy=0.0025;
+      cam.yaw += e.movementX*sx;
+      cam.pitch = clamp(cam.pitch - e.movementY*sy, -1.5, 1.5);
+      return;
+    }
+    if(!dragging) return;
+    if(mode==='Orbit'){
+      cam.orbitYaw   += dx*0.006;
+      cam.orbitPitch = clamp(cam.orbitPitch + dy*0.006, -1.35, 1.35);
+    } else if(mode==='Cockpit'){
+      cam.yaw += dx*0.0038;
+      cam.pitch = clamp(cam.pitch - dy*0.0038, -1.5, 1.5);
+    }
+  });
+  canvas.addEventListener('wheel',(e)=>{
+    const mode=ui.cameraMode.value;
+    const s = Math.sign(e.deltaY);
+    if(mode==='Orbit'){
+      cam.orbitR = clamp(cam.orbitR * (1.0 + s*0.08), 6, 520);
+    }else{
+      // fov zoom
+      ui.fov.value = clamp(+ui.fov.value + s*2.0, 25, 120);
+      syncHUD();
+    }
+  }, {passive:true});
+
+  // ========= Keys =========
+  const keys = Object.create(null);
+  addEventListener('keydown',(e)=>{
+    keys[e.code]=true;
+    if(e.code==='KeyP'){ savePNG(); }
+    if(e.code==='KeyC'){ cycleCamera(); }
+    if(e.code==='KeyL'){ ui.lockBtn.click(); }
+    if(e.code==='KeyG'){ ui.wormOn.checked = !ui.wormOn.checked; }
+  });
+  addEventListener('keyup',(e)=>{ keys[e.code]=false; });
+
+  function cycleCamera(){
+    const list=['Cockpit','Orbit','Flyby'];
+    const i=list.indexOf(ui.cameraMode.value);
+    ui.cameraMode.value = list[(i+1)%list.length];
+    syncHUD();
+  }
+
+  // ========= Touch pads (mobile) =========
+  const padL = $('padL'), padR=$('padR'), thumbL=$('thumbL'), thumbR=$('thumbR');
+  const btns = document.getElementById('btns');
+  const touchState = { lx:0, ly:0, rx:0, ry:0, rollL:0, rollR:0, up:0, down:0, boost:0 };
+  function bindPad(pad, thumb, setXY){
+    let id=null, ox=0, oy=0;
+    const rect = ()=>pad.getBoundingClientRect();
+    const upd = (x,y)=>{
+      const r=rect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+      let dx=(x-cx)/(r.width/2), dy=(y-cy)/(r.height/2);
+      const l=Math.hypot(dx,dy);
+      if(l>1){ dx/=l; dy/=l; }
+      thumb.style.left = (50 + dx*28) + '%';
+      thumb.style.top  = (50 + dy*28) + '%';
+      setXY(dx,dy);
+    };
+    pad.addEventListener('pointerdown',(e)=>{ id=e.pointerId; pad.setPointerCapture(id); upd(e.clientX,e.clientY); });
+    pad.addEventListener('pointermove',(e)=>{ if(id!==e.pointerId) return; upd(e.clientX,e.clientY); });
+    pad.addEventListener('pointerup',(e)=>{ if(id!==e.pointerId) return; id=null; thumb.style.left='36%'; thumb.style.top='36%'; setXY(0,0); });
+    pad.addEventListener('pointercancel',()=>{ id=null; thumb.style.left='36%'; thumb.style.top='36%'; setXY(0,0); });
+  }
+  bindPad(padL, thumbL, (x,y)=>{ touchState.lx=x; touchState.ly=y; });
+  bindPad(padR, thumbR, (x,y)=>{ touchState.rx=x; touchState.ry=y; });
+  btns.addEventListener('pointerdown',(e)=>{
+    const b = e.target.closest('button'); if(!b) return;
+    const act = b.dataset.act;
+    touchState[act]=1;
+  });
+  btns.addEventListener('pointerup',(e)=>{
+    const b = e.target.closest('button'); if(!b) return;
+    const act=b.dataset.act; touchState[act]=0;
+  });
+  btns.addEventListener('pointerleave',()=>{
+    ['rollL','rollR','up','down','boost'].forEach(k=>touchState[k]=0);
+  });
+
+  // ========= Gamepad =========
+  // Robust Gamepad API support (standard mapping + smoothing + deadzones)
+  const GP = (() => {
+    const cfg = {
+      deadzone: 0.14,   // axis deadzone
+      curve: 1.35,      // response curve (>1 = softer center)
+      smoothing: 0.22,  // 0..1 (higher = snappier)
+      lookSens: 2.1,    // right stick look multiplier
+      moveSens: 1.0,    // left stick move multiplier
+      invertY: false,   // invert right stick Y
+      haptics: true,    // rumble where supported
+    };
+
+    let index = null;
+    let lastLabel = 'none';
+
+    const s = {
+      lx:0, ly:0, rx:0, ry:0, lt:0, rt:0,
+      A:false, B:false, X:false, Y:false,
+      LB:false, RB:false, Back:false, Start:false,
+      LS:false, RS:false,
+      dUp:false, dDown:false, dLeft:false, dRight:false,
+      mapping:'', _gp:null,
+    };
+
+    const prev = {
+      A:false, B:false, X:false, Y:false,
+      LB:false, RB:false, Back:false, Start:false,
+      LS:false, RS:false,
+      dUp:false, dDown:false, dLeft:false, dRight:false,
+    };
+    const edgeMap = Object.create(null);
+
+    function pickGamepad(){
+      const gps = navigator.getGamepads ? navigator.getGamepads() : [];
+      if(index !== null && gps[index] && gps[index].connected) return gps[index];
+      for(let i=0;i<gps.length;i++){
+        const g = gps[i];
+        if(g && g.connected){ index=i; return g; }
+      }
+      index = null;
+      return null;
+    }
+
+    function dzAxis(x){
+      const dz = cfg.deadzone;
+      const ax = Math.abs(x);
+      if(ax < dz) return 0;
+      const nx = (ax - dz) / Math.max(1e-6, (1 - dz));
+      const curved = Math.pow(nx, cfg.curve);
+      return Math.sign(x) * curved;
+    }
+
+    function smooth(prevVal, nextVal, a){ return lerp(prevVal, nextVal, a); }
+
+    function poll(dt){
+      const gp = pickGamepad();
+      if(!gp){
+        s._gp = null;
+        if(lastLabel !== 'none'){ lastLabel='none'; ui.gpOut.textContent='none'; }
+        return null;
+      }
+
+      const label = (gp.id || 'gamepad').slice(0, 42);
+      const map = gp.mapping || '';
+      if(label !== lastLabel){
+        lastLabel = label;
+        ui.gpOut.textContent = label + (map ? (' · ' + map) : '');
+      }
+
+      const a = clamp(1 - Math.pow(1 - cfg.smoothing, dt*60), 0, 1);
+
+      // axes (standard mapping)
+      const rawLX = dzAxis((gp.axes[0]||0) * cfg.moveSens);
+      const rawLY = dzAxis((gp.axes[1]||0) * cfg.moveSens);
+      const rawRX = dzAxis((gp.axes[2]||0) * cfg.lookSens);
+      const rawRY = dzAxis((gp.axes[3]||0) * cfg.lookSens) * (cfg.invertY ? -1 : 1);
+
+      s.lx = smooth(s.lx, rawLX, a);
+      s.ly = smooth(s.ly, rawLY, a);
+      s.rx = smooth(s.rx, rawRX, a);
+      s.ry = smooth(s.ry, rawRY, a);
+
+      // triggers (standard: buttons 6/7 are LT/RT analog)
+      s.lt = gp.buttons[6]?.value || 0;
+      s.rt = gp.buttons[7]?.value || 0;
+
+      // digital buttons (standard)
+      s.A = !!gp.buttons[0]?.pressed;
+      s.B = !!gp.buttons[1]?.pressed;
+      s.X = !!gp.buttons[2]?.pressed;
+      s.Y = !!gp.buttons[3]?.pressed;
+      s.LB = !!gp.buttons[4]?.pressed;
+      s.RB = !!gp.buttons[5]?.pressed;
+      s.Back = !!gp.buttons[8]?.pressed;
+      s.Start = !!gp.buttons[9]?.pressed;
+      s.LS = !!gp.buttons[10]?.pressed;
+      s.RS = !!gp.buttons[11]?.pressed;
+      s.dUp = !!gp.buttons[12]?.pressed;
+      s.dDown = !!gp.buttons[13]?.pressed;
+      s.dLeft = !!gp.buttons[14]?.pressed;
+      s.dRight = !!gp.buttons[15]?.pressed;
+
+      // rising-edge detection
+      for(const k in prev){
+        edgeMap[k] = !!s[k] && !prev[k];
+        prev[k] = !!s[k];
+      }
+
+      s.mapping = map;
+      s._gp = gp;
+      return s;
+    }
+
+    function edge(k){ return !!edgeMap[k]; }
+
+    async function rumble(strong=0.6, weak=0.4, dur=90){
+      if(!cfg.haptics) return;
+      const gp = pickGamepad();
+      const va = gp?.vibrationActuator;
+      if(!va || typeof va.playEffect !== 'function') return;
+      try{
+        await va.playEffect('dual-rumble', {
+          duration: dur,
+          strongMagnitude: clamp(strong,0,1),
+          weakMagnitude: clamp(weak,0,1)
+        });
+      }catch(_){}
+    }
+
+    // Keep UI fresh even if Safari doesn't fire connect events reliably.
+    addEventListener('gamepadconnected', ()=>{ /* UI updates via poll() */ });
+    addEventListener('gamepaddisconnected', ()=>{ ui.gpOut.textContent = 'none'; });
+
+    return { cfg, poll, edge, rumble };
+  })();
+
+  // ========= Infinite starfield (chunked) =========
+
+  const WORLD = {
+    seed: u32((Math.random()*1e9)|0),
+    chunkSize: 140.0,
+    chunkRadius: 2, // 5^3 chunks
+    originChunk:[0,0,0],
+    origin:[0,0,0],
+    starPos:null,
+    starCol:null,
+    starSize:null,
+    count:0,
+    dirty:true,
+  };
+  function reseed(){
+    WORLD.seed = u32((Math.random()*1e9)|0);
+    WORLD.dirty = true;
+    ui.seedOut.textContent = WORLD.seed.toString(16);
+  }
+  ui.reseedBtn.addEventListener('click', reseed);
+  reseed();
+
+  function currentOriginFromCam(){
+    const cs = WORLD.chunkSize;
+    const cx = Math.floor(cam.pos[0]/cs);
+    const cy = Math.floor(cam.pos[1]/cs);
+    const cz = Math.floor(cam.pos[2]/cs);
+    return [cx,cy,cz];
+  }
+
+  function genStars(){
+    const cs = WORLD.chunkSize;
+    const R  = WORLD.chunkRadius;
+    const base = currentOriginFromCam();
+    // only rebuild if chunk changed or UI count changed or dirty
+    const sc = +ui.starCount.value;
+    const chunks = (2*R+1)**3;
+    const starsPerChunk = Math.max(120, Math.floor(sc / chunks));
+    const total = starsPerChunk * chunks;
+
+    WORLD.originChunk = base;
+    WORLD.origin = [base[0]*cs, base[1]*cs, base[2]*cs];
+
+    const pos = new Float32Array(total*3);
+    const col = new Float32Array(total*3);
+    const siz = new Float32Array(total);
+
+    let k=0;
+    for(let dz=-R; dz<=R; dz++){
+      for(let dy=-R; dy<=R; dy++){
+        for(let dx=-R; dx<=R; dx++){
+          const cx = base[0]+dx, cy=base[1]+dy, cz=base[2]+dz;
+          const rng = makeRng(hash3(cx,cy,cz) ^ WORLD.seed);
+          for(let i=0;i<starsPerChunk;i++){
+            // local position around origin (keeps precision)
+            const x = (dx + rng.next01() - 0.5) * cs;
+            const y = (dy + rng.next01() - 0.5) * cs;
+            const z = (dz + rng.next01() - 0.5) * cs;
+
+            // spectral-ish color
+            const t = Math.pow(rng.next01(), 0.45); // bias to blue/white
+            const cold = [1.0,0.72,0.50];
+            const hot  = [0.72,0.82,1.0];
+            let r = lerp(cold[0], hot[0], t);
+            let g = lerp(cold[1], hot[1], t);
+            let b = lerp(cold[2], hot[2], t);
+
+            const bright = 0.22 + 1.15*Math.pow(rng.next01(), 2.2);
+            r*=bright; g*=bright; b*=bright;
+
+            // size: mostly small, some giants
+            const s = 0.7 + 3.0*Math.pow(rng.next01(), 3.0) + (rng.next01()<0.002 ? 7.0:0.0);
+
+            pos[k*3+0]=x; pos[k*3+1]=y; pos[k*3+2]=z;
+            col[k*3+0]=r; col[k*3+1]=g; col[k*3+2]=b;
+            siz[k]=s;
+            k++;
+          }
+        }
+      }
+    }
+    WORLD.starPos=pos; WORLD.starCol=col; WORLD.starSize=siz; WORLD.count=total; WORLD.dirty=false;
+
+    // upload
+    gl.bindBuffer(gl.ARRAY_BUFFER, starBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, pos, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, colBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, col, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, sizeBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, siz, gl.STATIC_DRAW);
+  }
+
+  // ========= Orbits & belts (simple stylized geometry) =========
+  // Keep it light: draw orbits as line loops in the same star program by using POINTS?
+  // We'll draw orbits in composite via subtle rings (procedural).
+  // We'll use uniforms & procedural overlay in composite for belts when toggled (cheap).
+  // (So: no extra buffers here.)
+
+  // ========= Save PNG =========
+  function savePNG(){
+    const a=document.createElement('a');
+    a.download = `uniphi_infinite_${Date.now()}.png`;
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  }
+  ui.pngBtn.addEventListener('click', savePNG);
+
+  // ========= Frame =========
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+  gl.enable(gl.DEPTH_TEST);
+
+  let prev = performance.now();
+  // gamepad edges handled in GP
+
+  // fade program (for trails) — draws black quad with alpha
+  const fadeVS = `
+    attribute vec2 aPos; attribute vec2 aUV;
+    varying vec2 vUV;
+    void main(){ gl_Position=vec4(aPos,0,1); vUV=aUV; }
+  `;
+  const fadeFS = `
+    precision mediump float;
+    varying vec2 vUV;
+    uniform float uA;
+    void main(){ gl_FragColor = vec4(0.0,0.0,0.0,uA); }
+  `;
+  const fadeProg = link(compile(gl.VERTEX_SHADER, fadeVS), compile(gl.FRAGMENT_SHADER, fadeFS));
+  const uFadeA = gl.getUniformLocation(fadeProg, 'uA');
+  const aFadePos = gl.getAttribLocation(fadeProg, 'aPos');
+  const aFadeUV  = gl.getAttribLocation(fadeProg, 'aUV');
+
+  function drawFade(alpha){
+    gl.useProgram(fadeProg);
+    gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+    gl.enableVertexAttribArray(aFadePos);
+    gl.vertexAttribPointer(aFadePos,2,gl.FLOAT,false,16,0);
+    gl.enableVertexAttribArray(aFadeUV);
+    gl.vertexAttribPointer(aFadeUV,2,gl.FLOAT,false,16,8);
+    gl.uniform1f(uFadeA, alpha);
+    gl.disable(gl.DEPTH_TEST);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+    gl.enable(gl.DEPTH_TEST);
+  }
+
+  function frame(now){
+    resize();
+    const dt = Math.min(0.05, (now-prev)/1000); prev=now;
+    const sp = +ui.speed.value;
+    const speedBoost = (keys['ShiftLeft']||keys['ShiftRight']) ? 2.0 : 1.0;
+
+    // Update origin & stars if needed
+    const oc = currentOriginFromCam();
+    if(WORLD.dirty ||
+      oc[0]!==WORLD.originChunk[0] || oc[1]!==WORLD.originChunk[1] || oc[2]!==WORLD.originChunk[2]){
+      genStars();
+    }
+
+    // input sources
+    const gp = GP.poll(dt);
+
+    // gamepad actions (edge-based)
+    if(gp){
+      if(GP.edge('Y')) { cycleCamera(); GP.rumble(0.35,0.25,60); }
+      if(GP.edge('X')) { ui.wormOn.checked = !ui.wormOn.checked; GP.rumble(0.75,0.55,120); }
+      if(GP.edge('Start')) { ui.lockBtn.click(); GP.rumble(0.25,0.15,40); }
+      if(GP.edge('Back')) { savePNG(); GP.rumble(0.18,0.10,40); }
+      if(GP.edge('RS')) { ui.lensOn.checked = !ui.lensOn.checked; GP.rumble(0.20,0.12,40); }
+      if(GP.edge('LS')) { ui.showOrbits.checked = !ui.showOrbits.checked; }
+    }
+
+    // D-pad left/right: time-speed (hold)
+    if(gp && (gp.dLeft || gp.dRight)){
+      const d = (gp.dRight?1:0) - (gp.dLeft?1:0);
+      ui.speed.value = clamp(+ui.speed.value + d*1.2*dt, +ui.speed.min, +ui.speed.max);
+      syncHUD();
+    }
+
+    // camera update
+    const mode = ui.cameraMode.value;
+    if(mode==='Cockpit'){
+      // movement + look
+      const {f,r,u} = basisFromYawPitchRoll(cam.yaw, cam.pitch, cam.roll);
+      const accel = 38.0 * sp * speedBoost;
+      const damp  = Math.pow(0.0008, dt); // frame-rate-ish damping
+
+      let ax=0, ay=0, az=0;
+      const kW = keys['KeyW']||keys['ArrowUp'];
+      const kS = keys['KeyS']||keys['ArrowDown'];
+      const kA = keys['KeyA']||keys['ArrowLeft'];
+      const kD = keys['KeyD']||keys['ArrowRight'];
+      const kR = keys['KeyR'];
+      const kF = keys['KeyF'];
+      const brake = keys['Space'];
+
+      // gamepad mix + touch
+      const lx = (gp?gp.lx:0) + touchState.lx;
+      const ly = (gp?gp.ly:0) + touchState.ly;
+
+      const rx = (gp?gp.rx:0) + touchState.rx;
+      const ry = (gp?gp.ry:0) + touchState.ry;
+
+      // thrust/strafe
+      ax += (kD?1:0) - (kA?1:0);
+      az += (kW?1:0) - (kS?1:0);
+      ay += (kR?1:0) - (kF?1:0);
+
+      ax += lx;
+      az += -ly;
+
+      // gamepad: dpad vertical + triggers as throttle
+      if(gp){
+        ay += (gp.dUp?1:0) - (gp.dDown?1:0);
+        az += gp.rt * 1.15;
+        az -= gp.lt * 0.85;
+      }
+
+      // convert into world
+      let acc = [0,0,0];
+      acc = V3.add(acc, V3.mul(r, ax*accel));
+      acc = V3.add(acc, V3.mul(f, az*accel));
+      acc = V3.add(acc, V3.mul(u, ay*accel));
+
+      cam.vel[0] = cam.vel[0]*damp + acc[0]*dt;
+      cam.vel[1] = cam.vel[1]*damp + acc[1]*dt;
+      cam.vel[2] = cam.vel[2]*damp + acc[2]*dt;
+
+      if(brake || (gp && gp.B)) {
+        cam.vel[0]*=0.90; cam.vel[1]*=0.90; cam.vel[2]*=0.90;
+      }
+
+      cam.pos[0]+=cam.vel[0]*dt;
+      cam.pos[1]+=cam.vel[1]*dt;
+      cam.pos[2]+=cam.vel[2]*dt;
+
+      // look from mouse pointer lock / or right stick
+      const lookSp = 1.15 * dt;
+      cam.yaw   += rx * lookSp;
+      cam.pitch  = clamp(cam.pitch - ry * lookSp, -1.5, 1.5);
+// roll (keys + touch buttons)
+      const roll = ((keys['KeyE']?1:0)-(keys['KeyQ']?1:0))
+        + (touchState.rollR?1:0) - (touchState.rollL?1:0)
+        + (gp ? ((gp.RB?1:0)-(gp.LB?1:0)) : 0);
+      cam.roll += roll * 1.8 * dt;
+
+      // boost (touch/button A)
+      if((touchState.boost||0) || (gp && gp.A)){
+        cam.vel[0]+=f[0]*accel*0.015;
+        cam.vel[1]+=f[1]*accel*0.015;
+        cam.vel[2]+=f[2]*accel*0.015;
+      }
+}
+    else if(mode==='Orbit'){
+      // orbit around local origin (0,0,0)
+      // allow keyboard orbit too
+      const rot = 1.2 * dt;
+      if(keys['ArrowLeft']||keys['KeyA']) cam.orbitYaw -= rot;
+      if(keys['ArrowRight']||keys['KeyD']) cam.orbitYaw += rot;
+      if(keys['ArrowUp']||keys['KeyW']) cam.orbitPitch = clamp(cam.orbitPitch - rot, -1.35, 1.35);
+      if(keys['ArrowDown']||keys['KeyS']) cam.orbitPitch = clamp(cam.orbitPitch + rot, -1.35, 1.35);
+
+      if(gp){
+        const ox = gp.lx + gp.rx*0.45;
+        const oy = gp.ly + gp.ry*0.45;
+        cam.orbitYaw += ox * rot * 1.8;
+        cam.orbitPitch = clamp(cam.orbitPitch + oy * rot * 1.8, -1.35, 1.35);
+        const zoom = (gp.lt - gp.rt) * 1.35 * dt;
+        cam.orbitR = clamp(cam.orbitR * (1.0 + zoom), 6, 900);
+      }
+      const cy=Math.cos(cam.orbitYaw), sy=Math.sin(cam.orbitYaw);
+      const cp=Math.cos(cam.orbitPitch), sp2=Math.sin(cam.orbitPitch);
+      cam.pos = [ sy*cp*cam.orbitR, sp2*cam.orbitR, cy*cp*cam.orbitR ];
+      // keep view orientation towards origin
+      cam.yaw = cam.orbitYaw;
+      cam.pitch = -cam.orbitPitch*0.95;
+      cam.roll *= Math.pow(0.2, dt);
+    }
+    else if(mode==='Flyby'){
+      const gpFly = gp;
+      const extra = gpFly ? (gpFly.rt - gpFly.lt) * 0.55 : 0.0;
+      cam.flyT += dt * sp * (0.35 * speedBoost + extra);
+      const t = cam.flyT;
+      // lissajous-ish path
+      const x = Math.sin(t*0.9)*95 + Math.sin(t*0.12)*180;
+      const y = Math.sin(t*0.6)*42 + Math.sin(t*0.17)*60;
+      const z = Math.cos(t*0.92)*95 + Math.cos(t*0.11)*180;
+      cam.pos = [x,y,z];
+      // orientation looks along curve derivative
+      const dx = 0.9*Math.cos(t*0.9)*95 + 0.12*Math.cos(t*0.12)*180;
+      const dy = 0.6*Math.cos(t*0.6)*42 + 0.17*Math.cos(t*0.17)*60;
+      const dz = -0.92*Math.sin(t*0.92)*95 + -0.11*Math.sin(t*0.11)*180;
+      const f = V3.norm([dx,dy,dz]);
+      cam.yaw = Math.atan2(f[0], f[2]);
+      cam.pitch = Math.asin(clamp(f[1],-1,1));
+      if(gpFly){
+        cam.yaw += gpFly.rx * 0.22;
+        cam.pitch = clamp(cam.pitch - gpFly.ry * 0.18, -1.35, 1.35);
+      }
+      cam.roll = 0.35*Math.sin(t*0.4);
+    }
+
+    // ========== matrices in LOCAL space ==========
+    const o = WORLD.origin;
+    const localCam = [cam.pos[0]-o[0], cam.pos[1]-o[1], cam.pos[2]-o[2]];
+    const {f} = basisFromYawPitchRoll(cam.yaw, cam.pitch, cam.roll);
+    const localTarget = V3.add(localCam, f); // look forward
+    const proj = Mat4.perspective((+ui.fov.value*Math.PI)/180, W/H, 0.1, 2600);
+    const view = Mat4.lookAt(localCam, localTarget, [0,1,0]);
+    const VP = Mat4.mul(proj, view);
+
+    // stats
+    const v = V3.len(cam.vel);
+    ui.statOut.textContent =
+      `pos=${cam.pos.map(n=>n.toFixed(1)).join(',')}  vel=${v.toFixed(2)}  originChunk=${WORLD.originChunk.join(',')}  stars=${WORLD.count}`;
+
+    // ========== Pass 1: render scene to FBO ==========
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.viewport(0,0,W,H);
+
+    // trails: fade previous frame
+    const fade = +ui.trail.value;
+    gl.disable(gl.DEPTH_TEST);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    drawFade(fade);
+    gl.enable(gl.DEPTH_TEST);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+
+    // stars
+    if(ui.showStars.checked){
+      gl.useProgram(starProg);
+      gl.uniformMatrix4fv(uVP, false, VP);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, starBuf);
+      gl.enableVertexAttribArray(aPos);
+      gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 0, 0);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, colBuf);
+      gl.enableVertexAttribArray(aCol);
+      gl.vertexAttribPointer(aCol, 3, gl.FLOAT, false, 0, 0);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, sizeBuf);
+      gl.enableVertexAttribArray(aSize);
+      gl.vertexAttribPointer(aSize, 1, gl.FLOAT, false, 0, 0);
+
+      gl.drawArrays(gl.POINTS, 0, WORLD.count);
+    }
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.disable(gl.DEPTH_TEST);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+    // ========== Pass 2: composite to screen ==========
+    gl.useProgram(compProg);
+    gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+    const aQP = gl.getAttribLocation(compProg, 'aPos');
+    const aQU = gl.getAttribLocation(compProg, 'aUV');
+    gl.enableVertexAttribArray(aQP);
+    gl.vertexAttribPointer(aQP,2,gl.FLOAT,false,16,0);
+    gl.enableVertexAttribArray(aQU);
+    gl.vertexAttribPointer(aQU,2,gl.FLOAT,false,16,8);
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, colorTex);
+    gl.uniform1i(uComp.scene, 0);
+    gl.uniform2f(uComp.res, W, H);
+    gl.uniform1f(uComp.time, now*0.001);
+
+    gl.uniform1f(uComp.trail, fade);
+    gl.uniform1f(uComp.warp, +ui.warp.value);
+    gl.uniform1f(uComp.neb, +ui.nebula.value);
+    gl.uniform1f(uComp.lensOn, ui.lensOn.checked ? 1.0 : 0.0);
+    gl.uniform1f(uComp.wormOn, ui.wormOn.checked ? 1.0 : 0.0);
+    gl.uniform1f(uComp.worm, +ui.worm.value);
+    gl.uniform1f(uComp.wormRad, +ui.wormRad.value);
+
+    // lens parameters (tuned)
+    gl.uniform1f(uComp.lensRad, 0.22 + 0.04*(+ui.worm.value)); // linked to worm strength a bit
+    gl.uniform1f(uComp.lensInner, 0.03);
+    gl.uniform1f(uComp.lensStr, 1.0);
+
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+    requestAnimationFrame(frame);
+  }
+
+  // UI actions
+  ui.wormOn.addEventListener('change', syncHUD);
+  ui.lensOn.addEventListener('change', syncHUD);
+  ui.pngBtn.addEventListener('click', savePNG);
+
+  // seed out
+  ui.seedOut.textContent = WORLD.seed.toString(16);
+
+  requestAnimationFrame(frame);
+
+})();
+</script>
+</body>
+</html>

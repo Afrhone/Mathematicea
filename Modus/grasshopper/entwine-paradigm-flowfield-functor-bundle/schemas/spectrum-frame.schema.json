@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SpectrumFrame",
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "number"
+    },
+    "source": {
+      "type": "string"
+    },
+    "center_hz": {
+      "type": "number"
+    },
+    "sample_rate": {
+      "type": "number"
+    },
+    "bins": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "power": {
+      "type": "number"
+    }
+  }
+}

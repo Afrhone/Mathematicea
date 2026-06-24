@@ -1,0 +1,32 @@
+providers:
+  llama_gpu:
+    kind: openai
+    base_url: http://192.168.0.125:8088/v1
+    priority: 10
+    tags: [local, gguf, preferred]
+  gpu_compute_vllm:
+    kind: openai
+    base_url: http://192.168.0.52:8000/v1
+    priority: 20
+    tags: [local, cuda, vllm, heavy]
+  gpu_compute_diffusers:
+    kind: image
+    base_url: http://192.168.0.52:7860
+    priority: 25
+    tags: [local, cuda, image]
+  docker_model_runner:
+    kind: openai
+    base_url: http://model-runner.docker.internal:12434/engines/v1
+    native_url: http://model-runner.docker.internal:12434
+    priority: 30
+    tags: [local, dmr, docker]
+  sigmo_llama_cpp:
+    kind: openai
+    base_url: http://llama-cpp:8088/v1
+    priority: 40
+    tags: [local, cpu, fallback]
+  ollama:
+    kind: openai
+    base_url: http://ollama:11434/v1
+    priority: 50
+    tags: [local, ollama]

@@ -1,0 +1,72 @@
+{
+  "modules": [
+    {
+      "id": "monitoring",
+      "label": "Monitoring Core",
+      "services": [
+        "collector",
+        "guardian-api",
+        "mongo"
+      ]
+    },
+    {
+      "id": "sinkhole-dns",
+      "label": "DNS Sinkhole",
+      "services": [
+        "coredns",
+        "blocklist"
+      ]
+    },
+    {
+      "id": "llm-gateway",
+      "label": "LLM Guardian Gateway",
+      "services": [
+        "llama-gpu",
+        "gpu-compute",
+        "ollama",
+        "vllm"
+      ]
+    },
+    {
+      "id": "rag",
+      "label": "RAG + Search Tree",
+      "services": [
+        "mongo",
+        "embeddings",
+        "reranker"
+      ]
+    },
+    {
+      "id": "webgl-ui",
+      "label": "Live Hypergraph UI",
+      "services": [
+        "next",
+        "webgl"
+      ]
+    },
+    {
+      "id": "dev-env",
+      "label": "Gated Dev Hypernode",
+      "services": [
+        "lxd",
+        "docker",
+        "git"
+      ]
+    },
+    {
+      "id": "swarm",
+      "label": "Swarm Agent Porting",
+      "services": [
+        "docker-swarm",
+        "overlay"
+      ]
+    },
+    {
+      "id": "vpn",
+      "label": "WireGuard Mesh",
+      "services": [
+        "wg-sinkhole"
+      ]
+    }
+  ]
+}

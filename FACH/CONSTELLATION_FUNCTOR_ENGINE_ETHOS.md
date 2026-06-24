@@ -1,0 +1,115 @@
+
+
+CONSTELLATION-FUNCTOR ENGINE ETHOS 
+
+Integrate pass tier singularity knowledge basis axiom - evidence based canonical signal flow. Archetypal artefact human machine interface.
+Generate abstract input interface and knowledge systemic intelligence to agent with layered structures
+
+Where - intertwin - interwin
+/rhiz/ applicative
+/hypergraph
+/cloud-compute
+/PH|OS
+
+
+Abstract
+AGI singularity pass tier
+Format and systemics
+Hyperbolic elliptical design workflow
+
+
+Pass tier 5
+
+Digital entity superintelligence innovation singularity based
+In cycling symmetries and high computational pipeline signal flows, layered orchestration and cascading vertical ontology
+
+
+Pass tier 4
+
+Pass tier structured interface generation, iterative knowledge basis singularity approach
+
+Pass tier 3
+Sequence following approach in cascading systemics,
+Vertical to align abstract interfaces input
+
+Pass tier 2
+Integrate knowledge in the context of unsupervised learning contingency of PHI|OS, akatsuki singularity kobalt sigma llm model, hypergraph,
+Building orchastrated self supervised learning, as modular signal flow following cascade orchestration and dynamical states spaces functor, pipeline and clustering, virtualisation, parralel orchestration, ontologique abstraction, integrating signal flows generative interfaces, with realtime dashboard monitoring, provenance and agent orchestration self supervised architecture and workflow design logs. Integrate PHI|OS hypergraph and generate UI UX, dashboard monitoring and signal flows functor extractor as dynamic generative states spaces and functor, with absract invariants numerals towards independent generic modules as a mathematical definition in allication timeframe and problem solving strategy orchestration system self supervised self supervised architecture.
+
+
+Path tier 1
+Self-supervised polyfractal signal flow
+———————
+Path tier 0 
+RAG
+
+Interwin mark up down
+———————
+Persistent llm maintained record
+
+- Full time librarian
+- Actively compiling, linting
+- Interlinking Markdown
+
+Sturctured knowledge manipulation, transmutation
+(Signal flow extractor, functors, extracting intelligent flow modiles beyond function and sequence based algorithm)
+Hypergraph -> grasshopper | gen adversarial
+
+Self-healing, auditable, human reading
+
+
+Llm knowledge base - 3 stages
+Retrieval-augmented generation
+Doc chopped to chunks -> math vectors (embeddings)
+Stored specified db
+
+1. Data Ingest: Raw materials—research papers, GitHub repositories, datasets, and web articles—are dumped into a raw/ directory. Karpathy utilizes the Obsidian Web Clipper to convert web content into Markdown (.md) files, ensuring even images are stored locally so the LLM can reference them via vision capabilities.
+2. The Compilation Step: This is the core innovation. Instead of just indexing the files, the LLM "compiles" them. It reads the raw data and writes a structured wiki. This includes generating summaries, identifying key concepts, authoring encyclopedia-style articles, and—crucially—creating backlinks between related ideas.
+3. Active Maintenance (Linting): The system isn't static. Karpathy describes running "health checks" or "linting" passes where the LLM scans the wiki for inconsistencies, missing data, or new connections. As community member Charly Wargnier observed, "It acts as a living AI knowledge base that actually heals itself."
+(Venturebeat article)
+
+Solution: avoid black box, tracability
+
+Draft, validation, promoted by external tools for structured evaluation and dynamic approach canonisation.
+
+Ie venturebeat
+
+This system creates a "Compound Loop": agents dump raw outputs, the compiler organizes them, Hermes validates the truth, and verified briefings are fed back to agents at the start of each session. This ensures that the swarm never "wakes up blank," but instead begins every task with a filtered, high-integrity briefing of everything the collective has learned
+
+
+Feature	Vector DB / RAG	Karpathy’s Markdown Wiki
+Data Format	Opaque Vectors (Math)	Human-Readable Markdown
+Logic	Semantic Similarity (Nearest Neighbor)	Explicit Connections (Backlinks/Indices)
+Auditability	Low (Black Box)	High (Direct Traceability)
+Compounding	Static (Requires re-indexing)	Active (Self-healing through linting)
+Ideal Scale	Millions of Documents	100 - 10,000 High-Signal Documents
+
+Complexity entropy controls and abatraction through continious llm linting 
+(Building perfect training sets)
+
+Problem solved: en of forgotten bookmarks,
+Imtegrate with though experiment and synchronicity PHI|OS interface abstract inputs, include notepad feed composer allowing raw note input, bookmarks, architecture relations using signal flows live composer. Build new UI UX in uniphi and gamepad.
+
+
+Raw/dta lake ——> compiled knowledge asset
+
+Integrate artefact input preset, with scrapping modules and signal flow composer, in self supervised learning ark, integrate search knowledge integration using preset: 
+
+venturebeat
+
+Add self evaluation ranking promotion system, using the elliptical hyperbolic design flow to rank best practices in the spectrum of a workflow.
+
+
+Signal flow composer ( data brick)
+
+Test input:
+
+https://venturebeat.com/data/imagine-if-your-teams-or-slack-messages-automatically-turned-into-secure
+
+https://venturebeat.com/orchestration/mistral-ai-just-released-a-text-to-speech-model-it-says-beats-elevenlabs-and
+
+Integrate agent interview, Q&A on the base of self supervised processes, freewill and systemic logics mk0, using human interaction for differential nuancing and abstraction. Update agent chat gamepad for controller interaction in signal flows. Update drag and drop signal flow controler to allow xbox controller, using fullscreej scaling interface, to arrange hypergraph. Components, card nodes edges.
+
+Tools
+
+https://github.com/itsOwen/CyberScraper-2077

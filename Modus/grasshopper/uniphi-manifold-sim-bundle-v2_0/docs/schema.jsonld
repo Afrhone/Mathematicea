@@ -1,0 +1,376 @@
+{
+  "@context": {
+    "id": "@id",
+    "type": "@type",
+    "label": "http://www.w3.org/2000/01/rdf-schema#label",
+    "Domain": "https://example.org/schema/Domain",
+    "Concept": "https://example.org/schema/Concept",
+    "Observable": "https://example.org/schema/Observable",
+    "Operator": "https://example.org/schema/Operator",
+    "Model": "https://example.org/schema/Model",
+    "Parameter": "https://example.org/schema/Parameter",
+    "contains": "https://example.org/schema/contains",
+    "implemented_by": "https://example.org/schema/implemented_by",
+    "part_of": "https://example.org/schema/part_of",
+    "outputs": "https://example.org/schema/outputs",
+    "parameter": "https://example.org/schema/parameter",
+    "rel": "https://example.org/schema/rel",
+    "from": "https://example.org/schema/from",
+    "to": "https://example.org/schema/to",
+    "nodes": "https://example.org/schema/nodes",
+    "edges": "https://example.org/schema/edges",
+    "schema_version": "https://example.org/schema/schema_version",
+    "description": "https://example.org/schema/description",
+    "domain": "https://example.org/schema/domain",
+    "operators": "https://example.org/schema/operators",
+    "outputs_list": "https://example.org/schema/outputs_list",
+    "operator": "https://example.org/schema/operator"
+  },
+  "schema_version": "2.0",
+  "description": "JSON-LD export of the typed knowledge graph.",
+  "nodes": [
+    {
+      "id": "dom_thermo",
+      "type": "Domain",
+      "label": "thermodynamics"
+    },
+    {
+      "id": "dom_fluids",
+      "type": "Domain",
+      "label": "fluid_dynamics"
+    },
+    {
+      "id": "dom_prob",
+      "type": "Domain",
+      "label": "probability"
+    },
+    {
+      "id": "dom_stats",
+      "type": "Domain",
+      "label": "statistics"
+    },
+    {
+      "id": "dom_chem",
+      "type": "Domain",
+      "label": "chemistry"
+    },
+    {
+      "id": "dom_qmd",
+      "type": "Domain",
+      "label": "quantum_md"
+    },
+    {
+      "id": "dom_edyn",
+      "type": "Domain",
+      "label": "electrodynamics"
+    },
+    {
+      "id": "dom_geom",
+      "type": "Domain",
+      "label": "geometry_manifolds"
+    },
+    {
+      "id": "dom_graph",
+      "type": "Domain",
+      "label": "graph_maps"
+    },
+    {
+      "id": "con_entropy",
+      "type": "Concept",
+      "label": "entropy_production",
+      "domain": "dom_thermo"
+    },
+    {
+      "id": "con_advection",
+      "type": "Concept",
+      "label": "advection",
+      "domain": "dom_fluids"
+    },
+    {
+      "id": "con_curlnoise",
+      "type": "Concept",
+      "label": "curl_noise",
+      "domain": "dom_fluids"
+    },
+    {
+      "id": "con_gauss",
+      "type": "Concept",
+      "label": "gaussian_clt",
+      "domain": "dom_stats"
+    },
+    {
+      "id": "con_superpos",
+      "type": "Concept",
+      "label": "superposition",
+      "domain": "dom_qmd"
+    },
+    {
+      "id": "con_born",
+      "type": "Concept",
+      "label": "born_rule",
+      "domain": "dom_qmd"
+    },
+    {
+      "id": "con_interf",
+      "type": "Concept",
+      "label": "interference_cross_term",
+      "domain": "dom_qmd"
+    },
+    {
+      "id": "con_edyncpl",
+      "type": "Concept",
+      "label": "edyn_phase_flow_proxy",
+      "domain": "dom_edyn"
+    },
+    {
+      "id": "con_metric",
+      "type": "Concept",
+      "label": "metric_curvature",
+      "domain": "dom_geom"
+    },
+    {
+      "id": "con_paths",
+      "type": "Concept",
+      "label": "path_sum",
+      "domain": "dom_graph"
+    },
+    {
+      "id": "obs_rho",
+      "type": "Observable",
+      "label": "intensity_rho(x,t)"
+    },
+    {
+      "id": "obs_phi",
+      "type": "Observable",
+      "label": "phase_phi(x,t)"
+    },
+    {
+      "id": "obs_mu",
+      "type": "Observable",
+      "label": "dipole_mu(t)"
+    },
+    {
+      "id": "obs_J",
+      "type": "Observable",
+      "label": "current_density_J(t)"
+    },
+    {
+      "id": "obs_sigma",
+      "type": "Observable",
+      "label": "conductivity_sigma(\u03c9)"
+    },
+    {
+      "id": "obs_spectrum",
+      "type": "Observable",
+      "label": "spectrum_I(\u03c9)"
+    },
+    {
+      "id": "op_advect",
+      "type": "Operator",
+      "label": "advect"
+    },
+    {
+      "id": "op_decay",
+      "type": "Operator",
+      "label": "diffuse_decay"
+    },
+    {
+      "id": "op_noise",
+      "type": "Operator",
+      "label": "stochastic_force"
+    },
+    {
+      "id": "op_interf",
+      "type": "Operator",
+      "label": "interference_inject"
+    },
+    {
+      "id": "op_helix",
+      "type": "Operator",
+      "label": "helical_symmetry_generator"
+    },
+    {
+      "id": "op_edyn",
+      "type": "Operator",
+      "label": "edyn_coupling_proxy"
+    },
+    {
+      "id": "model_toy_v2",
+      "type": "Model",
+      "label": "toy_manifold_field_model_v2",
+      "operators": [
+        "op_advect",
+        "op_helix",
+        "op_noise",
+        "op_edyn",
+        "op_interf",
+        "op_decay"
+      ],
+      "outputs": [
+        "obs_rho",
+        "obs_phi"
+      ]
+    },
+    {
+      "id": "par_decay",
+      "type": "Parameter",
+      "label": "decay",
+      "operator": "op_decay"
+    },
+    {
+      "id": "par_gauss",
+      "type": "Parameter",
+      "label": "gaussian_blend",
+      "operator": "op_noise"
+    },
+    {
+      "id": "par_ifreq",
+      "type": "Parameter",
+      "label": "interference_frequency",
+      "operator": "op_interf"
+    },
+    {
+      "id": "par_edyn",
+      "type": "Parameter",
+      "label": "electrodynamic_coupling",
+      "operator": "op_edyn"
+    }
+  ],
+  "edges": [
+    {
+      "from": "dom_thermo",
+      "to": "con_entropy",
+      "rel": "contains"
+    },
+    {
+      "from": "dom_fluids",
+      "to": "con_advection",
+      "rel": "contains"
+    },
+    {
+      "from": "dom_fluids",
+      "to": "con_curlnoise",
+      "rel": "contains"
+    },
+    {
+      "from": "dom_stats",
+      "to": "con_gauss",
+      "rel": "contains"
+    },
+    {
+      "from": "dom_qmd",
+      "to": "con_superpos",
+      "rel": "contains"
+    },
+    {
+      "from": "dom_qmd",
+      "to": "con_born",
+      "rel": "contains"
+    },
+    {
+      "from": "dom_qmd",
+      "to": "con_interf",
+      "rel": "contains"
+    },
+    {
+      "from": "dom_edyn",
+      "to": "con_edyncpl",
+      "rel": "contains"
+    },
+    {
+      "from": "dom_geom",
+      "to": "con_metric",
+      "rel": "contains"
+    },
+    {
+      "from": "dom_graph",
+      "to": "con_paths",
+      "rel": "contains"
+    },
+    {
+      "from": "con_advection",
+      "to": "op_advect",
+      "rel": "implemented_by"
+    },
+    {
+      "from": "con_entropy",
+      "to": "op_decay",
+      "rel": "implemented_by"
+    },
+    {
+      "from": "con_gauss",
+      "to": "op_noise",
+      "rel": "implemented_by"
+    },
+    {
+      "from": "con_interf",
+      "to": "op_interf",
+      "rel": "implemented_by"
+    },
+    {
+      "from": "con_edyncpl",
+      "to": "op_edyn",
+      "rel": "implemented_by"
+    },
+    {
+      "from": "op_advect",
+      "to": "model_toy_v2",
+      "rel": "part_of"
+    },
+    {
+      "from": "op_decay",
+      "to": "model_toy_v2",
+      "rel": "part_of"
+    },
+    {
+      "from": "op_noise",
+      "to": "model_toy_v2",
+      "rel": "part_of"
+    },
+    {
+      "from": "op_interf",
+      "to": "model_toy_v2",
+      "rel": "part_of"
+    },
+    {
+      "from": "op_helix",
+      "to": "model_toy_v2",
+      "rel": "part_of"
+    },
+    {
+      "from": "op_edyn",
+      "to": "model_toy_v2",
+      "rel": "part_of"
+    },
+    {
+      "from": "model_toy_v2",
+      "to": "obs_rho",
+      "rel": "outputs"
+    },
+    {
+      "from": "model_toy_v2",
+      "to": "obs_phi",
+      "rel": "outputs"
+    },
+    {
+      "from": "op_noise",
+      "to": "par_gauss",
+      "rel": "parameter"
+    },
+    {
+      "from": "op_decay",
+      "to": "par_decay",
+      "rel": "parameter"
+    },
+    {
+      "from": "op_interf",
+      "to": "par_ifreq",
+      "rel": "parameter"
+    },
+    {
+      "from": "op_edyn",
+      "to": "par_edyn",
+      "rel": "parameter"
+    }
+  ]
+}

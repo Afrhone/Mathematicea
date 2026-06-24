@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<defs><style>
+.bg{fill:#f7f0df} .ink{stroke:#111;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.thin{stroke:#111;fill:none;stroke-width:1.2;opacity:.68;stroke-linecap:round;stroke-linejoin:round}
+.txt{font-family:Arial, Helvetica, sans-serif;fill:#111;letter-spacing:1.7px} .title{font-size:50px;font-weight:700} .small{font-size:18px} .tiny{font-size:14px}
+.paper{fill:#fffaf0;stroke:#111;stroke-width:2} .dash{stroke-dasharray:7 8}
+</style></defs>
+<rect class="bg" width="1600" height="1100"/>
+<text class="txt title" x="80" y="86">AFRHO DNA JSON ATLAS</text>
+<text class="txt small" x="84" y="123">Personal ancestry summary → safe machine-readable structure</text>
+<path class="thin" d="M80 145 H1520"/>
+
+<g transform="translate(70,190)">
+  <rect class="paper" x="0" y="0" width="700" height="720" rx="16"/>
+  <text class="txt small" x="30" y="45">REGIONAL ORIGIN — visible screenshot values</text>
+  <g transform="translate(30,85)"><g transform="translate(0,0)"><rect x="0" y="0" width="18" height="18" fill="#30a66a"/><text class="txt tiny" x="32" y="15">Sénégal, Gambie et Guinée-Bissau: 25%</text><rect x="480" y="3" width="225" height="10" fill="#30a66a" opacity=".75"/></g>
+<g transform="translate(0,32)"><rect x="0" y="0" width="18" height="18" fill="#ad4bd1"/><text class="txt tiny" x="32" y="15">Ghana, Togo et Bénin: 7%</text><rect x="480" y="3" width="63" height="10" fill="#ad4bd1" opacity=".75"/></g>
+<g transform="translate(0,64)"><rect x="0" y="0" width="18" height="18" fill="#22b8b0"/><text class="txt tiny" x="32" y="15">Guinée et Sierra Leone: 2%</text><rect x="480" y="3" width="18" height="10" fill="#22b8b0" opacity=".75"/></g>
+<g transform="translate(0,96)"><rect x="0" y="0" width="18" height="18" fill="#12a9d7"/><text class="txt tiny" x="32" y="15">Bassin ouest du lac Victoria: 3%</text><rect x="480" y="3" width="27" height="10" fill="#12a9d7" opacity=".75"/></g>
+<g transform="translate(0,128)"><rect x="0" y="0" width="18" height="18" fill="#ffd46b"/><text class="txt tiny" x="32" y="15">Bassin oriental du lac Victoria: 3%</text><rect x="480" y="3" width="27" height="10" fill="#ffd46b" opacity=".75"/></g>
+<g transform="translate(0,160)"><rect x="0" y="0" width="18" height="18" fill="#4c7195"/><text class="txt tiny" x="32" y="15">Érythrée, Éthiopie du Nord et Somalie: 5%</text><rect x="480" y="3" width="45" height="10" fill="#4c7195" opacity=".75"/></g>
+<g transform="translate(0,192)"><rect x="0" y="0" width="18" height="18" fill="#ff4a47"/><text class="txt tiny" x="32" y="15">Afrique australe: <1%</text><rect x="480" y="3" width="4.5" height="10" fill="#ff4a47" opacity=".75"/></g>
+<g transform="translate(0,224)"><rect x="0" y="0" width="18" height="18" fill="#ffff00"/><text class="txt tiny" x="32" y="15">Sud du bassin du Congo: <1%</text><rect x="480" y="3" width="4.5" height="10" fill="#ffff00" opacity=".75"/></g>
+<g transform="translate(0,256)"><rect x="0" y="0" width="18" height="18" fill="#59c9bd"/><text class="txt tiny" x="32" y="15">Péninsule italienne: 7%</text><rect x="480" y="3" width="63" height="10" fill="#59c9bd" opacity=".75"/></g>
+<g transform="translate(0,288)"><rect x="0" y="0" width="18" height="18" fill="#6ec2cc"/><text class="txt tiny" x="32" y="15">Péninsule ibérique: 5%</text><rect x="480" y="3" width="45" height="10" fill="#6ec2cc" opacity=".75"/></g>
+<g transform="translate(0,320)"><rect x="0" y="0" width="18" height="18" fill="#ffad62"/><text class="txt tiny" x="32" y="15">Europe de l’Ouest et centrale: 10%</text><rect x="480" y="3" width="90" height="10" fill="#ffad62" opacity=".75"/></g>
+<g transform="translate(0,352)"><rect x="0" y="0" width="18" height="18" fill="#a59289"/><text class="txt tiny" x="32" y="15">Finlande: 3%</text><rect x="480" y="3" width="27" height="10" fill="#a59289" opacity=".75"/></g>
+<g transform="translate(0,384)"><rect x="0" y="0" width="18" height="18" fill="#ffd34c"/><text class="txt tiny" x="32" y="15">Juif ashkénaze: 3%</text><rect x="480" y="3" width="27" height="10" fill="#ffd34c" opacity=".75"/></g>
+<g transform="translate(0,416)"><rect x="0" y="0" width="18" height="18" fill="#ffc13d"/><text class="txt tiny" x="32" y="15">Inde de l’Est: 20%</text><rect x="480" y="3" width="180" height="10" fill="#ffc13d" opacity=".75"/></g>
+<g transform="translate(0,448)"><rect x="0" y="0" width="18" height="18" fill="#b65ac9"/><text class="txt tiny" x="32" y="15">Myanmar: <1%</text><rect x="480" y="3" width="4.5" height="10" fill="#b65ac9" opacity=".75"/></g>
+<g transform="translate(0,480)"><rect x="0" y="0" width="18" height="18" fill="#12b6c4"/><text class="txt tiny" x="32" y="15">Maghreb et Égypte: 5%</text><rect x="480" y="3" width="45" height="10" fill="#12b6c4" opacity=".75"/></g>
+</g>
+</g>
+
+<g transform="translate(830,190)">
+  <rect class="paper" x="0" y="0" width="690" height="720" rx="16"/>
+  <text class="txt small" x="30" y="45">JSON CORE</text>
+  <text class="txt tiny" x="30" y="90">"{"</text>
+  <text class="txt tiny" x="55" y="125">"schema": "afrho.genome.identity.v0",</text>
+  <text class="txt tiny" x="55" y="160">"prehistoric_origin": "{ non_european: .53, farmers: .26 ... }",</text>
+  <text class="txt tiny" x="55" y="195">"regional_origin": [ map of regions + percentages ],</text>
+  <text class="txt tiny" x="55" y="230">"dna_model": "{ alphabet: [A,C,G,T], codon_length: 3 }",</text>
+  <text class="txt tiny" x="55" y="265">"synthetic_demo_sequence": "ATGGCCATTGTA..."</text>
+  <text class="txt tiny" x="30" y="300">"}"</text>
+  <g transform="translate(60,360)">
+    <path class="ink" d="M0 0 C80 80 80 160 0 240 M140 0 C60 80 60 160 140 240"/>
+    <path class="thin dash" d="M20 35 H120 M18 75 H122 M20 115 H120 M18 155 H122 M20 195 H120"/>
+    <text class="txt tiny" x="190" y="42">DNA letters</text>
+    <text class="txt tiny" x="190" y="82">group by 3 → codon</text>
+    <text class="txt tiny" x="190" y="122">codon → amino acid</text>
+    <text class="txt tiny" x="190" y="162">protein folding</text>
+    <text class="txt tiny" x="190" y="202">trait model + environment</text>
+    <path class="thin" d="M155 40 H180 M155 80 H180 M155 120 H180 M155 160 H180 M155 200 H180"/>
+  </g>
+</g>
+
+<g transform="translate(80,955)">
+  <path class="ink" d="M0 0 C120 -60 220 55 350 -5 S580 38 720 -18 S930 10 1070 -22 S1280 35 1430 0"/>
+  <circle cx="180" cy="-16" r="12" fill="#1f63ff"/><circle cx="450" cy="2" r="10" fill="#e2433b"/><circle cx="760" cy="-20" r="12" fill="#30a66a"/><circle cx="1100" cy="-22" r="11" fill="#e0ad35"/>
+  <text class="txt tiny" x="0" y="52">Kinetic minimal map line: roots / migration / memory / code — upload raw DNA to replace the synthetic sequence with real calls.</text>
+</g>
+</svg>

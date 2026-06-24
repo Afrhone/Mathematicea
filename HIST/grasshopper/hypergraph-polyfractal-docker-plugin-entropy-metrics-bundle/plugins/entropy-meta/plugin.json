@@ -1,0 +1,7 @@
+{
+  "id": "entropy-meta",
+  "name": "Entropy Meta-Aggregator",
+  "version": "1.0.0",
+  "entry": "plugin.mjs",
+  "description": "Computes node degree entropy-ish metric and adjusts size/color. Adds a run metadata stamp."
+}

@@ -1,0 +1,13 @@
+compute_pools:
+  cpu:
+    ceph_label: pool-cpu
+    libvirt_hosts: [rhiz-loes, rhiz-ueth, rhiz-woute, factau-rhiz, eliosys-rhiz]
+  gpu:
+    ceph_label: pool-gpu
+    libvirt_hosts: [sigmo-rhiz, exosystem]
+  vm:
+    ceph_label: pool-vm
+    libvirt_hosts: [sigmo-rhiz, rhiz-woute, rhiz-ueth, rhiz-loes, exosystem]
+  gaming:
+    ceph_label: pool-gpu
+    libvirt_hosts: [sigmo-rhiz, exosystem]

@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../generated/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+  operator-api:
+    image: ghcr.io/example/operator-api:latest
+    environment:
+      PUBLIC_ENDPOINT: ${PUBLIC_ENDPOINT:-rhiz-arch.afrho.net}
+volumes:
+  caddy_data:

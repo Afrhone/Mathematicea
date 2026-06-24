@@ -1,0 +1,66 @@
+{
+  "safe": [
+    {
+      "name": "google-gemma-4-31b-it",
+      "repo": "https://huggingface.co/google/gemma-4-31B-it",
+      "format": "safetensors/hf",
+      "notes": "neutral requested model; large"
+    },
+    {
+      "name": "davidau-glm-4.7-flash-neo-code-imatrix-max-gguf",
+      "repo": "https://huggingface.co/DavidAU/GLM-4.7-Flash-NEO-CODE-Imatrix-MAX-GGUF",
+      "format": "gguf",
+      "notes": "code-oriented GGUF"
+    },
+    {
+      "name": "unsloth-mistral-medium-3.5-128b-gguf",
+      "repo": "https://huggingface.co/unsloth/Mistral-Medium-3.5-128B-GGUF",
+      "format": "gguf",
+      "notes": "very large"
+    }
+  ],
+  "optional_gated": [
+    {
+      "name": "gpt-oss-20b-heretic",
+      "repo": "https://huggingface.co/p-e-w/gpt-oss-20b-heretic"
+    },
+    {
+      "name": "crow-9b-heretic-4.6",
+      "repo": "https://huggingface.co/Crownelius/Crow-9B-HERETIC-4.6"
+    },
+    {
+      "name": "qwen3.5-40b-deckard-heretic-uncensored-thinking",
+      "repo": "https://huggingface.co/DavidAU/Qwen3.5-40B-Claude-4.6-Opus-Deckard-Heretic-Uncensored-Thinking"
+    },
+    {
+      "name": "qwen3.5-9b-uncensored-hauhaucs-aggressive",
+      "repo": "https://huggingface.co/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive"
+    },
+    {
+      "name": "l3.2-rogue-creative-instruct-7b-gguf",
+      "repo": "https://huggingface.co/DavidAU/L3.2-Rogue-Creative-Instruct-7B-GGUF"
+    },
+    {
+      "name": "l3.2-rogue-creative-instruct-uncensored-abliterated-7b-gguf",
+      "repo": "https://huggingface.co/DavidAU/L3.2-Rogue-Creative-Instruct-Uncensored-Abliterated-7B-GGUF"
+    },
+    {
+      "name": "athirdpath-llama-3.1-instruct-nsfw-reddit-gguf",
+      "repo": "https://huggingface.co/featherless-ai-quants/athirdpath-Llama-3.1-Instruct_NSFW-pretrained_e1-plus_reddit-GGUF"
+    }
+  ],
+  "repo_refs": [
+    {
+      "name": "uncensored-ai-repo",
+      "repo": "https://github.com/0xSojalSec/Uncensored-AI"
+    },
+    {
+      "name": "heretic-repo",
+      "repo": "https://github.com/p-e-w/heretic"
+    },
+    {
+      "name": "karpathy-llm-c-gist",
+      "repo": "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f"
+    }
+  ]
+}

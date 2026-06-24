@@ -1,0 +1,38 @@
+services:
+  gateway:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    env_file: .env
+    volumes:
+      - ./services/gateway:/app/services/gateway
+      - ./ledger:/app/ledger:ro
+      - ${DATA_ROOT:-/var/lib/octopuce-medusa}:${DATA_ROOT:-/var/lib/octopuce-medusa}
+    working_dir: /app/services/gateway
+    ports:
+      - "${GATEWAY_PORT:-7188}:7188"
+    restart: unless-stopped
+
+  agent:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    env_file: .env
+    volumes:
+      - ./services/agent:/app
+      - ${DATA_ROOT:-/var/lib/octopuce-medusa}:${DATA_ROOT:-/var/lib/octopuce-medusa}
+    restart: unless-stopped
+
+  xrpl-validator-1:
+    profiles: ["xrpl"]
+    platform: linux/amd64
+    image: "${XRPL_IMAGE:-xrpllabsofficial/xrpld:latest}"
+    ports: ["8001:80", "5006:5005", "4001:6006", "9001:51235"]
+    volumes: ["./contracts/xrpl/private-network/validator_1/config:/config/"]
+
+  evm-dev:
+    profiles: ["evm"]
+    image: ghcr.io/foundry-rs/foundry:latest
+    command: anvil --host 0.0.0.0 --chain-id ${CHAIN_ID:-1337}
+    ports:
+      - "8545:8545"

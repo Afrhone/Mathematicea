@@ -1,0 +1,7 @@
+FROM python:3.12-slim
+WORKDIR /app
+COPY services/quantum-lab/requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+COPY services/quantum-lab/flowforms_quantum_lab.py /app/flowforms_quantum_lab.py
+EXPOSE 8090
+CMD ["uvicorn", "flowforms_quantum_lab:app", "--host", "0.0.0.0", "--port", "8090"]

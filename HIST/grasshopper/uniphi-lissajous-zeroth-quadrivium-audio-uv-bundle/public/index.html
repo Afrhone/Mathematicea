@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Uniphi Lissajous — Zeroth Quadrivium Index</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div id="wrap">
+    <div class="panel">
+      <div class="badges">
+        <span class="badge">Docker Module</span>
+        <span class="badge">Lissajous Invariants</span>
+        <span class="badge">Quadrivium → Zeroth Index</span>
+      </div>
+      <h1>Uniphi Lissajous — Invariants → State-Space → Zeroth</h1>
+      <div class="tiny">
+        Rational ratios close the loop (strong invariance). Irrational-ish ratios drift (diffusion).
+        The index projects the same curve across the Quadrivium and fuses it into a “zeroth” view.
+      </div>
+
+      <h2>Frequencies</h2>
+      <div class="row">
+        <div>
+          <label>fx (multiplier)</label>
+          <input id="fx" type="range" min="0.1" max="40" step="0.1" value="3" />
+        </div>
+        <div>
+          <label>fy (multiplier)</label>
+          <input id="fy" type="range" min="0.1" max="40" step="0.1" value="2" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Phase δ</label>
+          <input id="phase" type="range" min="-6.2831853" max="6.2831853" step="0.001" value="0" />
+        </div>
+        <div>
+          <label>Amplitude A</label>
+          <input id="amp" type="range" min="0.2" max="1.4" step="0.01" value="1.0" />
+        </div>
+      </div>
+
+      <h2>Geometric sequence coherence</h2>
+      <div class="row">
+        <div>
+          <label>Base (Hz)</label>
+          <input id="baseHz" type="number" min="10" max="2000" step="1" value="110" />
+        </div>
+        <div>
+          <label>Ratio r</label>
+          <input id="ratio" type="number" min="1.01" max="3" step="0.01" value="1.50" />
+        </div>
+      </div>
+      <div class="row3">
+        <div>
+          <label>nx</label>
+          <input id="nx" type="number" min="-12" max="24" step="1" value="1" />
+        </div>
+        <div>
+          <label>ny</label>
+          <input id="ny" type="number" min="-12" max="24" step="1" value="0" />
+        </div>
+        <div>
+          <label>Mode</label>
+          <select id="geoMode">
+            <option value="off" selected>Manual multipliers</option>
+            <option value="geo">Drive with geometric sequence</option>
+          </select>
+        </div>
+      </div>
+
+      <h2>Time & sampling</h2>
+      <div class="row">
+        <div>
+          <label>dt</label>
+          <input id="dt" type="range" min="0.0005" max="0.05" step="0.0005" value="0.008" />
+        </div>
+        <div>
+          <label>Trail</label>
+          <input id="trail" type="range" min="256" max="8192" step="64" value="2048" />
+        </div>
+      </div>
+
+      <h2>Zeroth weights</h2>
+      <div class="row">
+        <div><label>Arithmetic</label><input id="wA" type="range" min="0" max="1" step="0.01" value="0.25" /></div>
+        <div><label>Geometry</label><input id="wG" type="range" min="0" max="1" step="0.01" value="0.25" /></div>
+      </div>
+      <div class="row">
+        <div><label>Music</label><input id="wM" type="range" min="0" max="1" step="0.01" value="0.25" /></div>
+        <div><label>Astronomy</label><input id="wS" type="range" min="0" max="1" step="0.01" value="0.25" /></div>
+      </div>
+
+      <h2>Controls</h2>
+      <div class="row">
+        <button id="toggle">Pause</button>
+        <button id="snap">Snapshot (copy JSON)</button>
+      </div>
+
+      
+<h2>Audio (WebAudio)</h2>
+<div class="tiny">
+  2 oscillators (fxHz/fyHz). PanA←x, PanB←y. Requires a user click to start.
+</div>
+<div class="row">
+  <button id="audioToggle">Start audio</button>
+  <button id="audioMute">Mute</button>
+</div>
+<div class="row">
+  <div>
+    <label>Master gain</label>
+    <input id="audioGain" type="range" min="0" max="0.8" step="0.01" value="0.15" />
+  </div>
+  <div>
+    <label>Mix (A↔B)</label>
+    <input id="audioMix" type="range" min="0" max="1" step="0.01" value="0.50" />
+  </div>
+</div>
+<div class="row">
+  <div>
+    <label>Osc A type</label>
+    <select id="oscAType">
+      <option value="sine" selected>sine</option>
+      <option value="triangle">triangle</option>
+      <option value="sawtooth">sawtooth</option>
+      <option value="square">square</option>
+    </select>
+  </div>
+  <div>
+    <label>Osc B type</label>
+    <select id="oscBType">
+      <option value="sine" selected>sine</option>
+      <option value="triangle">triangle</option>
+      <option value="sawtooth">sawtooth</option>
+      <option value="square">square</option>
+    </select>
+  </div>
+</div>
+
+<h2>UV-map export (phase torus)</h2>
+<div class="tiny">
+  Exports UV along the trail: <code>u=(fx·t+δ) mod 2π</code>, <code>v=(fy·t) mod 2π</code>, normalized to [0,1].
+</div>
+<div class="row">
+  <button id="exportUV">Export UV JSON</button>
+  <button id="bakeUV">Bake UV density PNG</button>
+</div>
+
+
+<div class="hr"></div>
+      <div class="tiny">
+        API: <code>/api/health</code> • Schemas: <code>/api/schemas</code>
+      </div>
+
+      <h2>Epistemological Index</h2>
+      <div class="meter"><div id="zerothBar"></div></div>
+      <div style="height:8px"></div>
+      <div class="metricline"><span>Zeroth</span><b id="zeroth">—</b></div>
+      <div class="metricline"><span>Balance entropy</span><b id="bal">—</b></div>
+      <div style="height:6px"></div>
+      <div class="metricline"><span>Arithmetic</span><b id="arith">—</b></div>
+      <div class="metricline"><span>Geometry</span><b id="geom">—</b></div>
+      <div class="metricline"><span>Music</span><b id="music">—</b></div>
+      <div class="metricline"><span>Astronomy</span><b id="astro">—</b></div>
+
+      <h2>Invariants</h2>
+      <div id="chips"></div>
+      <pre id="inv">—</pre>
+
+      <h2>Notes</h2>
+      <div id="notes"></div>
+    </div>
+
+    <div class="stageGrid">
+      <div class="stage">
+        <canvas id="canvasMain"></canvas>
+        <div class="caption">Lissajous (space-time trace)</div>
+      </div>
+
+      <div class="subgrid">
+        <div class="subpanel">
+          <canvas id="canvasTorus"></canvas>
+          <div class="caption">Phase Torus (state-space)</div>
+        </div>
+        <div class="subpanel">
+          <canvas id="canvasPortrait"></canvas>
+          <div class="caption">Phase Portrait (x vs dx/dt)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

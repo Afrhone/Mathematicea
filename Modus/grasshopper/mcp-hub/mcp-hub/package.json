@@ -1,0 +1,21 @@
+{
+  "name": "niurk-mcp-hub",
+  "version": "0.1.0",
+  "description": "Read-only/planning MCP hub for LXD/Ceph cluster automation, Integrity reasoning, Visio image pipelines, particles/holography, and Bitcoin Core observability.",
+  "type": "module",
+  "bin": {
+    "niurk-mcp-hub": "src/hub.mjs"
+  },
+  "scripts": {
+    "start": "node src/hub.mjs",
+    "selftest": "node src/selftest.mjs",
+    "dev:stdio": "NIURK_ALLOW_COMMANDS=0 node src/hub.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {},
+  "optionalDependencies": {
+    "@modelcontextprotocol/sdk": "latest"
+  }
+}

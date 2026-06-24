@@ -1,0 +1,25 @@
+{
+  "corpora": [
+    "source-sketch",
+    "refined-planche",
+    "functorial-alphabet",
+    "symbolic-roots",
+    "user-drawing-session"
+  ],
+  "modi": [
+    "expressive",
+    "analytic",
+    "ritual",
+    "font-production",
+    "cluster-deploy"
+  ],
+  "latentAxes": [
+    "loop-density",
+    "branching",
+    "curvature",
+    "axis-stability",
+    "rhythmic-recurrence",
+    "axiom-centering",
+    "momentum"
+  ]
+}

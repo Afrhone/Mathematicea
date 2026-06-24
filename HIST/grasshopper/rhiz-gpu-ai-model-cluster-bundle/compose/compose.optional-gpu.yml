@@ -1,0 +1,24 @@
+services:
+  vllm:
+    profiles: ["vllm"]
+    image: ${VLLM_IMAGE:-vllm/vllm-openai:latest}
+    command: ["--model", "${VLLM_MODEL:-google/gemma-4-31B-it}", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "${VLLM_PORT:-8000}:8000"
+    volumes:
+      - "${MODEL_ROOT:-/srv/models}:/models"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: ["gpu"]
+  diffusers:
+    profiles: ["diffusers"]
+    image: python:3.12-slim
+    working_dir: /app
+    command: sh -c "pip install diffusers transformers accelerate safetensors torch fastapi uvicorn && python server.py"
+    volumes:
+      - ../services/diffusers:/app
+      - "${MODEL_ROOT:-/srv/models}:/models"
+    ports:
+      - "${DIFFUSERS_PORT:-7860}:7860"

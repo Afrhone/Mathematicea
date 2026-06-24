@@ -1,0 +1,10 @@
+:root{color-scheme:dark;background:#070a12;color:#e8f4ff;font-family:Inter,ui-sans-serif,system-ui}
+*{box-sizing:border-box} body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 10%,#173e5e 0,#07111b 35%,#05060a 100%)}
+main{padding:24px;display:grid;grid-template-columns:320px 1fr;gap:18px}
+.card{border:1px solid rgba(127,220,255,.22);background:rgba(6,14,24,.72);border-radius:20px;padding:16px;box-shadow:0 20px 80px rgba(0,0,0,.3)}
+h1{font-size:28px;margin:0 0 8px}.muted{color:#94b4c9}.pill{display:inline-flex;padding:6px 10px;border-radius:999px;background:#0d2739;border:1px solid #1d6d8a;margin:3px}
+button{border:1px solid #24a6d6;background:#092133;color:#dff8ff;border-radius:12px;padding:10px 12px;cursor:pointer}
+.canvas{position:relative;height:72vh;overflow:hidden;border-radius:24px;background:linear-gradient(135deg,rgba(0,30,50,.8),rgba(10,10,25,.95));border:1px solid rgba(129,226,255,.22)}
+.node{position:absolute;min-width:150px;padding:12px;border:1px solid rgba(116,220,255,.45);background:rgba(9,24,38,.9);border-radius:16px;box-shadow:0 0 34px rgba(0,180,255,.18)}
+.node small{display:block;color:#87b9cd;margin-top:4px}.heat{display:grid;grid-template-columns:repeat(8,1fr);gap:2px}.px{height:18px;border-radius:4px;background:rgba(255,180,80,.25)}
+pre{white-space:pre-wrap;font-size:12px;max-height:220px;overflow:auto}

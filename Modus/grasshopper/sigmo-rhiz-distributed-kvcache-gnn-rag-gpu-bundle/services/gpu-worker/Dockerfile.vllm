@@ -1,0 +1,8 @@
+FROM vllm/vllm-openai:latest
+# This image requires a modern CUDA-capable NVIDIA GPU.
+# LMCache/vLLM versions move fast; this Dockerfile intentionally keeps the config in env.
+RUN pip install --no-cache-dir lmcache || true
+COPY vllm-entrypoint.sh /vllm-entrypoint.sh
+RUN chmod +x /vllm-entrypoint.sh
+EXPOSE 8000
+ENTRYPOINT ["/vllm-entrypoint.sh"]

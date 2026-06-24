@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "niurk-mcp-hub": {
+      "command": "node",
+      "args": ["/mnt/data/niurk-mcp-hub-bundle/mcp-hub/src/hub.mjs"],
+      "env": {
+        "NIURK_HUB_NAME": "niurk-mcp-hub",
+        "NIURK_ALLOW_COMMANDS": "0",
+        "NIURK_ALLOW_DEPLOY": "0",
+        "NIURK_DRY_RUN": "1",
+        "NIURK_ORCHESTRATOR_NODE": "ark-rhiz",
+        "NIURK_VM_POOL": "rhiz-storage",
+        "NIURK_BRIDGE": "br0",
+        "BITCOIN_ALLOWED_METHODS": "getblockchaininfo,getmempoolinfo,getnetworkinfo,getblockcount,getblockhash,getblock,getrawtransaction"
+      }
+    }
+  }
+}

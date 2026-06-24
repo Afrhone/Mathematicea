@@ -1,0 +1,6 @@
+{
+  "name": "octopuce-medusa-gateway",
+  "type": "module",
+  "scripts": {"start":"node src/index.js"},
+  "dependencies": {"express":"^4.18.3","dotenv":"^16.4.5"}
+}

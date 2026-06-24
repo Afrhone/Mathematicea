@@ -1,0 +1,14 @@
+[Unit]
+Description=Exosys eno8303 MCP Cloud CPU Hub
+After=docker.service network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+WorkingDirectory=/opt/exosys-eno8303-mcp-cloud-cpu-hub-bundle
+EnvironmentFile=-/opt/exosys-eno8303-mcp-cloud-cpu-hub-bundle/.env
+ExecStart=/usr/bin/docker compose -f compose/compose.exosys-hub.yml up
+ExecStop=/usr/bin/docker compose -f compose/compose.exosys-hub.yml down
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,33 @@
+{
+  "name": "niurk-mcp-hub-bundle",
+  "version": "0.1.1-regenerated",
+  "generated": "2026-05-02",
+  "purpose": "Deployable MCP hub for rhizome cluster automation, Integrity reasoning, Visio image pipelines, holographic simulation, and Bitcoin read-only observability.",
+  "entrypoints": {
+    "mcp_stdio": "mcp-hub/src/hub.mjs",
+    "selftest": "bin/hub-selftest.sh",
+    "preflight": "bin/cluster-preflight.sh",
+    "client_config": "bin/render-client-config.sh",
+    "dashboard": "dashboard/infrasys-webgl/index.html"
+  },
+  "safety": {
+    "default": "plan-only/read-only",
+    "live_command_gate": "NIURK_ALLOW_COMMANDS=1",
+    "deploy_gate": "NIURK_ALLOW_DEPLOY=1 and NIURK_DRY_RUN=0",
+    "bitcoin": "read-only allowlist; wallet/sign/broadcast denied"
+  },
+  "sources": [
+    "https://mcpmarket.com/tools/skills/cognitive-superposition-1",
+    "https://mcpmarket.com/tools/skills/superforecasting-thinking-pattern",
+    "https://mcpmarket.com/tools/skills/scikit-image-assistant",
+    "https://mcpmarket.com/tools/skills/particles-router",
+    "https://mcpmarket.com/server/bitcoin",
+    "https://doi.org/10.1162/IMAG.a.1199"
+  ],
+  "generated_utc": "2026-05-02T13:01:29Z",
+  "regenerated": true,
+  "validation": {
+    "selftest": "bin/hub-selftest.sh",
+    "zip_integrity": "zip -T"
+  }
+}

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+source "$(dirname "$0")/lib/common.sh"
+: "${VM_NAME:=rhiz-adk-lab}"
+TARGET="${1:?usage: $0 TARGET_MEMBER [NEW_NAME]}"
+NEW_NAME="${2:-${VM_NAME}-fo-${TARGET}}"
+log "Failover clone plan: $VM_NAME -> $NEW_NAME on $TARGET"
+confirm "Proceed with LXD copy?"
+lxc copy "$VM_NAME" "$NEW_NAME" --target "$TARGET"
+lxc config set "$NEW_NAME" user.rhiz.failover.from "$VM_NAME"
+lxc config set "$NEW_NAME" user.rhiz.failover.created_at "$(date -Is)"
+lxc start "$NEW_NAME"
+lxc list "$NEW_NAME"

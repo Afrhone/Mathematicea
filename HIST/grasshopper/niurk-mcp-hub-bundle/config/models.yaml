@@ -1,0 +1,21 @@
+models:
+  integrity-reasoner:
+    purpose: "architectural reasoning, invariant extraction, risk compression"
+    default_context: "cluster design, deployment plans, security boundaries"
+    routes_to: [integrity_reasoning_pack, deployment_forecast]
+  vision-scikit:
+    purpose: "scientific image segmentation, feature extraction, morphology"
+    default_context: "sensor frames, dashboard screenshots, scientific imagery"
+    routes_to: [vision_pipeline_plan]
+  particles-holography:
+    purpose: "WebGL/particle simulation/holographic dataviz routing"
+    default_context: "infrasys-webgl graph surface and swarm overlays"
+    routes_to: [particles_route, holography_manifest]
+  bitcoin-readonly:
+    purpose: "local Bitcoin Core read-only blockchain/mempool observability"
+    default_context: "bitcoin-cli with wallet RPC disabled at hub layer"
+    routes_to: [bitcoin_readonly]
+  cluster-operator:
+    purpose: "LXD/Ceph/VM deployment planning and safe probes"
+    default_context: "rhizome LXD cluster, CephFS/RBD, niurk VMs"
+    routes_to: [hub_status, cluster_preflight, lxd_inventory, ceph_probe, deploy_plan]

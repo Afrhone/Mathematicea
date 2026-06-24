@@ -1,0 +1,24 @@
+{
+  "name": "flowforms_functorial_preset_bundle",
+  "version": "2.0.0-functorial",
+  "includes": [
+    "HTML5 Canvas/SVG playground",
+    "Functorial Alphabet preset",
+    "graph\u00e8me\u2192phon\u00e8me mappings",
+    "ODE/Lagrangian formalization",
+    "CMS/API preset endpoints",
+    "SSO-ready Docker Compose/Swarm",
+    "MCP-lite tool",
+    "LXD/libvirt/Fedora integration scripts",
+    "reference planches"
+  ],
+  "entrypoints": {
+    "static_web": "web/index.html",
+    "functorial_preview": "web/specimens/functorial-preset-preview.html",
+    "preset_json": "web/assets/presets/functorial-alphabet.json",
+    "api": "services/api/server.js",
+    "mcp": "services/mcp/flowforms-mcp.js",
+    "swarm": "deploy/swarm/deploy-stack.sh"
+  },
+  "validation": "python3 tests/validate_bundle.py"
+}

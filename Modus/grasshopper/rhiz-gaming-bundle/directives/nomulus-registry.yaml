@@ -1,0 +1,5 @@
+nomulus:
+  mode: stub
+  tld: .phi
+  registry_api_host: registry.rhiz-arch.afrho.net
+  note: This bundle scaffolds DNS/TLD integration points but does not perform a full Nomulus rollout.

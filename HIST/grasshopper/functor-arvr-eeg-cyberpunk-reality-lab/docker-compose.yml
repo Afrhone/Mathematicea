@@ -1,0 +1,41 @@
+services:
+  gateway:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    env_file: .env
+    volumes:
+      - ./gateway:/app
+      - ${DATA_ROOT:-/var/lib/reality-lab}:${DATA_ROOT:-/var/lib/reality-lab}
+    ports:
+      - "${GATEWAY_PORT:-7150}:7150"
+    restart: unless-stopped
+
+  eeg-bridge:
+    image: python:3.12-slim
+    working_dir: /app
+    command: sh -c "pip install --no-cache-dir -r requirements.txt && python src/eeg_bridge.py"
+    env_file: .env
+    volumes:
+      - ./eeg_bridge:/app
+      - ${DATA_ROOT:-/var/lib/reality-lab}:${DATA_ROOT:-/var/lib/reality-lab}
+    restart: unless-stopped
+
+  simulation:
+    image: python:3.12-slim
+    working_dir: /app
+    command: sh -c "pip install --no-cache-dir -r requirements.txt && python src/run_engine.py"
+    env_file: .env
+    volumes:
+      - ./simulation:/app
+      - ${DATA_ROOT:-/var/lib/reality-lab}:${DATA_ROOT:-/var/lib/reality-lab}
+
+  webxr:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --port 5173"
+    volumes:
+      - ./webxr:/app
+    ports:
+      - "${WEBXR_PORT:-5173}:5173"
+    restart: unless-stopped

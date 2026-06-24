@@ -1,0 +1,9 @@
+[Interface]
+Address = __EXOSYS_WG_IP__
+ListenPort = __WG_PORT__
+PrivateKey = __EXOSYS_WG_PRIVATE_KEY__
+
+[Peer]
+PublicKey = __RHIZ_UETH_WG_PUBLIC_KEY__
+AllowedIPs = 10.111.9.2/32
+PersistentKeepalive = 25

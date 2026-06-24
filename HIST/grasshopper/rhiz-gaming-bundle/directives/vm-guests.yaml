@@ -1,0 +1,41 @@
+guests:
+  niurk-24:
+    host: sigmo-rhiz
+    profile: gpu-fedora
+    role: cascade-app
+    storage_pool: vms
+    bridge: br0
+    guest_user: ubuntu
+    enable_lxd: true
+    enable_docker: true
+    join_swarm: false
+  niurk-21:
+    host: rhiz-ueth
+    profile: bastion-ubuntu
+    role: operator-bastion
+    storage_pool: vms
+    bridge: br0
+    guest_user: ubuntu
+    enable_lxd: false
+    enable_docker: true
+    join_swarm: false
+  niurk-43:
+    host: rhiz-woute
+    profile: cpu-fedora
+    role: hypergraph-main
+    storage_pool: vms
+    bridge: br0
+    guest_user: ubuntu
+    enable_lxd: true
+    enable_docker: true
+    join_swarm: true
+  valkyrie-win11:
+    host: sigmo-rhiz
+    profile: win11-gaming
+    role: windows-gaming
+    storage_pool: vms
+    bridge: br0
+    guest_user: Administrator
+    enable_lxd: false
+    enable_docker: false
+    join_swarm: false

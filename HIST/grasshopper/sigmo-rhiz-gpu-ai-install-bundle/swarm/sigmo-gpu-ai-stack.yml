@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  gateway:
+    image: rhiz/sigmo-gpu-ai-gateway:local
+    ports: ["8099:8099"]
+    environment:
+      CONFIG_DIR: /config
+    configs:
+      - source: providers_yaml
+        target: /config/providers.yaml
+      - source: safety_profiles_yaml
+        target: /config/safety-profiles.yaml
+    deploy:
+      placement:
+        constraints: [node.labels.rhiz.ai == true]
+  mcp-server:
+    image: rhiz/sigmo-gpu-ai-mcp:local
+    ports: ["8787:8787"]
+    deploy:
+      replicas: 1
+  ui:
+    image: rhiz/sigmo-gpu-ai-ui:local
+    ports: ["3033:3033"]
+    deploy:
+      replicas: 1
+configs:
+  providers_yaml:
+    file: ../config/providers.yaml
+  safety_profiles_yaml:
+    file: ../config/safety-profiles.yaml

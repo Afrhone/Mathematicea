@@ -1,0 +1,30 @@
+[
+  {
+    "id": "YETI-715",
+    "title": "Certified Snowblind Debugger",
+    "domain": "ops",
+    "power": "survives recursive failure loops and extracts invariant gates",
+    "status": "earned"
+  },
+  {
+    "id": "MAMMOTH-404",
+    "title": "Vanishing Resource Tracker",
+    "domain": "cluster",
+    "power": "finds resources the system swears do not exist",
+    "status": "available"
+  },
+  {
+    "id": "AXIO-001",
+    "title": "Invariant Keeper",
+    "domain": "axioms",
+    "power": "blocks blind retry until the gate is proven",
+    "status": "available"
+  },
+  {
+    "id": "RHIZ-042",
+    "title": "Rhizome Node Walker",
+    "domain": "cluster",
+    "power": "maps host-plane, storage-plane, and service-plane without collapsing them",
+    "status": "available"
+  }
+]

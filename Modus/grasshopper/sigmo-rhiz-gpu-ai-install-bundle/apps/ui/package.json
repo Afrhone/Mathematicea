@@ -1,0 +1,1 @@
+{"scripts":{"dev":"next dev -p 3033","build":"next build","start":"next start -p 3033"},"dependencies":{"next":"15.1.6","react":"19.0.0","react-dom":"19.0.0","lucide-react":"^0.468.0"},"devDependencies":{"typescript":"^5.7.2","@types/node":"^22.10.7","@types/react":"^19.0.7","tailwindcss":"^3.4.17","postcss":"^8.4.49","autoprefixer":"^10.4.20"}}

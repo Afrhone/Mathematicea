@@ -1,0 +1,14 @@
+[Unit]
+Description=RHIZ Model Gateway + MCP
+After=docker.service network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+WorkingDirectory=/opt/rhiz-gpu-ai-model-cluster-bundle
+EnvironmentFile=-/opt/rhiz-gpu-ai-model-cluster-bundle/.env
+ExecStart=/usr/bin/docker compose -f compose/compose.gateway-mcp.yml up
+ExecStop=/usr/bin/docker compose -f compose/compose.gateway-mcp.yml down
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=multi-user.target

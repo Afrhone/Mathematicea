@@ -1,0 +1,23 @@
+'use client';
+import {useEffect,useRef,useState} from 'react';
+
+function boot(gl: WebGL2RenderingContext){
+const vs=`#version 300 es
+in vec2 p; out vec2 uv; void main(){uv=(p+1.)*.5; gl_Position=vec4(p,0,1);}`;
+const fs=`#version 300 es
+precision highp float; in vec2 uv; out vec4 o; uniform float t; uniform float touch; uniform vec2 res;
+float hash(vec3 p){return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453);} 
+float noise(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);float n=mix(mix(mix(hash(i),hash(i+vec3(1,0,0)),f.x),mix(hash(i+vec3(0,1,0)),hash(i+vec3(1,1,0)),f.x),f.y),mix(mix(hash(i+vec3(0,0,1)),hash(i+vec3(1,0,1)),f.x),mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),f.z);return n;}
+vec3 pal(float x){return .5+.5*cos(6.28318*(vec3(.05,.35,.7)+x+vec3(0,.22,.48)));}
+void main(){vec2 q=(uv-.5)*vec2(res.x/res.y,1.);float r=length(q);float sphere=smoothstep(.52,.50,r);vec3 n=normalize(vec3(q, sqrt(max(0.,.25-r*r))));vec4 h=vec4(n, sin(t*.13)+cos(t*.07));float d8=sin(dot(h,vec4(2.1,3.7,5.3,7.9))+t)+cos(dot(h,vec4(11.1,13.7,17.3,19.9))-t*.7);float blobs=0.;for(int i=0;i<8;i++){float fi=float(i);vec2 c=.24*vec2(sin(t*.21+fi*1.7),cos(t*.17+fi*2.2));blobs+=.04/(length(q-c)+.035);}float water=sin(70.*r-4.*t+d8*2.)*.025;float crack=smoothstep(.985,1.,sin(22.*atan(q.y,q.x)+8.*r-2.*t+noise(vec3(n*6.+t))));float fog=smoothstep(.15,.78,r);vec3 col=pal(d8*.07+blobs*.15+t*.03);col+=vec3(.2,.8,1.)*water+vec3(1.,.8,.35)*crack*.35+touch*.08;col=mix(col,vec3(.02,.05,.09),fog*.65);o=vec4(col*sphere + vec3(.005,.01,.025)*(1.-sphere),1.);}`;
+const prog=gl.createProgram()!; const cv=(type:number,src:string)=>{const s=gl.createShader(type)!;gl.shaderSource(s,src);gl.compileShader(s);return s};
+gl.attachShader(prog,cv(gl.VERTEX_SHADER,vs));gl.attachShader(prog,cv(gl.FRAGMENT_SHADER,fs));gl.linkProgram(prog);gl.useProgram(prog);
+const buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
+const loc=gl.getAttribLocation(prog,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+return {prog, t: gl.getUniformLocation(prog,'t'), touch: gl.getUniformLocation(prog,'touch'), res: gl.getUniformLocation(prog,'res')};}
+
+function Surface(){const ref=useRef<HTMLCanvasElement>(null);const [touch,setTouch]=useState(0);useEffect(()=>{const c=ref.current!, gl=c.getContext('webgl2')!; const st=boot(gl); let raf=0; const draw=(ms:number)=>{const w=c.clientWidth*devicePixelRatio,h=c.clientHeight*devicePixelRatio;if(c.width!==w||c.height!==h){c.width=w;c.height=h;gl.viewport(0,0,w,h)}gl.useProgram(st.prog);gl.uniform1f(st.t,ms/1000);gl.uniform1f(st.touch,touch);gl.uniform2f(st.res,c.width,c.height);gl.drawArrays(gl.TRIANGLES,0,6);raf=requestAnimationFrame(draw)};raf=requestAnimationFrame(draw);return()=>cancelAnimationFrame(raf)},[touch]);return <canvas ref={ref} onPointerMove={()=>setTouch(x=>Math.min(1,x+.08))} onPointerLeave={()=>setTouch(0)} />}
+
+export default function Page(){const [prompt,setPrompt]=useState('Analyze local LXD GPU inference capacity and decide what should burst to Infomaniak.'); const [model,setModel]=useState('auto:architect'); const [log,setLog]=useState(''); const gateway=process.env.NEXT_PUBLIC_GATEWAY_URL||'http://localhost:8066';
+async function ask(){setLog('routing...');const r=await fetch(`${gateway}/v1/chat/completions`,{method:'POST',headers:{'content-type':'application/json','authorization':'Bearer change-me-local-gateway-key'},body:JSON.stringify({model,messages:[{role:'user',content:prompt}],metadata:{lane:'heavy'}})});setLog(JSON.stringify(await r.json(),null,2));}
+return <main className="shell"><div className="grid"><section className="card hero"><h1>RHIZ Outpost Infomaniak Agent Router</h1><p className="muted">Local GPU first. Sovereign cloud for heavy context, multimodal review, rerank, image, and hypergraph planning.</p><Surface/><div className="row"><span className="pill">outpost.aheap.afrho.net</span><span className="pill">LXD GPU</span><span className="pill">Mongo traces</span><span className="pill">OpenAI-compatible</span></div></section><aside className="card"><h2>Agent lane</h2><select value={model} onChange={e=>setModel(e.target.value)}><option>auto:fast</option><option>auto:architect</option><option>auto:sovereign</option><option>auto:code</option><option>auto:nano</option><option>auto:rerank</option></select><textarea style={{width:'100%',height:160,marginTop:10}} value={prompt} onChange={e=>setPrompt(e.target.value)} /><button onClick={ask}>route request</button><h3>Trace</h3><pre className="log">{log}</pre></aside></div></main>}

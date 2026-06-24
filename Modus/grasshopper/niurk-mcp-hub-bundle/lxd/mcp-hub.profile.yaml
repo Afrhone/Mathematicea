@@ -1,0 +1,16 @@
+config:
+  security.nesting: "false"
+  security.privileged: "false"
+description: niurk MCP Hub profile for dashboard/probe container; host systemd preferred for direct LXD socket access.
+devices:
+  eth0:
+    name: eth0
+    nictype: bridged
+    parent: br0
+    type: nic
+  root:
+    path: /
+    pool: rhiz-storage
+    type: disk
+name: mcp-hub
+used_by: []

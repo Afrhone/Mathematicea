@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "name": "Isotope Stub Pack",
+    "version": "0.1.0",
+    "notes": "Demo-only. Replace with authoritative isotope data if needed."
+  },
+  "elements": {
+    "H": {
+      "stable_isotopes": [
+        1,
+        2
+      ],
+      "radioisotopes": [
+        3
+      ],
+      "notes": "Protium/Deuterium stable; Tritium radioactive."
+    },
+    "C": {
+      "stable_isotopes": [
+        12,
+        13
+      ],
+      "radioisotopes": [
+        14
+      ],
+      "notes": "C-14 long-lived beta emitter."
+    },
+    "U": {
+      "stable_isotopes": [],
+      "radioisotopes": [
+        235,
+        238
+      ],
+      "notes": "U-235/U-238 radioactive; nuclear fuel context."
+    }
+  }
+}

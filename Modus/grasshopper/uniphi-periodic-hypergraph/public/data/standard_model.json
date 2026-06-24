@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "name": "Standard Model Pocket Reference",
+    "version": "0.1.0",
+    "notes": "Conceptual UI reference."
+  },
+  "particles": {
+    "quarks": [
+      {
+        "name": "up",
+        "symbol": "u",
+        "charge": "+2/3"
+      },
+      {
+        "name": "down",
+        "symbol": "d",
+        "charge": "-1/3"
+      },
+      {
+        "name": "charm",
+        "symbol": "c",
+        "charge": "+2/3"
+      },
+      {
+        "name": "strange",
+        "symbol": "s",
+        "charge": "-1/3"
+      },
+      {
+        "name": "top",
+        "symbol": "t",
+        "charge": "+2/3"
+      },
+      {
+        "name": "bottom",
+        "symbol": "b",
+        "charge": "-1/3"
+      }
+    ],
+    "leptons": [
+      {
+        "name": "electron",
+        "symbol": "e−",
+        "charge": "-1"
+      },
+      {
+        "name": "muon",
+        "symbol": "μ−",
+        "charge": "-1"
+      },
+      {
+        "name": "tau",
+        "symbol": "τ−",
+        "charge": "-1"
+      },
+      {
+        "name": "electron neutrino",
+        "symbol": "νe",
+        "charge": "0"
+      },
+      {
+        "name": "muon neutrino",
+        "symbol": "νμ",
+        "charge": "0"
+      },
+      {
+        "name": "tau neutrino",
+        "symbol": "ντ",
+        "charge": "0"
+      }
+    ],
+    "bosons": [
+      {
+        "name": "photon",
+        "symbol": "γ",
+        "role": "electromagnetic"
+      },
+      {
+        "name": "gluon",
+        "symbol": "g",
+        "role": "strong"
+      },
+      {
+        "name": "W boson",
+        "symbol": "W±",
+        "role": "weak"
+      },
+      {
+        "name": "Z boson",
+        "symbol": "Z",
+        "role": "weak"
+      },
+      {
+        "name": "Higgs",
+        "symbol": "H",
+        "role": "mass mechanism"
+      }
+    ]
+  }
+}

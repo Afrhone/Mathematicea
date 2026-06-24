@@ -1,0 +1,16 @@
+[Unit]
+Description=YETTI Codex Conservation Engine
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/yetti-codex-conservation-engine-bundle
+EnvironmentFile=-/opt/yetti-codex-conservation-engine-bundle/.env
+ExecStart=/usr/bin/docker compose -f compose/compose.yetti-codex.yml up
+ExecStop=/usr/bin/docker compose -f compose/compose.yetti-codex.yml down
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+[Unit]
+Description=RHIZ Sigmo GPU AI Compose Stack
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/rhiz/sigmo-rhiz-gpu-ai-install-bundle
+ExecStart=/usr/bin/docker compose -f compose/docker-compose.yml --env-file .env up -d
+ExecStop=/usr/bin/docker compose -f compose/docker-compose.yml --env-file .env down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

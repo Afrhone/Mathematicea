@@ -1,0 +1,24 @@
+config: {}
+networks:
+- name: ${VM_LXD_BRIDGE}
+  type: bridge
+  config:
+    ipv4.address: ${VM_LXD_BRIDGE_CIDR}
+    ipv4.nat: "true"
+    ipv6.address: none
+storage_pools:
+- name: ${VM_LXD_STORAGE_POOL}
+  driver: dir
+profiles:
+- name: default
+  description: Default LXD profile
+  devices:
+    eth0:
+      name: eth0
+      network: ${VM_LXD_BRIDGE}
+      type: nic
+    root:
+      path: /
+      pool: ${VM_LXD_STORAGE_POOL}
+      type: disk
+cluster: null

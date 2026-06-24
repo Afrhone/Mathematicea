@@ -1,0 +1,24 @@
+{
+  "schema": "rhiz.host-management.ceph-lxd.v1",
+  "goals": [
+    "build a verified Ceph LXD client package",
+    "push package to all LXD cluster members",
+    "install into host and snap LXD Ceph paths",
+    "gate with remote rbd ls",
+    "restart LXD after gate passes",
+    "create pinned LXD instance only after gates"
+  ],
+  "invariants": [
+    "ceph.client.lxd.keyring must exist and be non-empty",
+    "keyring must contain [client.lxd]",
+    "remote install uses package path, not missing /tmp assumptions",
+    "remote commands must use set -e",
+    "OK must not print after rbd failure",
+    "target host must pass rbd gate before LXD create"
+  ],
+  "fallback": {
+    "no_ceph": "create local dir pool and launch instance with local storage",
+    "ssh_dns_failure": "use hosts.csv ssh_host/IP",
+    "sudo_requires_tty": "ssh -t is enabled"
+  }
+}

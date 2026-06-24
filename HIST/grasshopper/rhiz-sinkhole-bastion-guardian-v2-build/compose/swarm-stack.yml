@@ -1,0 +1,37 @@
+version: "3.9"
+services:
+  guardian-api:
+    image: rhiz/guardian-api:local
+    env_file: .env
+    ports:
+      - target: 8450
+        published: 8450
+        protocol: tcp
+        mode: host
+    deploy:
+      placement:
+        constraints:
+          - node.labels.rhiz.sinkhole == true
+      replicas: 1
+  web:
+    image: rhiz/guardian-web:local
+    env_file: .env
+    ports:
+      - target: 3000
+        published: 3100
+        protocol: tcp
+        mode: host
+    deploy:
+      replicas: 1
+  collector:
+    image: rhiz/guardian-collector:local
+    env_file: .env
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.rhiz.collector == true
+networks:
+  default:
+    driver: overlay
+    attachable: true

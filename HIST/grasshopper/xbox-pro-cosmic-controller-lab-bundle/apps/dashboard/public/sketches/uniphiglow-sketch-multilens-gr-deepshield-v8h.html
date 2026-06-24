@@ -1,0 +1,5486 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>
+      Uniphiglow — Multi‑Lens GR × Deep‑Field × Advanced Objects (v8g —
+      multiverse mode fix + manifold multiverse)
+    </title>
+    <style>
+      :root {
+        --accent: #ffb84d;
+        --panel: rgba(0, 0, 0, 0.62);
+        --hud: rgba(0, 0, 0, 0.45);
+        --chip: rgba(0, 0, 0, 0.55);
+        --alert: rgba(255, 184, 77, 0.08);
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+        color: #fff;
+        font-family: system-ui, Segoe UI, ui-sans-serif;
+      }
+      canvas {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      #gl {
+        pointer-events: auto;
+      }
+      #deepField {
+        pointer-events: none;
+        mix-blend-mode: screen;
+        opacity: 0.95;
+      }
+      #hud {
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding: 8px 12px;
+        background: var(--hud);
+        border-bottom-right-radius: 10px;
+        pointer-events: none;
+        font-size: 12px;
+      }
+      #overlay {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+      }
+      #ui {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: clamp(420px, 34vw, 920px);
+        max-height: 100vh;
+        overflow: auto;
+        padding: 16px 18px;
+        background: var(--panel);
+        backdrop-filter: blur(8px);
+        border-bottom-left-radius: 16px;
+        box-shadow: 0 0 12px #000c;
+      }
+      #ui h2 {
+        margin: 0 0 10px;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: #ffd17a;
+      }
+      #ui label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 8px 0;
+      }
+      #ui label span {
+        margin-left: auto;
+        min-width: 96px;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        opacity: 0.9;
+      }
+      #ui input[type="range"] {
+        flex: 1;
+      }
+      #ui input[type="checkbox"],
+      #ui select {
+        accent-color: var(--accent);
+      }
+      #resetBtn,
+      #exportBtn {
+        display: block;
+        width: 100%;
+        margin: 10px 0 8px;
+        padding: 10px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: #111;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      #alerts {
+        font-size: 11px;
+        max-height: 160px;
+        overflow: auto;
+        background: var(--alert);
+        padding: 6px 8px;
+        border-radius: 8px;
+      }
+      .alert {
+        color: #ffd89a;
+        white-space: nowrap;
+      }
+      .tag {
+        position: absolute;
+        transform: translate(-50%, -120%);
+        background: var(--chip);
+        padding: 4px 6px;
+        border-radius: 6px;
+        font: 12px/1.2 system-ui, sans-serif;
+        white-space: nowrap;
+      }
+      .ring {
+        position: absolute;
+        border: 2px solid #f44;
+        border-radius: 999px;
+        box-shadow: 0 0 10px #f22;
+        pointer-events: none;
+      }
+      .lensDot {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #fff8;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      fieldset {
+        border: 1px solid #333;
+        border-radius: 10px;
+        padding: 8px 10px;
+        margin: 8px 0;
+      }
+      fieldset legend {
+        color: #ffd17a;
+        padding: 0 6px;
+        font-size: 12px;
+      }
+      .mini {
+        font-size: 12px;
+        opacity: 0.9;
+      }
+      .mono {
+        font-family: ui-monospace, Consolas, Monaco, monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gl"></canvas>
+    <canvas id="deepField"></canvas>
+    <div id="hud">
+      drag = orbit · wheel/pinch = zoom · WASD/↑↓←→ = pan · P = PNG export ·
+      Age=<span id="hudAge">13.8</span> Gyr · scale=10^<span id="hudScale"
+        >0</span
+      >
+      m
+    </div>
+    <div id="overlay"></div>
+
+    <div id="ui">
+      <h2>Uniphiglow — Multi‑Lens GR × Deep‑Field × Advanced Objects</h2>
+      <button id="resetBtn">Reset ⟳</button>
+      <button id="exportBtn">Export PNG ⤓</button>
+
+      <label
+        >Preset
+        <select id="presetSel">
+          <option value="" selected disabled>Select…</option>
+          <option value="uniphiglow">✨ Uniphiglow Defaults</option>
+          <option value="random">🎲 Random</option>
+          <option value="demo-lenses">🔮 Demo Lenses (3)</option>
+          <option value="solar-min">☀️ Solar (minimal)</option>
+          <option value="cluster-dense">🌀 Cluster (dense)</option>
+          <option value="hyperspiral">φ Hyperspiral</option>
+          <option value="order">Order (low entropy)</option>
+          <option value="chaos">Chaos (high entropy)</option>
+          <option value="known">Known Galaxy</option>
+        </select>
+      </label>
+
+      <label
+        >Scenario
+        <select id="sceneSel">
+          <option value="solar">Solar System</option>
+          <option value="galaxy">Galaxy</option>
+          <option value="cluster">Cluster</option>
+          <option value="cosmos">Cosmos</option>
+          <option value="uniphi">Uniphi</option>
+          <option value="hyperbolic">Hyperbolic Manifold</option>
+          <option value="munsellQ">Munsell Quantum</option>
+        </select>
+      </label>
+
+      <details open>
+        <summary>Multiverse ▾</summary>
+        <label
+          >Mode
+          <select id="universeMode">
+            <option value="single" selected>Single</option>
+            <option value="bubble">Bubble</option>
+            <option value="layered">Layered</option>
+            <option value="hyperbolic">Hyperbolic</option>
+            <option value="space">Space (fluid)</option>
+            <option value="string">String</option>
+            <option value="fluct">Fluctuations</option>
+            <option value="hologram">Hologram</option>
+          </select>
+        </label>
+        <label id="universeCountLabel"
+          >Universes
+          <input
+            id="universeCount"
+            type="range"
+            min="1"
+            max="4"
+            value="1"
+          /><span id="universeCountVal"></span>
+        </label>
+        <label
+          >Interference
+          <input
+            id="interfSlider"
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value="0.35"
+          /><span id="interfVal"></span>
+        </label>
+      </details>
+      
+      
+      <details open>
+        <summary>Interference & Bursts ▾</summary>
+        <label>Interference Gain
+          <input id="interfGain" type="range" min="0" max="2" step="0.01" value="1.00"/>
+          <span id="interfGainVal"></span>
+        </label>
+        <label><input id="burstEnable" type="checkbox" checked/> Energy Bursts / Explosions</label>
+        <div class="row">
+          <label>Burst Strength
+            <input id="burstStrength" type="range" min="0" max="10" step="0.1" value="3.0"/>
+            <span id="burstStrengthVal"></span>
+          </label>
+          <label>Burst Radius
+            <input id="burstRadius" type="range" min="1" max="80" step="1" value="18"/>
+            <span id="burstRadiusVal"></span>
+          </label>
+        </div>
+        <div class="row">
+          <label>Fragment Prob.
+            <input id="fragProb" type="range" min="0" max="1" step="0.01" value="0.20"/>
+            <span id="fragProbVal"></span>
+          </label>
+          <label>Transform Threshold
+            <input id="transformThresh" type="range" min="0" max="5" step="0.1" value="1.5"/>
+            <span id="transformThreshVal"></span>
+          </label>
+        </div>
+        <label><input id="burstNetworks" type="checkbox" checked/> Collisions seed Ecosystem Networks</label>
+        <label><input id="burstRings" type="checkbox" checked/> Show Explosion Rings</label>
+      </details>
+
+      <details open>
+        <summary>Gas Clouds & Radiation ▾</summary>
+        <label><input id="gasEnable" type="checkbox" checked/> Gas Clouds</label>
+        <div class="row">
+          <label>Gas Density
+            <input id="gasDensity" type="range" min="0" max="3" step="0.01" value="0.8"/>
+            <span id="gasDensityVal"></span>
+          </label>
+          <label>Gas Flow
+            <input id="gasFlow" type="range" min="0" max="5" step="0.01" value="1.5"/>
+            <span id="gasFlowVal"></span>
+          </label>
+        </div>
+        <label><input id="radEnable" type="checkbox" checked/> Cosmic Radiation</label>
+        <div class="row">
+          <label>Radiation Level
+            <input id="radLevel" type="range" min="0" max="2" step="0.01" value="0.6"/>
+            <span id="radLevelVal"></span>
+          </label>
+          <label>Stochasticity
+            <input id="stoch" type="range" min="0" max="1" step="0.01" value="0.35"/>
+            <span id="stochVal"></span>
+          </label>
+        </div>
+        <div class="mini mono">gas=<span id="gasLevel">0.00</span> · rad=<span id="radDose">0.00</span></div>
+      </details>
+    
+      <details open>
+        <summary>Cosmic Fog / Gas ▾</summary>
+        <label
+          ><input id="fogEnable" type="checkbox" checked /> Enable Fog
+          Shader</label
+        >
+        <div class="row">
+          <label
+            >Fog Amp
+            <input
+              id="fogAmp"
+              type="range"
+              min="0"
+              max="3"
+              step="0.01"
+              value="0.8" /><span id="fogAmpVal"></span
+          ></label>
+          <label
+            >Scatter
+            <input
+              id="fogScatter"
+              type="range"
+              min="0"
+              max="2"
+              step="0.01"
+              value="0.6" /><span id="fogScatterVal"></span
+          ></label>
+        </div>
+        <div class="row">
+          <label
+            >Hue°
+            <input
+              id="fogHue"
+              type="range"
+              min="0"
+              max="360"
+              value="220" /><span id="fogHueVal"></span
+          ></label>
+          <label
+            >Time ×
+            <input
+              id="fogTime"
+              type="range"
+              min="0.1"
+              max="5"
+              step="0.1"
+              value="1.0" /><span id="fogTimeVal"></span
+          ></label>
+        </div>
+        <div class="row">
+          <label
+            >Quantum Noise
+            <input
+              id="fogQ"
+              type="range"
+              min="0"
+              max="1.5"
+              step="0.01"
+              value="0.35" /><span id="fogQVal"></span
+          ></label>
+          <label
+            >EM Coupling
+            <input
+              id="fogEM"
+              type="range"
+              min="0"
+              max="2"
+              step="0.01"
+              value="0.7" /><span id="fogEMVal"></span
+          ></label>
+        </div>
+      </details>
+
+      
+      <details open>
+        <summary>Plasma (Audio) ▾</summary>
+        <label><input id="plasmaEnable" type="checkbox"/> Enable Plasma Overlay</label>
+        <button id="plasmaMicBtn">Start Microphone 🎙️</button>
+        <div class="row">
+          <label>Plasma Amp
+            <input id="plasmaAmp" type="range" min="0" max="3" step="0.01" value="1.0"/>
+            <span id="plasmaAmpVal"></span>
+          </label>
+          <label>Blend ×
+            <input id="plasmaBlend" type="range" min="0" max="1" step="0.01" value="0.75"/>
+            <span id="plasmaBlendVal"></span>
+          </label>
+        </div>
+        <div class="row">
+          <label>Palette Rotate°
+            <input id="plasmaHue" type="range" min="0" max="360" step="1" value="180"/>
+            <span id="plasmaHueVal"></span>
+          </label>
+          <label>Audio Amp ×
+            <input id="plasmaAudioAmp" type="range" min="0" max="5" step="0.01" value="1.0"/>
+            <span id="plasmaAudioAmpVal"></span>
+          </label>
+        </div>
+        <div class="row">
+          <label><input id="plasmaG" type="checkbox" checked/> Gravity</label>
+          <label><input id="plasmaE" type="checkbox" checked/> EM</label>
+        </div>
+        <div class="row">
+          <label><input id="plasmaS" type="checkbox"/> Strong</label>
+          <label><input id="plasmaW" type="checkbox"/> Weak</label>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Tensor Field Diagnostics ▾</summary>
+        <div class="row">
+          <label><input id="fluxChk" type="checkbox" checked/> Flux · <span id="fluxVal" class="mono">0.00</span></label>
+          <label><input id="curlChk" type="checkbox" checked/> |∇×F| · <span id="curlVal" class="mono">0.00</span></label>
+        </div>
+        <label><input id="divChk" type="checkbox" checked/> ∇·F · <span id="divVal" class="mono">0.00</span></label>
+      </details>
+    
+
+      <details open>
+        <summary>Universe Overrides (A–D)</summary>
+        <div class="mini">
+          Per‑universe deltas multiply the global controls. A=primary, then
+          B/C/D for mirrors.
+        </div>
+        <fieldset>
+          <legend>A (primary)</legend>
+          <label
+            >Gravity ×
+            <input
+              id="uA_grav"
+              type="range"
+              min="-4"
+              max="5"
+              step="0.1"
+              value="1.0" /><span id="uA_gravVal"></span
+          ></label>
+          <label
+            >EM ×
+            <input
+              id="uA_em"
+              type="range"
+              min="0"
+              max="5"
+              step="0.1"
+              value="1.0" /><span id="uA_emVal"></span
+          ></label>
+          <label
+            >Time ×
+            <input
+              id="uA_time"
+              type="range"
+              min="-3"
+              max="5"
+              step="0.1"
+              value="1.0" /><span id="uA_timeVal"></span
+          ></label>
+          <label
+            >λ (Manifold) ×
+            <input
+              id="uA_lambda"
+              type="range"
+              min="0"
+              max="3"
+              step="0.05"
+              value="1.0" /><span id="uA_lambdaVal"></span
+          ></label>
+          <label
+            >Δτ
+            <input
+              id="uA_tau"
+              type="range"
+              min="-3.14"
+              max="3.14"
+              step="0.01"
+              value="0" /><span id="uA_tauVal"></span
+          ></label>
+          <label
+            >Δκ
+            <input
+              id="uA_k"
+              type="range"
+              min="-1"
+              max="1"
+              step="0.01"
+              value="0" /><span id="uA_kVal"></span
+          ></label>
+
+          <label
+            >Topology
+            <select id="uA_topo">
+              <option value="inherit">Inherit</option>
+              <option value="none">None</option>
+              <option value="torus">Torus</option>
+              <option value="klein">Klein</option>
+              <option value="hyperbolic">Hyperbolic</option>
+            </select>
+          </label>
+          <div class="row mini">
+            <label
+              >R
+              <input
+                id="uA_R"
+                type="range"
+                min="2"
+                max="80"
+                step="0.5"
+                value="26" /><span id="uA_RVal"></span
+            ></label>
+            <label
+              >r
+              <input
+                id="uA_r"
+                type="range"
+                min="0.5"
+                max="30"
+                step="0.5"
+                value="6" /><span id="uA_rVal"></span
+            ></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>B</legend>
+          <label
+            >Gravity ×
+            <input
+              id="uB_grav"
+              type="range"
+              min="-4"
+              max="5"
+              step="0.1"
+              value="1.0" /><span id="uB_gravVal"></span
+          ></label>
+          <label
+            >EM ×
+            <input
+              id="uB_em"
+              type="range"
+              min="0"
+              max="5"
+              step="0.1"
+              value="1.0" /><span id="uB_emVal"></span
+          ></label>
+          <label
+            >Time ×
+            <input
+              id="uB_time"
+              type="range"
+              min="-3"
+              max="5"
+              step="0.1"
+              value="1.0" /><span id="uB_timeVal"></span
+          ></label>
+          <label
+            >λ (Manifold) ×
+            <input
+              id="uB_lambda"
+              type="range"
+              min="0"
+              max="3"
+              step="0.05"
+              value="1.0" /><span id="uB_lambdaVal"></span
+          ></label>
+          <label
+            >Δτ
+            <input
+              id="uB_tau"
+              type="range"
+              min="-3.14"
+              max="3.14"
+              step="0.01"
+              value="0" /><span id="uB_tauVal"></span
+          ></label>
+          <label
+            >Δκ
+            <input
+              id="uB_k"
+              type="range"
+              min="-1"
+              max="1"
+              step="0.01"
+              value="0" /><span id="uB_kVal"></span
+          ></label>
+
+          <label
+            >Topology
+            <select id="uB_topo">
+              <option value="inherit">Inherit</option>
+              <option value="none">None</option>
+              <option value="torus">Torus</option>
+              <option value="klein">Klein</option>
+              <option value="hyperbolic">Hyperbolic</option>
+            </select>
+          </label>
+          <div class="row mini">
+            <label
+              >R
+              <input
+                id="uB_R"
+                type="range"
+                min="2"
+                max="80"
+                step="0.5"
+                value="26" /><span id="uB_RVal"></span
+            ></label>
+            <label
+              >r
+              <input
+                id="uB_r"
+                type="range"
+                min="0.5"
+                max="30"
+                step="0.5"
+                value="6" /><span id="uB_rVal"></span
+            ></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>C</legend>
+          <label
+            >Gravity ×
+            <input
+              id="uC_grav"
+              type="range"
+              min="-4"
+              max="5"
+              step="0.1"
+              value="1.0" /><span id="uC_gravVal"></span
+          ></label>
+          <label
+            >EM ×
+            <input
+              id="uC_em"
+              type="range"
+              min="0"
+              max="5"
+              step="0.1"
+              value="1.0" /><span id="uC_emVal"></span
+          ></label>
+          <label
+            >Time ×
+            <input
+              id="uC_time"
+              type="range"
+              min="-3"
+              max="5"
+              step="0.1"
+              value="1.0" /><span id="uC_timeVal"></span
+          ></label>
+          <label
+            >λ (Manifold) ×
+            <input
+              id="uC_lambda"
+              type="range"
+              min="0"
+              max="3"
+              step="0.05"
+              value="1.0" /><span id="uC_lambdaVal"></span
+          ></label>
+          <label
+            >Δτ
+            <input
+              id="uC_tau"
+              type="range"
+              min="-3.14"
+              max="3.14"
+              step="0.01"
+              value="0" /><span id="uC_tauVal"></span
+          ></label>
+          <label
+            >Δκ
+            <input
+              id="uC_k"
+              type="range"
+              min="-1"
+              max="1"
+              step="0.01"
+              value="0" /><span id="uC_kVal"></span
+          ></label>
+
+          <label
+            >Topology
+            <select id="uC_topo">
+              <option value="inherit">Inherit</option>
+              <option value="none">None</option>
+              <option value="torus">Torus</option>
+              <option value="klein">Klein</option>
+              <option value="hyperbolic">Hyperbolic</option>
+            </select>
+          </label>
+          <div class="row mini">
+            <label
+              >R
+              <input
+                id="uC_R"
+                type="range"
+                min="2"
+                max="80"
+                step="0.5"
+                value="26" /><span id="uC_RVal"></span
+            ></label>
+            <label
+              >r
+              <input
+                id="uC_r"
+                type="range"
+                min="0.5"
+                max="30"
+                step="0.5"
+                value="6" /><span id="uC_rVal"></span
+            ></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>D</legend>
+          <label
+            >Gravity ×
+            <input
+              id="uD_grav"
+              type="range"
+              min="-4"
+              max="5"
+              step="0.1"
+              value="1.0" /><span id="uD_gravVal"></span
+          ></label>
+          <label
+            >EM ×
+            <input
+              id="uD_em"
+              type="range"
+              min="0"
+              max="5"
+              step="0.1"
+              value="1.0" /><span id="uD_emVal"></span
+          ></label>
+          <label
+            >Time ×
+            <input
+              id="uD_time"
+              type="range"
+              min="-3"
+              max="5"
+              step="0.1"
+              value="1.0" /><span id="uD_timeVal"></span
+          ></label>
+          <label
+            >λ (Manifold) ×
+            <input
+              id="uD_lambda"
+              type="range"
+              min="0"
+              max="3"
+              step="0.05"
+              value="1.0" /><span id="uD_lambdaVal"></span
+          ></label>
+          <label
+            >Δτ
+            <input
+              id="uD_tau"
+              type="range"
+              min="-3.14"
+              max="3.14"
+              step="0.01"
+              value="0" /><span id="uD_tauVal"></span
+          ></label>
+          <label
+            >Δκ
+            <input
+              id="uD_k"
+              type="range"
+              min="-1"
+              max="1"
+              step="0.01"
+              value="0" /><span id="uD_kVal"></span
+          ></label>
+
+          <label
+            >Topology
+            <select id="uD_topo">
+              <option value="inherit">Inherit</option>
+              <option value="none">None</option>
+              <option value="torus">Torus</option>
+              <option value="klein">Klein</option>
+              <option value="hyperbolic">Hyperbolic</option>
+            </select>
+          </label>
+          <div class="row mini">
+            <label
+              >R
+              <input
+                id="uD_R"
+                type="range"
+                min="2"
+                max="80"
+                step="0.5"
+                value="26" /><span id="uD_RVal"></span
+            ></label>
+            <label
+              >r
+              <input
+                id="uD_r"
+                type="range"
+                min="0.5"
+                max="30"
+                step="0.5"
+                value="6" /><span id="uD_rVal"></span
+            ></label>
+          </div>
+        </fieldset>
+        <label
+          ><input id="xverseChk" type="checkbox" /> Cross‑verse collision
+          prediction</label
+        >
+      </details>
+
+      <details open>
+        <summary>Ecosystem / Networks ▾</summary>
+        <label
+          ><input id="ecoEnable" type="checkbox" checked /> Enable
+          Ecosystem</label
+        >
+        <div class="row">
+          <label
+            >Networks
+            <input
+              id="ecoNetworks"
+              type="range"
+              min="0"
+              max="12"
+              value="5" /><span id="ecoNetworksVal"></span
+          ></label>
+          <label
+            >Paths / Net
+            <input
+              id="ecoPaths"
+              type="range"
+              min="0"
+              max="64"
+              value="18" /><span id="ecoPathsVal"></span
+          ></label>
+        </div>
+        <div class="row">
+          <label
+            >Growth
+            <input
+              id="ecoGrow"
+              type="range"
+              min="0"
+              max="0.01"
+              step="0.0001"
+              value="0.001" /><span id="ecoGrowVal"></span
+          ></label>
+          <label
+            >Mitosis
+            <input
+              id="ecoMitosis"
+              type="range"
+              min="0"
+              max="0.01"
+              step="0.0001"
+              value="0.001" /><span id="ecoMitosisVal"></span
+          ></label>
+        </div>
+        <div class="row">
+          <label
+            >Merge
+            <input
+              id="ecoMerge"
+              type="range"
+              min="0"
+              max="0.01"
+              step="0.00001"
+              value="0.00001" /><span id="ecoMergeVal"></span
+          ></label>
+          <label
+            >Exchange<input
+              id="ecoExchange"
+              type="range"
+              min="0"
+              max="0.01"
+              step="0.0001"
+              value="0.001" /><span id="ecoExchangeVal"></span
+          ></label>
+        </div>
+        <div class="row">
+          <label
+            >Flocking
+            <input
+              id="ecoFlock"
+              type="range"
+              min="0"
+              max="3"
+              step="0.05"
+              value="1.2" /><span id="ecoFlockVal"></span
+          ></label>
+          <label
+            >Diff. Growth
+            <input
+              id="ecoDiff"
+              type="range"
+              min="0"
+              max="3"
+              step="0.05"
+              value="1.0" /><span id="ecoDiffVal"></span
+          ></label>
+        </div>
+        <div class="row">
+          <label
+            >Topology Outlines <input id="ecoTopo" type="checkbox" checked
+          /></label>
+          <label
+            >Bind → Systems <input id="ecoBind" type="checkbox" checked
+          /></label>
+        </div>
+      </details>
+      <!-- STANDARD OBJECTS -->
+      <details open>
+        <summary>Standard Objects ▾</summary>
+        <label
+          >Planets
+          <input
+            id="planetSlider"
+            type="range"
+            min="0"
+            max="20"
+            value="9"
+          /><span id="planetVal"></span>
+        </label>
+        <label
+          >Moons
+          <input
+            id="moonSlider"
+            type="range"
+            min="0"
+            max="100"
+            value="0"
+          /><span id="moonVal"></span>
+        </label>
+        <label
+          ><input id="moonDistToggle" type="checkbox" /> Even Moon Dist.</label
+        >
+        <label
+          >Comets
+          <input
+            id="cometSlider"
+            type="range"
+            min="0"
+            max="50"
+            value="10"
+          /><span id="cometVal"></span>
+        </label>
+        <label
+          >Meteors
+          <input
+            id="meteorSlider"
+            type="range"
+            min="0"
+            max="300"
+            step="5"
+            value="32"
+          /><span id="meteorVal"></span>
+        </label>
+        <label
+          >Asteroids
+          <input
+            id="asteroidSlider"
+            type="range"
+            min="0"
+            max="200"
+            value="25"
+          /><span id="asteroidVal"></span>
+        </label>
+        <label
+          >Black Holes
+          <input id="bhSlider" type="range" min="0" max="5" value="0" /><span
+            id="bhVal"
+          ></span>
+        </label>
+      </details>
+
+      <!-- GALAXY / CLUSTER -->
+      <details>
+        <summary>Galaxy Parameters ▾</summary>
+        <label
+          >Stars
+          <input
+            id="starCount"
+            type="range"
+            min="100"
+            max="3000"
+            step="25"
+            value="400"
+          /><span id="starCountVal"></span>
+        </label>
+      </details>
+      <details>
+        <summary>Cluster Parameters ▾</summary>
+        <label
+          >Galaxy Clusters
+          <input
+            id="galClusterCount"
+            type="range"
+            min="1"
+            max="23"
+            value="3"
+          /><span id="galClusterVal"></span>
+        </label>
+        <label
+          >Stars / Cluster
+          <input
+            id="clusterStarCount"
+            type="range"
+            min="100"
+            max="3500"
+            step="25"
+            value="30"
+          /><span id="clusterStarVal"></span>
+        </label>
+      </details>
+
+      <!-- ADVANCED -->
+      <details>
+        <summary>Advanced Stellar Objects ▾</summary>
+        <label
+          >Pulsars
+          <input
+            id="pulsarCount"
+            type="range"
+            min="0"
+            max="20"
+            value="1"
+          /><span id="pulsarCountVal"></span>
+        </label>
+        <label
+          >Pulsar Period (ms)
+          <input
+            id="pulsarPeriod"
+            type="range"
+            min="1"
+            max="1000"
+            value="33"
+          /><span id="pulsarPeriodVal"></span>
+        </label>
+        <label
+          >Neutron Stars
+          <input
+            id="neutronCount"
+            type="range"
+            min="0"
+            max="20"
+            value="1"
+          /><span id="neutronCountVal"></span>
+        </label>
+        <label
+          >Quasars
+          <input id="quasarCount" type="range" min="0" max="5" value="1" /><span
+            id="quasarCountVal"
+          ></span>
+        </label>
+        <label
+          >Nebulae
+          <input
+            id="nebulaCount"
+            type="range"
+            min="0"
+            max="15"
+            value="3"
+          /><span id="nebulaCountVal"></span>
+        </label>
+        <label
+          >Star Clusters
+          <input
+            id="subClusterCount"
+            type="range"
+            min="0"
+            max="12"
+            value="1"
+          /><span id="subClusterVal"></span>
+        </label>
+      </details>
+
+      <!-- COSMOS -->
+      <details>
+        <summary>COSMOS ▾</summary>
+        <label
+          >Universe Age (Gyr)
+          <input
+            id="univAge"
+            type="range"
+            min="0.5"
+            max="30"
+            step="0.1"
+            value="13.8"
+          /><span id="univAgeVal"></span>
+        </label>
+        <label
+          >Scale 10^x m
+          <input
+            id="scaleExp"
+            type="range"
+            min="-35"
+            max="26"
+            step="1"
+            value="0"
+          /><span id="scaleExpVal"></span>
+        </label>
+      </details>
+
+      <details open>
+        <summary>Nebula Glow</summary>
+        <label><input id="nebChk" type="checkbox" /> Enable</label>
+        <label
+          >Hue°
+          <input id="nebHue" type="range" min="0" max="360" value="270" /><span
+            id="nebHueVal"
+          ></span
+        ></label>
+        <label
+          >Wave Amp
+          <input
+            id="nebAmp"
+            type="range"
+            min="0"
+            max="5"
+            step="0.1"
+            value="1.2" /><span id="nebAmpVal"></span
+        ></label>
+        <label
+          >Mag Field
+          <input
+            id="nebMag"
+            type="range"
+            min="0"
+            max="5"
+            step="0.1"
+            value="1.0" /><span id="nebMagVal"></span
+        ></label>
+        <label
+          >Time Scale
+          <input
+            id="nebTime"
+            type="range"
+            min="0.1"
+            max="10"
+            step="0.1"
+            value="1.0" /><span id="nebTimeVal"></span
+        ></label>
+        <label
+          >Chaos
+          <input
+            id="nebChaos"
+            type="range"
+            min="0"
+            max="5"
+            step="0.1"
+            value="1.0" /><span id="nebChaosVal"></span
+        ></label>
+      </details>
+
+      <details open>
+        <summary>Forces & Fields</summary>
+        <label><input id="gravChk" type="checkbox" checked /> Gravity</label>
+        <label
+          >Gravity ×
+          <input
+            id="gravSlider"
+            type="range"
+            min="-4"
+            max="5"
+            step="0.1"
+            value="1.0"
+          /><span id="gravVal"></span>
+        </label>
+        <label
+          ><input id="emChk" type="checkbox" checked /> Electromagnetism</label
+        >
+        <label
+          >EM ×
+          <input
+            id="emScale"
+            type="range"
+            min="0"
+            max="5"
+            step="0.1"
+            value="1.0"
+          /><span id="emScaleVal"></span>
+        </label>
+        <label
+          >Entropy
+          <input
+            id="entropy"
+            type="range"
+            min="0"
+            max="2"
+            step="0.01"
+            value="0.25"
+          /><span id="entropyVal"></span>
+        </label>
+        <label
+          >Information
+          <input
+            id="information"
+            type="range"
+            min="0"
+            max="2"
+            step="0.01"
+            value="1.20"
+          /><span id="informationVal"></span>
+        </label>
+        <label
+          >Dark Matter %
+          <input
+            id="darkMatter"
+            type="range"
+            min="0"
+            max="2"
+            step="0.01"
+            value="0.25"
+          /><span id="darkMatterVal"></span>
+        </label>
+        <label
+          >Matter↔Anti ratio
+          <input
+            id="matterRatio"
+            type="range"
+            min="-1"
+            max="1"
+            step="0.01"
+            value="0.90"
+          /><span id="matterRatioVal"></span>
+        </label>
+        <label
+          >Time Scale
+          <input
+            id="timeScale"
+            type="range"
+            min="-3"
+            max="5"
+            step="0.1"
+            value="1.0"
+          /><span id="timeScaleVal"></span>
+        </label>
+        <label
+          ><input id="showGRTags" type="checkbox" checked /> Show GR
+          overlay</label
+        >
+
+        <details>
+          <summary>Deep‑Field (Neon‑Twinkle)</summary>
+          <label><input id="shieldEnable" type="checkbox" /> Enable</label>
+          <label
+            >Amplitude
+            <input
+              id="shieldAmp"
+              type="range"
+              min="0"
+              max="2"
+              step="0.01"
+              value="1.00"
+            /><span id="shieldAmpVal"></span>
+          </label>
+          <label
+            >Tempo
+            <input
+              id="shieldTempo"
+              type="range"
+              min="0"
+              max="4"
+              step="0.01"
+              value="1.00"
+            /><span id="shieldTempoVal"></span>
+          </label>
+          <label
+            ><input id="shieldGrav" type="checkbox" checked /> Gravity</label
+          >
+          <label
+            ><input id="shieldEM" type="checkbox" checked />
+            Electromagnetism</label
+          >
+          <label><input id="shieldStrong" type="checkbox" /> Strong</label>
+          <label><input id="shieldWeak" type="checkbox" /> Weak</label>
+        </details>
+      </details>
+
+      <details open>
+        <summary>Scenario Differential</summary>
+        <label
+          >Hyperbolic Strength
+          <input
+            id="hypStrength"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.35"
+          /><span id="hypVal"></span>
+        </label>
+        <label
+          >Scenario Blend
+          <input
+            id="sceneBlend"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.00"
+          /><span id="sceneBlendVal"></span>
+        </label>
+      </details>
+
+      <details open>
+        <summary>Camera</summary>
+        <label
+          >Radius
+          <input
+            id="camRadSlider"
+            type="range"
+            min="20"
+            max="900"
+            value="160"
+          /><span id="camRadVal"></span>
+        </label>
+        <label
+          >FOV°
+          <input
+            id="fovSlider"
+            type="range"
+            min="30"
+            max="120"
+            value="60"
+          /><span id="fovVal"></span>
+        </label>
+      </details>
+
+      <details open>
+        <summary>Lens Balls (multi)</summary>
+        <label
+          ># Lenses
+          <input
+            id="lensCount"
+            type="range"
+            min="0"
+            max="24"
+            step="1"
+            value="0"
+          /><span id="lensCountVal"></span>
+        </label>
+        <div class="mini">
+          Per‑lens controls: world/screen anchor, mass, radius, strength,
+          yaw/pitch/roll (→ quaternion), UV center or XYZ pos, “Show GR.” DM
+          weight, E=mc², and t′/t labels.
+        </div>
+        <div id="lensList"></div>
+      </details>
+
+      <details open>
+        <summary>Gas Clouds & Radiation</summary>
+        <label><input id="gasEnable" type="checkbox" /> Gas Clouds</label>
+        <label
+          >Gas Density
+          <input
+            id="gasDensity"
+            type="range"
+            min="0"
+            max="3"
+            step="0.1"
+            value="1.2"
+          /><span id="gasDensityVal"></span>
+        </label>
+        <label
+          >Gas Flow
+          <input
+            id="gasFlow"
+            type="range"
+            min="0"
+            max="5"
+            step="0.1"
+            value="1.0"
+          /><span id="gasFlowVal"></span>
+        </label>
+        <label
+          ><input id="radEnable" type="checkbox" checked /> Cosmic
+          Radiation</label
+        >
+        <label
+          >Radiation Level
+          <input
+            id="radLevel"
+            type="range"
+            min="0"
+            max="3"
+            step="0.05"
+            value="0.6"
+          /><span id="radLevelVal"></span>
+        </label>
+        <label
+          >Stochasticity
+          <input
+            id="stoch"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.25"
+          /><span id="stochVal"></span>
+        </label>
+        <div class="mini mono">
+          live — rad dose: <span id="radDose">0.0</span> · gas field:
+          <span id="gasLevel">0.0</span>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Trajectories (RK4)</summary>
+        <label
+          ><input id="rk4Enable" type="checkbox" /> Use RK4 for curves</label
+        >
+        <label
+          >RK4 Steps
+          <input
+            id="rk4Steps"
+            type="range"
+            min="60"
+            max="2400"
+            step="60"
+            value="600"
+          /><span id="rk4StepsVal"></span>
+        </label>
+        <label
+          >RK4 dt
+          <input
+            id="rk4dt"
+            type="range"
+            min="0.002"
+            max="0.2"
+            step="0.005"
+            value="0.02"
+          /><span id="rk4dtVal"></span>
+        </label>
+        <label
+          >Trajectory Color
+          <select id="trajColorMode">
+            <option value="type">By Type</option>
+            <option value="speed">By Speed</option>
+            <option value="palette">Munsell Palette</option>
+          </select>
+        </label>
+      </details>
+
+      <details>
+        <summary>MunsellQ Palette & Audio</summary>
+        <div class="row">
+          <label
+            >Color 1 <input id="mqC1" type="color" value="#FF0000"
+          /></label>
+          <label
+            >Color 2 <input id="mqC2" type="color" value="#00FF00"
+          /></label>
+        </div>
+        <div class="row">
+          <label
+            >Color 3 <input id="mqC3" type="color" value="#0000FF"
+          /></label>
+          <label
+            >Color 4 <input id="mqC4" type="color" value="#FFFF00"
+          /></label>
+        </div>
+        <div class="row">
+          <label
+            >Color 5 <input id="mqC5" type="color" value="#FF00FF"
+          /></label>
+          <label
+            >Color 6 <input id="mqC6" type="color" value="#00FFFF"
+          /></label>
+        </div>
+        <button id="mqApply">Apply Palette</button>
+        <button id="mqStartAudio">Start Audio</button>
+        <div class="mini mono">munsell: <span id="mqStatus">idle</span></div>
+      </details>
+
+      <details open>
+        <summary>Tensor Field Diagnostics</summary>
+        <label><input id="fluxChk" type="checkbox" checked /> Flux</label>
+        <label><input id="curlChk" type="checkbox" checked /> Curl |∇×F|</label>
+        <label><input id="divChk" type="checkbox" /> Divergence ∇·F</label>
+        <div class="mini mono">
+          ⟂ flux=<span id="fluxVal">0</span> · |curl|=<span id="curlVal"
+            >0</span
+          >
+          · div=<span id="divVal">0</span> · τ=<span id="tauVal">0</span> ·
+          jerk=<span id="jerkVal">0</span>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Trails & Interactions</summary>
+        <label
+          >Trail Length
+          <input
+            id="trailSlider"
+            type="range"
+            min="0"
+            max="3000"
+            step="10"
+            value="600"
+          /><span id="trailVal"></span>
+        </label>
+        <label
+          ><input id="trajChk" type="checkbox" checked /> Trajectories</label
+        >
+        <label><input id="planeChk" type="checkbox" /> Orbit Planes</label>
+        <label><input id="collChk" type="checkbox" checked /> Collisions</label>
+        <label><input id="predChk" type="checkbox" /> Predict Collisions</label>
+        <div id="predictions" class="mini mono"></div>
+      </details>
+
+      <details>
+        <summary>Constants</summary>
+        <div class="mini mono">Planck h = 6.626 070 15×10⁻³⁴ J·s (exact)</div>
+        <div class="mini mono">
+          c = 299 792 458 m/s · G = 6.674 30×10⁻¹¹ N·m²/kg²
+        </div>
+      </details>
+
+      <div id="alerts"></div>
+    </div>
+
+    <script>
+      (() => {
+        const $ = (id) => document.getElementById(id);
+        const overlay = $("overlay");
+        const logBox = $("alerts");
+        const hudAge = $("hudAge");
+        const hudScale = $("hudScale");
+        const log = (m) => {
+        // General UI → simulation wiring
+        function updateBasesFromUI(){
+          for(const W of getWorlds()){
+            if(!W._base) W._base = {grav: W.gravityScale, em: W.emScale, time: W.timeScale};
+            W._base.grav = +($("gravSlider")?.value || W.gravityScale);
+            W._base.em   = +($("emScale")?.value || W.emScale);
+            W._base.time = +($("timeScale")?.value || W.timeScale);
+            // basic toggles
+            W.enableGravity = $("gravChk")?.checked ?? W.enableGravity;
+            W.enableEM = $("emChk")?.checked ?? W.enableEM;
+            // nebula sync
+            if (W.nebula){
+              W.nebula.enabled = $("nebChk")?.checked ?? W.nebula.enabled;
+              W.nebula.hue = +($("nebHue")?.value || W.nebula.hue);
+              W.nebula.amp = +($("nebAmp")?.value || W.nebula.amp);
+              W.nebula.mag = +($("nebMag")?.value || W.nebula.mag);
+              W.nebula.timeScale = +($("nebTime")?.value || W.nebula.timeScale);
+              W.nebula.chaos = +($("nebChaos")?.value || W.nebula.chaos);
+            }
+          }
+        }
+        (function attachGlobalUI(){
+          const uiEl = $("ui");
+          if(!uiEl) return;
+          const react = () => {
+            updateBasesFromUI();
+            applyUniverseOverrides?.();
+            // trails and manifolds react live
+            ManifoldPU?.buildAll?.();
+            uploadGeometry();
+          };
+          uiEl.addEventListener("input", react);
+          uiEl.addEventListener("change", react);
+        })();
+
+          const el = document.createElement("div");
+          el.className = "alert";
+          el.textContent = "[" + new Date().toLocaleTimeString() + "] " + m;
+          logBox.prepend(el);
+          while (logBox.children.length > 200)
+            logBox.removeChild(logBox.lastChild);
+        };
+
+        // Live binds
+        function bind(id, span, fmt = (v) => v) {
+          const e = $(id),
+            s = $(span);
+          if (!e || !s) return;
+          const u = () => (s.textContent = fmt(e.value));
+          e.addEventListener("input", u);
+          u();
+        }
+        [
+          ["planetSlider", "planetVal"],
+          ["moonSlider", "moonVal"],
+          ["cometSlider", "cometVal"],
+          ["meteorSlider", "meteorVal"],
+          ["asteroidSlider", "asteroidVal"],
+          ["bhSlider", "bhVal"],
+          ["starCount", "starCountVal"],
+          ["galClusterCount", "galClusterVal"],
+          ["clusterStarCount", "clusterStarVal"],
+          ["pulsarCount", "pulsarCountVal"],
+          ["pulsarPeriod", "pulsarPeriodVal"],
+          ["neutronCount", "neutronCountVal"],
+          ["quasarCount", "quasarCountVal"],
+          ["nebulaCount", "nebulaCountVal"],
+          ["subClusterCount", "subClusterVal"],
+          [
+            "univAge",
+            "univAgeVal",
+            (v) => {
+              hudAge.textContent = (+v).toFixed(1);
+              return (+v).toFixed(1);
+            },
+          ],
+          [
+            "scaleExp",
+            "scaleExpVal",
+            (v) => {
+              hudScale.textContent = +v | 0;
+              return +v | 0;
+            },
+          ],
+          ["nebHue", "nebHueVal"],
+          ["nebAmp", "nebAmpVal", (v) => (+v).toFixed(1)],
+          ["nebMag", "nebMagVal", (v) => (+v).toFixed(1)],
+          ["nebTime", "nebTimeVal", (v) => (+v).toFixed(1)],
+          ["nebChaos", "nebChaosVal", (v) => (+v).toFixed(1)],
+          ["universeCount", "universeCountVal"],
+          ["interfSlider", "interfVal", (v) => (+v).toFixed(2)],
+          ["gravSlider", "gravVal", (v) => (+v).toFixed(1) + "×"],
+          ["emScale", "emScaleVal", (v) => (+v).toFixed(1) + "×"],
+          ["entropy", "entropyVal", (v) => (+v).toFixed(2)],
+          ["information", "informationVal", (v) => (+v).toFixed(2)],
+          ["darkMatter", "darkMatterVal", (v) => Math.round(+v * 100) + "%"],
+          ["matterRatio", "matterRatioVal", (v) => (+v).toFixed(2)],
+          ["timeScale", "timeScaleVal", (v) => (+v).toFixed(1) + "×"],
+          ["camRadSlider", "camRadVal", (v) => v | 0],
+          ["fovSlider", "fovVal"],
+          ["lensCount", "lensCountVal"],
+          ["trailSlider", "trailVal"],
+          ["shieldAmp", "shieldAmpVal", (v) => (+v).toFixed(2)],
+          ["shieldTempo", "shieldTempoVal", (v) => (+v).toFixed(2)],
+          ["hypStrength", "hypVal", (v) => (+v).toFixed(2)],
+          ["sceneBlend", "sceneBlendVal", (v) => (+v).toFixed(2)],
+          ["gasDensity", "gasDensityVal", (v) => (+v).toFixed(1)],
+          ["gasFlow", "gasFlowVal", (v) => (+v).toFixed(1)],
+          ["radLevel", "radLevelVal", (v) => (+v).toFixed(2)],
+          ["rk4Steps", "rk4StepsVal"],
+          ["rk4dt", "rk4dtVal"],
+          ["uA_grav", "uA_gravVal", (v) => (+v).toFixed(1) + "×"],
+          ["uA_em", "uA_emVal", (v) => (+v).toFixed(1) + "×"],
+          ["uA_time", "uA_timeVal", (v) => (+v).toFixed(1) + "×"],
+          ["uB_grav", "uB_gravVal", (v) => (+v).toFixed(1) + "×"],
+          ["uB_em", "uB_emVal", (v) => (+v).toFixed(1) + "×"],
+          ["uB_time", "uB_timeVal", (v) => (+v).toFixed(1) + "×"],
+          ["uC_grav", "uC_gravVal", (v) => (+v).toFixed(1) + "×"],
+          ["uC_em", "uC_emVal", (v) => (+v).toFixed(1) + "×"],
+          ["uC_time", "uC_timeVal", (v) => (+v).toFixed(1) + "×"],
+          ["uD_grav", "uD_gravVal", (v) => (+v).toFixed(1) + "×"],
+          ["uD_em", "uD_emVal", (v) => (+v).toFixed(1) + "×"],
+          ["uD_time", "uD_timeVal", (v) => (+v).toFixed(1) + "×"],
+          ["uA_lambda", "uA_lambdaVal", (v) => (+v).toFixed(2) + "×"],
+          ["uA_tau", "uA_tauVal", (v) => (+v).toFixed(2)],
+          ["uA_k", "uA_kVal", (v) => (+v).toFixed(2)],
+          ["uB_lambda", "uB_lambdaVal", (v) => (+v).toFixed(2) + "×"],
+          ["uB_tau", "uB_tauVal", (v) => (+v).toFixed(2)],
+          ["uB_k", "uB_kVal", (v) => (+v).toFixed(2)],
+          ["uC_lambda", "uC_lambdaVal", (v) => (+v).toFixed(2) + "×"],
+          ["uC_tau", "uC_tauVal", (v) => (+v).toFixed(2)],
+          ["uC_k", "uC_kVal", (v) => (+v).toFixed(2)],
+          ["uD_lambda", "uD_lambdaVal", (v) => (+v).toFixed(2) + "×"],
+          ["uD_tau", "uD_tauVal", (v) => (+v).toFixed(2)],
+          ["uD_k", "uD_kVal", (v) => (+v).toFixed(2)],
+          ["uA_R", "uA_RVal"],
+          ["uA_r", "uA_rVal"],
+          ["uB_R", "uB_RVal"],
+          ["uB_r", "uB_rVal"],
+          ["uC_R", "uC_RVal"],
+          ["uC_r", "uC_rVal"],
+          ["uD_R", "uD_RVal"],
+          ["uD_r", "uD_rVal"],["interfGain","interfGainVal",v=>(+v).toFixed(2)],["burstStrength","burstStrengthVal",v=>(+v).toFixed(1)],["burstRadius","burstRadiusVal"],["fragProb","fragProbVal",v=>(+v).toFixed(2)],["transformThresh","transformThreshVal",v=>(+v).toFixed(1)],["plasmaAmp","plasmaAmpVal",v=>(+v).toFixed(2)],["plasmaBlend","plasmaBlendVal",v=>(+v).toFixed(2)],["plasmaHue","plasmaHueVal"],["plasmaAudioAmp","plasmaAudioAmpVal",v=>(+v).toFixed(2)],["gasDensity","gasDensityVal",v=>(+v).toFixed(2)],["gasFlow","gasFlowVal",v=>(+v).toFixed(2)],["radLevel","radLevelVal",v=>(+v).toFixed(2)],["stoch","stochVal",v=>(+v).toFixed(2)],
+          ["ecoNetworks", "ecoNetworksVal"],
+          ["ecoPaths", "ecoPathsVal"],
+          ["ecoGrow", "ecoGrowVal", (v) => (+v).toFixed(4)],
+          ["ecoMitosis", "ecoMitosisVal", (v) => (+v).toFixed(4)],
+          ["ecoMerge", "ecoMergeVal", (v) => (+v).toFixed(5)],
+          ["ecoExchange", "ecoExchangeVal", (v) => (+v).toFixed(4)],
+          ["ecoFlock", "ecoFlockVal", (v) => (+v).toFixed(2)],
+          ["ecoDiff", "ecoDiffVal", (v) => (+v).toFixed(2)],
+          ["fogAmp", "fogAmpVal", (v) => (+v).toFixed(2)],
+          ["fogScatter", "fogScatterVal", (v) => (+v).toFixed(2)],
+          ["fogHue", "fogHueVal"],
+          ["fogTime", "fogTimeVal", (v) => (+v).toFixed(2)],
+          ["fogQ", "fogQVal", (v) => (+v).toFixed(2)],
+          ["fogEM", "fogEMVal", (v) => (+v).toFixed(2)],
+          ["maniUSegs", "maniUSegsVal"],
+          ["maniVSegs", "maniVSegsVal"],
+          ["maniR", "maniRVal"],
+          ["manir", "manirVal"],
+          ["maniK", "maniKVal", (v) => (+v).toFixed(2)],
+          ["maniTwist", "maniTwistVal", (v) => (+v).toFixed(2)],
+          ["maniCouple", "maniCoupleVal", (v) => (+v).toFixed(2)],
+          ["maniNoise", "maniNoiseVal", (v) => (+v).toFixed(2)],
+          ["maniStreamN", "maniStreamNVal"],
+          ["maniStreamL", "maniStreamLVal"],
+        ].forEach(([i, s, f]) => bind(i, s, f || ((v) => v)));
+
+        // Overlay helpers
+        function tag(id, text, x, y) {
+          if (!$("showGRTags").checked) return;
+          let el = document.getElementById(id);
+          if (!el) {
+            el = document.createElement("div");
+            el.id = id;
+            el.className = "tag";
+            overlay.appendChild(el);
+          }
+          el.textContent = text;
+          el.style.left = x * 100 + "%";
+          el.style.top = y * 100 + "%";
+        }
+        function ring(id, x, y, pxSize, color = "#f44") {
+          let el = document.getElementById(id);
+          if (!el) {
+            el = document.createElement("div");
+            el.id = id;
+            el.className = "ring";
+            overlay.appendChild(el);
+          }
+          const s = Math.max(6, pxSize);
+          el.style.borderColor = color;
+          el.style.width = s + "px";
+          el.style.height = s + "px";
+          el.style.left = x * innerWidth - s / 2 + "px";
+          el.style.top = y * innerHeight - s / 2 + "px";
+          return el;
+        }
+        function dot(id, x, y) {
+          let el = document.getElementById(id);
+          if (!el) {
+            el = document.createElement("div");
+            el.id = id;
+            el.className = "lensDot";
+            overlay.appendChild(el);
+          }
+          el.style.left = x * 100 + "%";
+          el.style.top = y * 100 + "%";
+        }
+        function clearOverlay() {
+          overlay.innerHTML = "";
+        }
+
+        // GL setup
+        const canvas = $("gl"); // canvas ref (already declared)
+        const gl = canvas.getContext("webgl2", {
+          antialias: true,
+          preserveDrawingBuffer: true,
+        });
+        const deep = $("deepField");
+        var deepGL = deep.getContext("webgl2", { antialias: false });
+        if (!gl) {
+          alert("WebGL2 not supported");
+          return;
+        }
+
+        let dpr = devicePixelRatio || 1;
+        function resize() {
+          dpr = devicePixelRatio || 1;
+          canvas.width = innerWidth * dpr;
+          canvas.height = innerHeight * dpr;
+          deep.width = canvas.width;
+          deep.height = canvas.height;
+          gl.viewport(0, 0, canvas.width, canvas.height);
+          deepGL.viewport(0, 0, deep.width, deep.height);
+          createFBO();
+        }
+        addEventListener("resize", resize);
+
+        // Shader utils
+        function compile(glx, src, type) {
+          const sh = glx.createShader(type);
+          glx.shaderSource(sh, src);
+          glx.compileShader(sh);
+          if (!glx.getShaderParameter(sh, glx.COMPILE_STATUS)) {
+            console.warn(glx.getShaderInfoLog(sh));
+          }
+          return sh;
+        }
+        function link(glx, vs, fs) {
+          const pr = glx.createProgram();
+          glx.attachShader(pr, vs);
+          glx.attachShader(pr, fs);
+          glx.linkProgram(pr);
+          if (!glx.getProgramParameter(pr, glx.LINK_STATUS)) {
+            console.warn(glx.getProgramInfoLog(pr));
+          }
+          return pr;
+        }
+
+        function hexToRGB01(hex) {
+          const h = hex.replace("#", "");
+          return [
+            parseInt(h.slice(0, 2), 16) / 255,
+            parseInt(h.slice(2, 4), 16) / 255,
+            parseInt(h.slice(4, 6), 16) / 255,
+          ];
+        }
+        // Matrices (column‑major)
+        function perspective(fovy, aspect, near, far) {
+          const f = 1 / Math.tan(fovy / 2);
+          const nf = 1 / (near - far);
+          const m = new Float32Array(16);
+          m[0] = f / aspect;
+          m[5] = f;
+          m[10] = (far + near) * nf;
+          m[11] = -1;
+          m[14] = 2 * far * near * nf;
+          return m;
+        }
+        function lookAt(eye, target, up) {
+          const zx = eye[0] - target[0],
+            zy = eye[1] - target[1],
+            zz = eye[2] - target[2];
+          let rl = 1 / Math.hypot(zx, zy, zz);
+          const zxN = zx * rl,
+            zyN = zy * rl,
+            zzN = zz * rl;
+          const xx = up[1] * zzN - up[2] * zyN,
+            xy = up[2] * zxN - up[0] * zzN,
+            xz = up[0] * zyN - up[1] * zxN;
+          rl = 1 / Math.hypot(xx, xy, xz);
+          const xxN = xx * rl,
+            xyN = xy * rl,
+            xzN = xz * rl;
+          const yx = zyN * xzN - zzN * xyN,
+            yy = zzN * xxN - zxN * xzN,
+            yz = zxN * xyN - zyN * xxN;
+          const m = new Float32Array(16);
+          m[0] = xxN;
+          m[1] = yx;
+          m[2] = zxN;
+          m[3] = 0;
+          m[4] = xyN;
+          m[5] = yy;
+          m[6] = zyN;
+          m[7] = 0;
+          m[8] = xzN;
+          m[9] = yz;
+          m[10] = zzN;
+          m[11] = 0;
+          m[12] = -(xxN * eye[0] + xyN * eye[1] + xzN * eye[2]);
+          m[13] = -(yx * eye[0] + yy * eye[1] + yz * eye[2]);
+          m[14] = -(zxN * eye[0] + zyN * eye[1] + zzN * eye[2]);
+          m[15] = 1;
+          return m;
+        }
+        function mul(a, b) {
+          const r = new Float32Array(16);
+          for (let c = 0; c < 4; c++)
+            for (let r0 = 0; r0 < 4; r0++)
+              r[c * 4 + r0] =
+                a[0 * 4 + r0] * b[c * 4 + 0] +
+                a[1 * 4 + r0] * b[c * 4 + 1] +
+                a[2 * 4 + r0] * b[c * 4 + 2] +
+                a[3 * 4 + r0] * b[c * 4 + 3];
+          return r;
+        }
+
+        // === Vector field helpers (flux, curl, divergence) ===
+        function fieldAt(pos) {
+          const n = world.bodies.length;
+          let Fx = FxM,
+            Fy = FyM,
+            Fz = FzM;
+          for (let j = 0; j < n; j++) {
+            const B = world.bodies[j];
+            const dx = B.p[0] - pos[0],
+              dy = B.p[1] - pos[1],
+              dz = B.p[2] - pos[2];
+            const r2 = dx * dx + dy * dy + dz * dz + 1e-6;
+            const r = Math.sqrt(r2);
+            const g = world.enableGravity
+              ? (world.gravityScale * B.m) / (r2 * r)
+              : 0;
+            Fx += g * dx;
+            Fy += g * dy;
+            Fz += g * dz;
+            const e = world.enableEM
+              ? (0.1 * world.emScale * B.q) / (r2 * r)
+              : 0;
+            Fx += e * dx;
+            Fy += e * dy;
+            Fz += e * dz;
+          }
+          if (world.nebula && world.nebula.enabled) {
+            const fN = world.nebula.field(
+              pos,
+              performance.now() * 0.001 * world.nebula.timeScale
+            );
+            Fx += fN[0] * world.nebula.mag;
+            Fy += fN[1] * world.nebula.mag;
+            Fz += fN[2] * world.nebula.mag;
+          }
+          if (document.getElementById("gasEnable").checked) {
+            const gAmp = +document.getElementById("gasDensity").value;
+            const gFlow = +document.getElementById("gasFlow").value;
+            const s = Math.sin(
+              pos[0] * 0.07 + pos[2] * 0.05 + gFlow * performance.now() * 0.0005
+            );
+            const c = Math.cos(
+              pos[0] * 0.04 - pos[2] * 0.06 + gFlow * performance.now() * 0.0005
+            );
+            Fx += gAmp * (-pos[1] * 0.001 + s * 0.02);
+            Fy += gAmp * (c * 0.015);
+            Fz += gAmp * (pos[0] * 0.001 - s * 0.02);
+          }
+          if (document.getElementById("radEnable").checked) {
+            const R = +document.getElementById("radLevel").value;
+            const t = performance.now() * 0.001;
+            const n1 = Math.sin(12.9898 * (pos[0] + t)) * 43758.5453;
+            const n2 = Math.sin(78.233 * (pos[2] - t)) * 12713.4321;
+            Fx += R * 0.02 * ((n1 % 1) - 0.5);
+            Fy += R * 0.02 * ((n2 % 1) - 0.5);
+            Fz += R * 0.02 * (((n1 + n2) % 1) - 0.5);
+          }
+          return [Fx, Fy, Fz];
+        }
+        
+        // === Quantum Blob field (inspired by quantum_blob_x) ===
+        // Produces a smooth scalar [0..1] based on distance to moving centers and harmonic ripples.
+        function qBlobAt(p, t){
+          const f = +($("#gasFlow")?.value || 1.5);
+          const d = +($("#gasDensity")?.value || 0.8);
+          // three drifting centers on Lissajous loops
+          const c1 = [30*Math.sin(0.37*t), 22*Math.sin(0.53*t+1.7), 26*Math.sin(0.29*t+2.3)];
+          const c2 = [28*Math.sin(0.21*t+0.8), 28*Math.sin(0.31*t+2.2), 20*Math.sin(0.41*t+1.2)];
+          const c3 = [24*Math.sin(0.17*t+2.8), 26*Math.sin(0.27*t+0.4), 28*Math.sin(0.35*t+2.9)];
+          function kernel(q){
+            const dx=p[0]-q[0], dy=p[1]-q[1], dz=p[2]-q[2]; const r=Math.sqrt(dx*dx+dy*dy+dz*dz)+1e-3;
+            return Math.exp(-(r*r)/(800.0/(1.0+0.5*d))) * (0.7+0.3*Math.sin(0.07*r + 0.8*t));
+          }
+          let s = kernel(c1)+kernel(c2)+kernel(c3);
+          s = 1.0 - Math.exp(-s); // squash to [0..1)
+          // modulate by mild harmonic "observer" term using info/time
+          const obs = (+($("#infoSlider")?.value||0.5))*0.5 + (+($("#timeScale")?.value||1.0))*0.1;
+          s = Math.min(1.0, Math.max(0.0, s*(0.8+0.2*Math.sin(t*0.3+obs))));
+          return s;
+        }
+    function divergenceAt(pos) {
+          const e = 0.5;
+          const fpx = fieldAtAll([pos[0] + e, pos[1], pos[2]])[0];
+          const fmx = fieldAtAll([pos[0] - e, pos[1], pos[2]])[0];
+          const fpy = fieldAtAll([pos[0], pos[1] + e, pos[2]])[1];
+          const fmy = fieldAtAll([pos[0], pos[1] - e, pos[2]])[1];
+          const fpz = fieldAtAll([pos[0], pos[1], pos[2] + e])[2];
+          const fmz = fieldAtAll([pos[0], pos[1], pos[2] - e])[2];
+          return (
+            (fpx - fmx) / (2 * e) +
+            (fpy - fmy) / (2 * e) +
+            (fpz - fmz) / (2 * e)
+          );
+        }
+        function curlAt(pos) {
+          const e = 0.5;
+          const f_yz_plus = fieldAtAll([pos[0], pos[1], pos[2] + e]);
+          const f_yz_minus = fieldAtAll([pos[0], pos[1], pos[2] - e]);
+          const f_xz_plus = fieldAtAll([pos[0] + e, pos[1], pos[2]]);
+          const f_xz_minus = fieldAtAll([pos[0] - e, pos[1], pos[2]]);
+          const f_xy_plus = fieldAtAll([pos[0], pos[1] + e, pos[2]]);
+          const f_xy_minus = fieldAtAll([pos[0], pos[1] - e, pos[2]]);
+          const dFy_dz = (f_yz_plus[1] - f_yz_minus[1]) / (2 * e);
+          const dFz_dy = (f_xy_plus[2] - f_xy_minus[2]) / (2 * e);
+          const dFz_dx = (f_xz_plus[2] - f_xz_minus[2]) / (2 * e);
+          const dFx_dz = (f_yz_plus[0] - f_yz_minus[0]) / (2 * e);
+          const dFx_dy = (f_xy_plus[0] - f_xy_minus[0]) / (2 * e);
+          const dFy_dx = (f_xz_plus[1] - f_xz_minus[1]) / (2 * e);
+          return [dFy_dz - dFz_dy, dFz_dx - dFx_dz, dFx_dy - dFy_dx];
+        }
+
+        // === RK4 integrator for trajectory preview ===
+        function rk4Path(b, steps, dt) {
+          const path = [];
+          let p = b.p.slice(),
+            v = b.v.slice();
+          for (let s = 0; s < steps; s++) {
+            const f = (pp, vv) => {
+              const a = fieldAtAll(pp);
+              return { dp: vv, dv: a };
+            };
+            const k1 = f(p, v);
+            const p2 = [
+              p[0] + k1.dp[0] * dt * 0.5,
+              p[1] + k1.dp[1] * dt * 0.5,
+              p[2] + k1.dp[2] * dt * 0.5,
+            ];
+            const v2 = [
+              v[0] + k1.dv[0] * dt * 0.5,
+              v[1] + k1.dv[1] * dt * 0.5,
+              v[2] + k1.dv[2] * dt * 0.5,
+            ];
+            const k2 = f(p2, v2);
+            const p3 = [
+              p[0] + k2.dp[0] * dt * 0.5,
+              p[1] + k2.dp[1] * dt * 0.5,
+              p[2] + k2.dp[2] * dt * 0.5,
+            ];
+            const v3 = [
+              v[0] + k2.dv[0] * dt * 0.5,
+              v[1] + k2.dv[1] * dt * 0.5,
+              v[2] + k2.dv[2] * dt * 0.5,
+            ];
+            const k3 = f(p3, v3);
+            const p4 = [
+              p[0] + k3.dp[0] * dt,
+              p[1] + k3.dp[1] * dt,
+              p[2] + k3.dp[2] * dt,
+            ];
+            const v4 = [
+              v[0] + k3.dv[0] * dt,
+              v[1] + k3.dv[1] * dt,
+              v[2] + k3.dv[2] * dt,
+            ];
+            const k4 = f(p4, v4);
+            p = [
+              p[0] +
+                (dt / 6) * (k1.dp[0] + 2 * k2.dp[0] + 2 * k3.dp[0] + k4.dp[0]),
+              p[1] +
+                (dt / 6) * (k1.dp[1] + 2 * k2.dp[1] + 2 * k3.dp[1] + k4.dp[1]),
+              p[2] +
+                (dt / 6) * (k1.dp[2] + 2 * k2.dp[2] + 2 * k3.dp[2] + k4.dp[2]),
+            ];
+            v = [
+              v[0] +
+                (dt / 6) * (k1.dv[0] + 2 * k2.dv[0] + 2 * k3.dv[0] + k4.dv[0]),
+              v[1] +
+                (dt / 6) * (k1.dv[1] + 2 * k2.dv[1] + 2 * k3.dv[1] + k4.dv[1]),
+              v[2] +
+                (dt / 6) * (k1.dv[2] + 2 * k2.dv[2] + 2 * k3.dv[2] + k4.dv[2]),
+            ];
+            path.push(p.slice());
+          }
+          return path;
+        }
+
+        // palette (MunsellQ style)
+        let mqPalette = [
+          "#FF0000",
+          "#00FF00",
+          "#0000FF",
+          "#FFFF00",
+          "#FF00FF",
+          "#00FFFF",
+        ];
+        let mqActive = false,
+          mqAudio = null;
+        async function ensureMunsell() {
+          try {
+            await import("https://cdn.jsdelivr.net/npm/munsell@1.1.6/+esm");
+            document.getElementById("mqStatus").textContent = "munsell loaded";
+          } catch (e) {
+            document.getElementById("mqStatus").textContent = "munsell failed";
+          }
+        }
+        document
+          .getElementById("mqApply")
+          .addEventListener("click", async () => {
+            mqPalette = ["mqC1", "mqC2", "mqC3", "mqC4", "mqC5", "mqC6"].map(
+              (id) => document.getElementById(id).value
+            );
+            await ensureMunsell();
+            mqActive = true;
+            document.getElementById("mqStatus").textContent = "palette applied";
+            buildScene();
+          });
+        document
+          .getElementById("mqStartAudio")
+          .addEventListener("click", async () => {
+            try {
+              const ctx = new (window.AudioContext ||
+                window.webkitAudioContext)();
+              const osc = ctx.createOscillator();
+              osc.type = "sine";
+              osc.frequency.value = 220;
+              const gain = ctx.createGain();
+              gain.gain.value = 0.05;
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start();
+              mqAudio = { ctx, osc, gain };
+              document.getElementById("mqStatus").textContent = "audio on";
+            } catch (e) {
+              document.getElementById("mqStatus").textContent = "audio failed";
+            }
+          });
+
+        // World physics and objects
+        const C_SI = 299792458.0,
+          G_SI = 6.6743e-11,
+          H_SI = 6.62607015e-34;
+        let LEN_UNIT = 1e7; // meters per world unit (will be scaled by 10^x)
+
+        class Body {
+          constructor(o = {}) {
+            Object.assign(
+              this,
+              {
+                m: 1,
+                q: 0,
+                p: [0, 0, 0],
+                v: [0, 0, 0],
+                r: 0.35,
+                c: [1, 1, 1],
+                moving: true,
+                path: [],
+                name: "Body",
+                type: "Body",
+                pulse: 0,
+              },
+              o
+            );
+          }
+        }
+        class NebulaField {
+          constructor(o = {}) {
+            Object.assign(
+              this,
+              {
+                enabled: true,
+                hue: 270,
+                amp: 1.2,
+                mag: 1.0,
+                timeScale: 1.0,
+                chaos: 1.0,
+              },
+              o
+            );
+          }
+          field(pos, t) {
+            const r = Math.hypot(pos[0], pos[1], pos[2]) + 1e-6;
+            const a = Math.atan2(pos[1], pos[0]);
+            const s = this.chaos * Math.sin(a * 3.0 + t * this.timeScale);
+            return [(-pos[1] / r) * s, (pos[0] / r) * s, 0];
+          }
+        }
+        class World {
+          constructor() {
+            this.reset();
+          }
+          reset() {
+            this.bodies = [];
+            this.trailLen = +$("trailSlider").value | 0;
+            this.showTraj = $("trajChk").checked;
+            this.showPlanes = $("planeChk").checked;
+            this.doCollisions = $("collChk").checked;
+            this.enableGravity = $("gravChk").checked;
+            this.enableEM = $("emChk").checked;
+            this.gravityScale = +$("gravSlider").value;
+            this.emScale = +$("emScale").value;
+            this.entropy = +$("entropy").value;
+            this.information = +$("information").value;
+            this.darkMatter = +$("darkMatter").value;
+            this.matterRatio = +$("matterRatio").value;
+            this.timeScale = +$("timeScale").value;
+            this.hypStrength = +$("hypStrength").value;
+            this.sceneBlend = +$("sceneBlend").value;
+            this.nebula = new NebulaField({
+              enabled: $("nebChk").checked,
+              hue: +$("nebHue").value,
+              amp: +$("nebAmp").value,
+              mag: +$("nebMag").value,
+              timeScale: +$("nebTime").value,
+              chaos: +$("nebChaos").value,
+            });
+            this.age = +$("univAge").value;
+            this.scaleExp = +$("scaleExp").value;
+            LEN_UNIT = 1e7 * Math.pow(10, this.scaleExp | 0);
+          }
+          add(b) {
+            this.bodies.push(b);
+          }
+          merge(i, j) {
+            const A = this.bodies[i],
+              B = this.bodies[j];
+            const M = A.m + B.m;
+            A.v = A.v.map((v, k) => (v * A.m + B.v[k] * B.m) / M);
+            A.m = M;
+            A.q += B.q;
+            A.r = Math.cbrt(A.r ** 3 + B.r ** 3);
+            A.c = A.c.map((v, k) => (v + B.c[k]) * 0.5);
+            this.bodies.splice(j, 1);
+          }
+          step(dt, t) {
+            const n = this.bodies.length;
+            const acc = Array.from({ length: n }, () => [0, 0, 0]);
+            const hyper = Math.tanh(this.information - 0.5 * this.entropy);
+            const ageFactor = Math.pow(this.age / 13.8, 0.15); // gentle influence
+            const gravScale = this.enableGravity
+              ? this.gravityScale *
+                (1.0 + this.darkMatter) *
+                (1.0 + 0.3 * hyper) *
+                ageFactor
+              : 0;
+            const emScale = this.enableEM
+              ? this.emScale * (1.0 - 0.2 * hyper)
+              : 0;
+            for (let i = 0; i < n; i++)
+              for (let j = i + 1; j < n; j++) {
+                const A = this.bodies[i],
+                  B = this.bodies[j];
+                const dx = B.p[0] - A.p[0],
+                  dy = B.p[1] - A.p[1],
+                  dz = B.p[2] - A.p[2];
+                const r = Math.hypot(dx, dy, dz) + 1e-9;
+                let fG =
+                  A.type === "BlackHole" || B.type === "BlackHole" ? 1.6 : 1.0;
+                fG *= (A.m * B.m) / (r * r * r);
+                let fE = (A.q * B.q) / (r * r * r);
+                const fx = (gravScale * fG + 0.1 * emScale * fE) * dx;
+                const fy = (gravScale * fG + 0.1 * emScale * fE) * dy;
+                const fz = (gravScale * fG + 0.1 * emScale * fE) * dz;
+                acc[i][0] += fx / A.m;
+                acc[i][1] += fy / A.m;
+                acc[i][2] += fz / A.m;
+                acc[j][0] -= fx / B.m;
+                acc[j][1] -= fy / B.m;
+                acc[j][2] -= fz / B.m;
+              }
+            for (let i = 0; i < n; i++) {
+              const b = this.bodies[i];
+              if (!b.moving) continue;
+              const tw =
+                this.timeScale *
+                (1.0 + 0.15 * Math.sinh(hyper) * Math.sin(t * 0.33));
+              b.v = b.v.map((v, k) => v + acc[i][k] * dt * tw);
+              if (this.nebula && this.nebula.enabled) {
+                const fN = this.nebula.field(b.p, t);
+                b.v = b.v.map((v, k) => v + fN[k] * dt * this.nebula.mag);
+              }
+              if (this.hypStrength > 0) {
+                const r = Math.hypot(b.p[0], b.p[2]);
+                const a = Math.atan2(b.p[2], b.p[0]);
+                const rr =
+                  r *
+                  (1.0 + this.hypStrength * 0.25 * Math.sin(3.0 * a + t * 0.2));
+                const px = rr * Math.cos(a),
+                  pz = rr * Math.sin(a);
+                b.p[0] = px;
+                b.p[2] = pz;
+              }
+              b.p = b.p.map((p, k) => p + b.v[k] * dt * tw);
+              if (b.type === "Pulsar") {
+                const per = +$("pulsarPeriod").value / 1000;
+                b.pulse =
+                  0.65 +
+                  0.35 *
+                    Math.max(0, Math.sin(((t % per) / per) * 6.28318 * 8.0));
+              }
+            }
+            if (this.doCollisions) {
+              let i = 0;
+              while (i < this.bodies.length) {
+                let j = i + 1;
+                while (j < this.bodies.length) {
+                  const A = this.bodies[i],
+                    B = this.bodies[j];
+                  if (
+                    Math.hypot(
+                      A.p[0] - B.p[0],
+                      A.p[1] - B.p[1],
+                      A.p[2] - B.p[2]
+                    ) <
+                    A.r + B.r
+                  ) {
+                    A.m >= B.m ? this.merge(i, j) : this.merge(j, i);
+                    continue;
+                  }
+                  j++;
+                }
+                i++;
+              }
+            }
+            for (const b of this.bodies) {
+              if (this.showTraj) {
+                b.path.push([...b.p]);
+                if (b.path.length > this.trailLen) b.path.shift();
+              } else b.path.length = 0;
+            }
+          }
+        }
+
+        let FxM = 0,
+          FyM = 0,
+          FzM = 0;
+        let eye = [0, 0, 0],
+          target = [0, 0, 0],
+          up = [0, 1, 0];
+
+        // Extend World.step with diagnostics and stochastic singularities
+        const world = new World();
+        const _orig_step = world.step.bind(world);
+        world.step = function (dt, t) {
+          const R = document.getElementById("radEnable").checked
+            ? +document.getElementById("radLevel").value
+            : 0;
+          const G = document.getElementById("gasEnable").checked
+            ? +document.getElementById("gasDensity").value
+            : 0;
+          const stoch = +document.getElementById("stoch").value;
+          for (let i = 0; i < this.bodies.length; i++) {
+            const b = this.bodies[i];
+            if (R > 0) {
+              b.v[0] += (Math.random() - 0.5) * R * 0.002;
+              b.v[1] += (Math.random() - 0.5) * R * 0.002;
+              b.v[2] += (Math.random() - 0.5) * R * 0.002;
+            }
+            if (G > 1.5) {
+              const drag = 0.001 * (G - 1.5);
+              b.v[0] *= 1.0 - drag;
+              b.v[1] *= 1.0 - drag;
+              b.v[2] *= 1.0 - drag;
+            }
+          }
+          _orig_step(dt, t);
+          let fluxSum = 0,
+            curlSum = 0,
+            divSum = 0,
+            tauSum = 0,
+            jerkSum = 0;
+          for (let i = 0; i < this.bodies.length; i++) {
+            const b = this.bodies[i];
+            const accNow = fieldAtAll(b.p);
+            const la = b._lastAcc || [0, 0, 0];
+            const jerk =
+              Math.hypot(
+                accNow[0] - la[0],
+                accNow[1] - la[1],
+                accNow[2] - la[2]
+              ) / Math.max(1e-6, dt);
+            b._lastAcc = accNow;
+            jerkSum += jerk;
+            const pvec = [b.m * b.v[0], b.m * b.v[1], b.m * b.v[2]];
+            const tau = Math.hypot(
+              b.p[1] * pvec[2] - b.p[2] * pvec[1],
+              b.p[2] * pvec[0] - b.p[0] * pvec[2],
+              b.p[0] * pvec[1] - b.p[1] * pvec[0]
+            );
+            tauSum += tau;
+            const curl = curlAt(b.p);
+            const div = divergenceAt(b.p);
+            curlSum += Math.hypot(curl[0], curl[1], curl[2]);
+            divSum += div;
+            fluxSum += Math.hypot(accNow[0], accNow[1], accNow[2]) * b.m;
+          }
+          const n = Math.max(1, this.bodies.length);
+          document.getElementById("fluxVal").textContent = (
+            fluxSum / n
+          ).toFixed(3);
+          document.getElementById("curlVal").textContent = (
+            curlSum / n
+          ).toFixed(3);
+          document.getElementById("divVal").textContent = (divSum / n).toFixed(
+            3
+          );
+          document.getElementById("tauVal").textContent = (tauSum / n).toFixed(
+            3
+          );
+          document.getElementById("jerkVal").textContent = (
+            jerkSum / n
+          ).toFixed(3);
+          document.getElementById("radDose").textContent = R.toFixed(2);
+          document.getElementById("gasLevel").textContent = G.toFixed(2);
+
+          if (Math.random() < stoch * 0.01 && this.bodies.length) {
+            let bestIdx = 0,
+              bestVal = -1e9;
+            for (let i = 0; i < this.bodies.length; i++) {
+              const d = divergenceAt(this.bodies[i].p);
+              if (d > bestVal) {
+                bestVal = d;
+                bestIdx = i;
+              }
+            }
+            const b = this.bodies[bestIdx];
+            const pos = b.p.slice();
+            this.add(
+              new Body({
+                type: "BlackHole",
+                m: 1500 + Math.random() * 800,
+                p: [
+                  pos[0] + Math.random() - 0.5,
+                  pos[1] + Math.random() - 0.5,
+                  pos[2] + Math.random() - 0.5,
+                ],
+                v: [0, 0, 0],
+                r: 0.5,
+                c: [1, 0.9, 0.9],
+                name: "Micro BH",
+              })
+            );
+          }
+        };
+
+        // Trajectory color mapping
+        const typeColors = {
+          Star: [1, 0.95, 0.82],
+          Planet: [0.8, 0.7, 0.6],
+          Moon: [0.9, 0.9, 1],
+          Comet: [0.9, 0.9, 1],
+          Meteor: [0.9, 0.7, 0.4],
+          Asteroid: [0.8, 0.7, 0.6],
+          BlackHole: [0.7, 0.8, 1],
+          Pulsar: [0.9, 0.9, 1],
+          NeutronStar: [0.7, 0.8, 1],
+          Quasar: [1, 0.95, 0.95],
+          NebulaObj: [0.7, 0.3, 1],
+          Cluster: [1, 0.9, 0.7],
+          Body: [1, 1, 1],
+          PhiStar: [0.9, 0.85, 1],
+          HypStar: [0.9, 0.8, 1],
+        };
+        function colorFor(b) {
+          const mode = document.getElementById("trajColorMode").value;
+          if (mode === "type") return typeColors[b.type] || [1, 1, 1];
+          if (mode === "speed") {
+            const s = Math.min(1, Math.hypot(b.v[0], b.v[1], b.v[2]) / 5);
+            return [0.2 + 0.8 * s, 0.6 * (1 - s) + 0.2, 1.0 * (1 - s)];
+          }
+          if (mode === "palette") {
+            const idx =
+              ([
+                "Star",
+                "Planet",
+                "Comet",
+                "Meteor",
+                "Asteroid",
+                "BlackHole",
+              ].indexOf(b.type) +
+                6) %
+              6;
+            const hex = mqPalette[idx % mqPalette.length];
+            return hexToRGB01(hex);
+          }
+          return typeColors[b.type] || [1, 1, 1];
+        }
+
+        // === Multiverse helpers ===
+        let mirrors = [];
+        function getWorlds() {
+          return [world, ...mirrors];
+        }
+        function bodiesIterator() {
+          const arr = [];
+          for (const W of getWorlds()) for (const b of W.bodies) arr.push(b);
+          return arr;
+        }
+        function rebuildMirrors() {
+          mirrors.length = 0;
+          const modeSel = document.getElementById("universeMode");
+          if (!modeSel) {
+            return;
+          }
+          var mode = modeSel.value || "single";
+          if (mode === "single" || mode === "none") {
+            clearOverlay();
+            return;
+          }
+          clearOverlay();
+          const overlay = $("overlay");
+          if (!overlay) {
+            console.warn("No overlay element found!");
+            return;
+          }
+          if (mode === "lens") {
+            const lensDot = document.getElementById("lensDot");
+            if (!lensDot) {
+              console.warn("No lensDot element found!");
+              return;
+            }
+            const x = +(document.getElementById("lensX")?.value || 0),
+              y = +(document.getElementById("lensY")?.value || 0),
+              z = +(document.getElementById("lensZ")?.value || 0);
+            lensDot.style.transform = `translate(${x}px, ${y}px)`;
+            lensDot.style.opacity = String(Math.max(0, Math.min(1, z * 0.01)));
+            lensDot.style.display = "block";
+            overlay.style.display = "block";
+          }
+          if (mode === "bubble" || mode === "layered") {
+            overlay.style.display = "flex";
+            const countSel = document.getElementById("universeCount");
+            if (!countSel) {
+              console.warn("No universeCount element found!");
+              return;
+            }
+            countSel.style.display = "block";
+            const countLbl = document.getElementById("universeCountLabel") || countSel.closest("label");
+            if(countLbl){ countLbl.style.display = "block"; }
+            document.getElementById("universeCount").value = String(Math.max(2, +(countSel.value || 2)));
+            document.getElementById("universeCount").disabled = false;
+            if(countLbl){ countLbl.style.display = "inline"; }
+          } else {
+            overlay.style.display = "none";
+            const countSel = document.getElementById("universeCount");
+            if (countSel) {
+              countSel.style.display = "none";
+              countSel.disabled = true;
+            }
+            const countLbl2 = document.getElementById("universeCountLabel") || (countSel && countSel.closest("label"));
+              if(countLbl2){ countLbl2.style.display = "none"; }
+          }
+
+          // Create mirrors based on the selected mode
+          mirrors.length = 0;
+          mode = modeSel.value || "single";
+          if (mode === "lens") return; // lens is handled separately
+          if (mode === "bubble" || mode === "layered") {
+              if (!["bubble", "layered"].includes(mode)) {
+              console.warn(`Invalid universe mode: ${mode}`);
+              return;
+            }
+          }
+            const isBubble = mode === "bubble";
+            const isLayered = mode === "layered";
+
+            const isStr = mode === "string";
+            const isFlu = mode === "fluct";
+            const isHolo = mode === "hologram";
+            const isHyper = mode === "hyperbolic";
+            const isSpace = mode === "space";
+            const count = Math.max(
+              1,
+              +(document.getElementById("universeCount")?.value || 1)
+            );
+          
+            if (mode === "single" || count === 1) return;
+            const TWO_PI = Math.PI * 2;
+            const R = 160;
+            for (let i = 1; i <= count - 1; i++) {
+              const W = new World();
+              // copy global flags (not arrays)
+              Object.assign(W, {
+                trailLen: world.trailLen,
+                showTraj: world.showTraj,
+                showPlanes: world.showPlanes,
+                doCollisions: world.doCollisions,
+                enableGravity: world.enableGravity,
+                enableEM: world.enableEM,
+                gravityScale: world.gravityScale,
+                emScale: world.emScale,
+                entropy: world.entropy,
+                information: world.information,
+                darkMatter: world.darkMatter,
+                matterRatio: world.matterRatio,
+                timeScale: world.timeScale,
+                hypStrength: world.hypStrength,
+                sceneBlend: world.sceneBlend,
+                age: world.age,
+                scaleExp: world.scaleExp,
+                nebula: world.nebula,
+              });
+              const ang = ((i - 1) / Math.max(1, count - 1)) * TWO_PI;
+              const layer = mode === "layered" ? (i - (count - 1) / 2) * 90 : 0;
+              const off =
+                mode === "bubble"
+                  ? [R * Math.cos(ang), 0, R * Math.sin(ang)]
+                  : [0, 0, layer];
+              for (const b of world.bodies) {
+                W.add(
+                  new Body({
+                    m: b.m,
+                    q: b.q,
+                    p: [b.p[0] + off[0], b.p[1] + off[1], b.p[2] + off[2]],
+                    v: b.v.slice(),
+                    r: b.r,
+                    c: b.c.slice(),
+                    moving: b.moving,
+                    name: (b.name || b.type) + "′",
+                    type: b.type,
+                  })
+                );
+              }
+              mirrors.push(W);
+            }
+          
+        }
+        // Ensure multiverse UI applies immediately and on load
+        function applyMultiverseMode() {
+          const modeSel = document.getElementById("universeMode");
+          const cntSel = document.getElementById("universeCount");
+          if (!modeSel || !cntSel) {
+            rebuildMirrors();
+            ManifoldPU?.buildAll?.();
+            uploadGeometry();
+            return;
+          }
+          let count = +(cntSel.value || 1);
+          if ((mode === "bubble" || mode === "layered") && count < 2) {
+            count = 2;
+            cntSel.value = String(count);
+          }
+          rebuildMirrors();
+          applyUniverseOverrides?.();
+          ManifoldPU?.buildAll?.();
+          uploadGeometry();
+          if (typeof log === "function")
+            log(`Multiverse applied · mode=${mode} count=${count}`);
+        }
+
+        ["universeMode", "universeCount"].forEach((id) => {
+          const el = $(id);
+          if (el) {
+            const fn = () => {
+              buildScene();
+            };
+            ["input", "change"].forEach((ev) => el.addEventListener(ev, fn));
+          }
+        });
+        (function () {
+          const el = $("interfSlider");
+          if (el) {
+            const fn = () => {
+              rebuildMirrors();
+              applyUniverseOverrides();
+              uploadGeometry();
+            };
+            ["input", "change"].forEach((ev) => el.addEventListener(ev, fn));
+          }
+        })();
+        
+        ;["rk4Enable","rk4Steps","rk4dt","trajColorMode","gasEnable","gasDensity","gasFlow","radEnable","radLevel","stoch","fogEnable","fogAmp","fogScatter","fogHue","fogTime","fogQ","fogEM"].forEach(id=>{
+          const el = $(id);
+          if(!el) return;
+          const fn = ()=>{ uploadGeometry(); };
+          el.addEventListener("input", fn);
+          el.addEventListener("change", fn);
+        });
+
+        
+        ;["gasEnable","gasDensity","gasFlow","radEnable","radLevel","stoch","fluxChk","curlChk","divChk"].forEach(id=>{
+          const el=$(id); if(!el) return;
+          const fn=()=>{ uploadGeometry(); };
+          el.addEventListener("input", fn); el.addEventListener("change", fn);
+        });
+
+        setTimeout(() => {
+          rebuildMirrors();
+          applyUniverseOverrides();
+          ManifoldPU.buildAll();
+          uploadGeometry();
+
+        ;["uA_topo","uB_topo","uC_topo","uD_topo","uA_R","uA_r","uB_R","uB_r","uC_R","uC_r","uD_R","uD_r","uA_k","uB_k","uC_k","uD_k","uA_lambda","uB_lambda","uC_lambda","uD_lambda","uA_tau","uB_tau","uC_tau","uD_tau"].forEach(id=>{
+          const el = $(id);
+          if(!el) return;
+          const fn = ()=>{ ManifoldPU.buildAll(); uploadGeometry(); };
+          el.addEventListener("input", fn);
+          el.addEventListener("change", fn);
+        });
+
+        }, 0);
+
+        function fieldFromWorld(W, pos) {
+          let Fx = FxM,
+            Fy = FyM,
+            Fz = FzM;
+          const n = W.bodies.length;
+          for (let j = 0; j < n; j++) {
+            const B = W.bodies[j];
+            const dx = B.p[0] - pos[0],
+              dy = B.p[1] - pos[1],
+              dz = B.p[2] - pos[2];
+            const r2 = dx * dx + dy * dy + dz * dz + 1e-6;
+            const r = Math.sqrt(r2);
+            const g = W.enableGravity ? (W.gravityScale * B.m) / (r2 * r) : 0;
+            Fx += g * dx;
+            Fy += g * dy;
+            Fz += g * dz;
+            const e = W.enableEM ? (0.1 * W.emScale * B.q) / (r2 * r) : 0;
+            Fx += e * dx;
+            Fy += e * dy;
+            Fz += e * dz;
+          }
+          if (W.nebula && W.nebula.enabled) {
+            const fN = W.nebula.field(
+              pos,
+              performance.now() * 0.001 * W.nebula.timeScale
+            );
+            Fx += fN[0] * W.nebula.mag;
+            Fy += fN[1] * W.nebula.mag;
+            Fz += fN[2] * W.nebula.mag;
+          }
+          return [Fx, Fy, Fz];
+        }
+        function fieldAtAll(pos) {
+          // manifold handled per‑universe by ManifoldPU
+          let Fx = 0,
+            Fy = 0,
+            Fz = 0;
+          const worlds = getWorlds();
+          const interf = +(document.getElementById("interfSlider")?.value || 0);
+          for (let wi = 0; wi < worlds.length; wi++) {
+            const W = worlds[wi];
+            const w = wi === 0 ? 1.0 : interf;
+            const f = fieldFromWorld(W, pos);
+            const ov = getOverrideForIndex(wi);
+            // per‑universe manifold field
+            let fM = ManifoldPU.fieldAtFor(wi, pos);
+            // apply Δτ rotation and Δκ scale
+            const ct = Math.cos(ov.tau || 0),
+              st = Math.sin(ov.tau || 0);
+            const rx = ct * fM[0] + st * fM[2],
+              rz = -st * fM[0] + ct * fM[2];
+            fM[0] = rx;
+            fM[2] = rz;
+            fM[0] *= 1 + (ov.k || 0);
+            fM[1] *= 1 + (ov.k || 0);
+            fM[2] *= 1 + (ov.k || 0);
+            fM[0] *= ov.lam || 1;
+            fM[1] *= ov.lam || 1;
+            fM[2] *= ov.lam || 1;
+            Fx += w * (f[0] + fM[0]);
+            Fy += w * (f[1] + fM[1]);
+            Fz += w * (f[2] + fM[2]);
+          }
+          // add global gas/radiation once
+          if (document.getElementById("gasEnable")?.checked) {
+            const gAmp = +document.getElementById("gasDensity").value;
+            const gFlow = +document.getElementById("gasFlow").value;
+            const s = Math.sin(
+              pos[0] * 0.07 + pos[2] * 0.05 + gFlow * performance.now() * 0.0005
+            );
+            const c = Math.cos(
+              pos[0] * 0.04 - pos[2] * 0.06 + gFlow * performance.now() * 0.0005
+            );
+            Fx += gAmp * (-pos[1] * 0.001 + s * 0.02);
+            Fy += gAmp * (c * 0.015);
+            Fz += gAmp * (pos[0] * 0.001 - s * 0.02);
+          }
+          if (document.getElementById("radEnable")?.checked) {
+            const R = +document.getElementById("radLevel").value;
+            const t = performance.now() * 0.001;
+            const n1 = Math.sin(12.9898 * (pos[0] + t)) * 43758.5453;
+            const n2 = Math.sin(78.233 * (pos[2] - t)) * 12713.4321;
+            Fx += R * 0.02 * ((n1 % 1) - 0.5);
+            Fy += R * 0.02 * ((n2 % 1) - 0.5);
+            Fz += R * 0.02 * (((n1 + n2) % 1) - 0.5);
+          }
+          return [Fx, Fy, Fz];
+        }
+
+        
+        // === Diagnostics updater ===
+        function updateDiagnostics() {
+          try{
+            const pos = [pan[0], pan[1], pan[2]];
+            const n = [0,1,0]; // sample plane normal (orbit plane)
+            if ($("fluxChk")?.checked) {
+              // Flux across a tiny patch: F·n
+              const F = fieldAtAll(pos);
+              const flux = F[0]*n[0] + F[1]*n[1] + F[2]*n[2];
+              $("fluxVal").textContent = flux.toFixed(3);
+            }
+            if ($("curlChk")?.checked) {
+              const c = curlAt(pos);
+              const mag = Math.hypot(c[0], c[1], c[2]);
+              $("curlVal").textContent = mag.toFixed(3);
+            }
+            if ($("divChk")?.checked) {
+              const d = divergenceAt(pos);
+              $("divVal").textContent = d.toFixed(3);
+            }
+            // Live monitors for gas/radiation levels
+            const gAmp = ($("gasEnable")?.checked ? +$("gasDensity").value : 0);
+            const R = ($("radEnable")?.checked ? +$("radLevel").value : 0);
+            $("gasLevel").textContent = gAmp.toFixed(2);
+            $("radDose").textContent = (R).toFixed(2);
+          }catch(e){/* silent */}
+        }
+
+        // === Per‑universe overrides ===
+        function getOverrideForIndex(i) {
+          const pick = (pfx, k, def) => {
+            const el = $(pfx + "_" + k);
+            return el ? +el.value : def;
+          };
+          if (i === 0)
+            return {
+              g: pick("uA", "grav", 1),
+              e: pick("uA", "em", 1),
+              t: pick("uA", "time", 1),
+              lam: pick("uA", "lambda", 1),
+              tau: pick("uA", "tau", 0),
+              k: pick("uA", "k", 0),
+            };
+          if (i === 1)
+            return {
+              g: pick("uB", "grav", 1),
+              e: pick("uB", "em", 1),
+              t: pick("uB", "time", 1),
+              lam: pick("uB", "lambda", 1),
+              tau: pick("uB", "tau", 0),
+              k: pick("uB", "k", 0),
+            };
+          if (i === 2)
+            return {
+              g: pick("uC", "grav", 1),
+              e: pick("uC", "em", 1),
+              t: pick("uC", "time", 1),
+              lam: pick("uC", "lambda", 1),
+              tau: pick("uC", "tau", 0),
+              k: pick("uC", "k", 0),
+            };
+          if (i === 3)
+            return {
+              g: pick("uD", "grav", 1),
+              e: pick("uD", "em", 1),
+              t: pick("uD", "time", 1),
+              lam: pick("uD", "lambda", 1),
+              tau: pick("uD", "tau", 0),
+              k: pick("uD", "k", 0),
+            };
+          return { g: 1, e: 1, t: 1, lam: 1, tau: 0, k: 0 };
+        }
+        function captureBase(W) {
+          if (!W._base) {
+            W._base = {
+              grav: W.gravityScale,
+              em: W.emScale,
+              time: W.timeScale,
+            };
+          }
+        }
+        function applyUniverseOverrides() {
+          const worlds = getWorlds();
+          for (let i = 0; i < worlds.length; i++) {
+            const W = worlds[i];
+            captureBase(W);
+            const o = getOverrideForIndex(i);
+            W.gravityScale = W._base.grav * o.g;
+            W.emScale = W._base.em * o.e;
+            W.timeScale = W._base.time * o.t;
+          }
+        }
+        [
+          "uA_grav",
+          "uA_em",
+          "uA_time",
+          "uA_lambda",
+          "uA_tau",
+          "uA_k",
+          "uB_grav",
+          "uB_em",
+          "uB_time",
+          "uB_lambda",
+          "uB_tau",
+          "uB_k",
+          "uC_grav",
+          "uC_em",
+          "uC_time",
+          "uC_lambda",
+          "uC_tau",
+          "uC_k",
+          "uD_grav",
+          "uD_em",
+          "uD_time",
+          "uD_lambda",
+          "uD_tau",
+          "uD_k",
+        ].forEach((id) => {
+          const el = $(id);
+          if (el) {
+            const fn = () => {
+              applyUniverseOverrides();
+              uploadGeometry();
+            };
+            el.addEventListener("input", fn);
+            el.addEventListener("change", fn);
+          }
+        });
+
+        // === Multiverse-aware predictions (rough, constant-velocity estimate) ===
+        function computePredictions() {
+          const predOn = $("predChk")?.checked;
+          if (!predOn) {
+            $("predictions").innerHTML = "";
+            return;
+          }
+          const cross = $("xverseChk")?.checked;
+          const worlds = getWorlds();
+          // collect candidates (top-N by mass per world)
+          const cand = [];
+          for (let wi = 0; wi < worlds.length; wi++) {
+            const W = worlds[wi];
+            const arr = W.bodies
+              .slice()
+              .sort((a, b) => b.m - a.m)
+              .slice(0, 120); // cap per world
+            for (const b of arr) cand.push({ W, wi, b });
+          }
+          const maxPairs = 250;
+          let pairs = 0;
+          const res = [];
+          for (let i = 0; i < cand.length; i++) {
+            const A = cand[i];
+            for (let j = i + 1; j < cand.length; j++) {
+              const B = cand[j];
+              if (!cross && A.wi !== B.wi) continue;
+              // rel
+              const rx = B.b.p[0] - A.b.p[0],
+                ry = B.b.p[1] - A.b.p[1],
+                rz = B.b.p[2] - A.b.p[2];
+              const vx = B.b.v[0] - A.b.v[0],
+                vy = B.b.v[1] - A.b.v[1],
+                vz = B.b.v[2] - A.b.v[2];
+              const R = Math.hypot(rx, ry, rz),
+                V = Math.hypot(vx, vy, vz) + 1e-9;
+              const Rmin = (A.b.r + B.b.r) * 0.95;
+              const t = R > Rmin ? (R - Rmin) / V : 0.0;
+              if (t >= 0 && t < 120) {
+                // within ~120s of sim-time
+                res.push({ A, B, t });
+                if (++pairs > maxPairs) break;
+              }
+            }
+            if (pairs > maxPairs) break;
+          }
+          // write UI
+          const box = $("predictions");
+          res.sort((a, b) => a.t - b.t);
+          const lines = res.slice(0, 20).map((r) => {
+            const nA = r.A.b.name || r.A.b.type,
+              nB = r.B.b.name || r.B.b.type;
+            const uA = "ABCD"[Math.min(r.A.wi, 3)] || "A",
+              uB = "ABCD"[Math.min(r.B.wi, 3)] || "A";
+            return `${nA} (U${uA}) ↔ ${nB} (U${uB}) in ${r.t.toFixed(1)}s`;
+          });
+          box.textContent = lines.join("\n");
+          // draw rings
+          if (window._lastVP) {
+            let idx = 0;
+            for (const r of res.slice(0, 10)) {
+              const pa = worldToScreen(r.A.b.p, window._lastVP);
+              const size = Math.max(8, 400 / (1e-6 + pa[2]));
+              ring("pred" + idx++, pa[0], pa[1], size, "#f55");
+            }
+          }
+        }
+
+        // === Complex & Manifold Mesh ===
+        class Complex {
+          constructor(re = 0, im = 0) {
+            this.re = re;
+            this.im = im;
+          }
+          add(o) {
+            return new Complex(this.re + o.re, this.im + o.im);
+          }
+          sub(o) {
+            return new Complex(this.re - o.re, this.im - o.im);
+          }
+          mul(o) {
+            return new Complex(
+              this.re * o.re - this.im * o.im,
+              this.re * o.im + this.im * o.re
+            );
+          }
+          scale(k) {
+            return new Complex(this.re * k, this.im * k);
+          }
+          conj() {
+            return new Complex(this.re, -this.im);
+          }
+          abs() {
+            return Math.hypot(this.re, this.im);
+          }
+          rot(theta) {
+            const c = Math.cos(theta),
+              s = Math.sin(theta);
+            return new Complex(
+              this.re * c - this.im * s,
+              this.re * s + this.im * c
+            );
+          }
+        }
+        const Manifold = {
+          cache: null,
+          params: {
+            topo: "none",
+            uSegs: 64,
+            vSegs: 48,
+            R: 26,
+            r: 6,
+            k: -0.3,
+            twist: 1.57,
+            couple: 0.5,
+            noise: 0.2,
+            show: true,
+          },
+          dirty: true,
+          setFromUI() {
+            const g = (id, def = null) => {
+              const el = $(id);
+              return el ? el.value : def;
+            };
+            const gc = (id, def = false) => {
+              const el = $(id);
+              return el ? el.checked : def;
+            };
+            this.params.topo = g("maniTopo", this.params.topo) || "none";
+            this.params.uSegs = +(
+              g("maniUSegs", this.params.uSegs) || this.params.uSegs
+            );
+            this.params.vSegs = +(
+              g("maniVSegs", this.params.vSegs) || this.params.vSegs
+            );
+            this.params.R = +(g("maniR", this.params.R) || this.params.R);
+            this.params.r = +(g("manir", this.params.r) || this.params.r);
+            this.params.k = +(g("maniK", this.params.k) || this.params.k);
+            this.params.twist = +(
+              g("maniTwist", this.params.twist) || this.params.twist
+            );
+            this.params.couple = +(
+              g("maniCouple", this.params.couple) || this.params.couple
+            );
+            this.params.noise = +(
+              g("maniNoise", this.params.noise) || this.params.noise
+            );
+            this.params.show = gc("maniShow", this.params.show);
+            this.dirty = true;
+          },
+          build() {
+            const P = this.params;
+            if (P.topo === "none") {
+              this.cache = null;
+              this.dirty = false;
+              return;
+            }
+            const U = P.uSegs,
+              V = P.vSegs,
+              pts = [];
+            const noiseAmp = P.noise;
+            let idx = 0;
+            for (let i = 0; i < U; i++) {
+              const u = i / (U - 1);
+              for (let j = 0; j < V; j++) {
+                const v = j / (V - 1);
+                let x = 0,
+                  y = 0,
+                  z = 0;
+                if (P.topo === "torus") {
+                  const th = u * 2 * Math.PI;
+                  const ph = v * 2 * Math.PI;
+                  const R = P.R,
+                    r = P.r;
+                  const nx = R + r * Math.cos(ph);
+                  x = nx * Math.cos(th);
+                  y = r * Math.sin(ph);
+                  z = nx * Math.sin(th);
+                } else if (P.topo === "klein") {
+                  const u2 = u * 2 * Math.PI,
+                    v2 = v * 2 * Math.PI;
+                  const R = P.R,
+                    r = P.r;
+                  const c = Math.cos(u2),
+                    s = Math.sin(u2);
+                  const A = new Complex(Math.cos(v2), Math.sin(v2));
+                  const w = new Complex(Math.cos(u2 / 2), Math.sin(u2 / 2))
+                    .mul(A)
+                    .rot(P.twist);
+                  x = (R + w.re * r) * c;
+                  y = w.im * r;
+                  z = (R + w.re * r) * s;
+                } else if (P.topo === "hyperbolic") {
+                  // Pseudosphere-ish / hyperbolic sheet via sinh/cosh
+                  const a = (u - 0.5) * 2,
+                    b = (v - 0.5) * 2;
+                  const k = P.k;
+                  const cosh = (t) => (Math.exp(t) + Math.exp(-t)) / 2;
+                  const sinh = (t) => (Math.exp(t) - Math.exp(-t)) / 2;
+                  x = P.R * Math.sinh(k * a);
+                  y = P.r * b;
+                  z = P.R * (cosh(k * a) - 1);
+                }
+                // tiny procedural noise to keep it alive
+                const t = performance.now() * 0.0007;
+                x += noiseAmp * Math.sin(0.7 * x + 1.3 * z + t);
+                y += noiseAmp * Math.cos(0.6 * y + 0.9 * x - 0.5 * t);
+                z += noiseAmp * Math.sin(0.5 * z + 1.1 * y + 0.7 * t);
+                pts.push([x, y, z]);
+              }
+            }
+            this.cache = { pts, U, V };
+            this.dirty = false;
+          },
+          fieldAt(pos) {
+            const P = this.params;
+            if (!this.cache) return [0, 0, 0];
+            // attract toward the nearest patch on the mesh, plus tangential swirl by twist
+            const pts = this.cache.pts;
+            let best = 0,
+              bestD = 1e9,
+              bestP = null;
+            for (
+              let i = 0;
+              i < pts.length;
+              i += Math.max(1, Math.floor(pts.length / 1024))
+            ) {
+              const q = pts[i];
+              const dx = q[0] - pos[0],
+                dy = q[1] - pos[1],
+                dz = q[2] - pos[2];
+              const d2 = dx * dx + dy * dy + dz * dz;
+              if (d2 < bestD) {
+                bestD = d2;
+                best = i;
+                bestP = q;
+              }
+            }
+            if (!bestP) return [0, 0, 0];
+            const dx = bestP[0] - pos[0],
+              dy = bestP[1] - pos[1],
+              dz = bestP[2] - pos[2];
+            const r = Math.sqrt(bestD) + 1e-6;
+            let Fx = dx / (r * r),
+              Fy = dy / (r * r),
+              Fz = dz / (r * r);
+            // twist-based tangential component
+            const tw = this.params.twist;
+            const tx = -Fz * tw * 0.1,
+              tz = Fx * tw * 0.1;
+            Fx += tx;
+            Fz += tz;
+            // curvature bias
+            Fx += this.params.k * 0.05 * dx;
+            Fy += this.params.k * 0.02 * dy;
+            Fz += this.params.k * 0.05 * dz;
+            return [
+              Fx * this.params.couple,
+              Fy * this.params.couple,
+              Fz * this.params.couple,
+            ];
+          },
+        };
+        // Wire UI
+        [
+          "maniTopo",
+          "maniUSegs",
+          "maniVSegs",
+          "maniR",
+          "manir",
+          "maniK",
+          "maniTwist",
+          "maniCouple",
+          "maniNoise",
+          "maniShow",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.addEventListener("input", () => {
+              Manifold.setFromUI();
+              Manifold.build();
+              uploadGeometry();
+            });
+            el.addEventListener("change", () => {
+              Manifold.setFromUI();
+              Manifold.build();
+              uploadGeometry();
+            });
+          }
+        });
+        // Initialize
+        Manifold.setFromUI();
+        Manifold.build();
+
+        // === Per‑Universe Manifold (geometry + cache) ===
+        const ManifoldPU = {
+          params: [], // array by U index
+          cache: [],
+          ensure(n) {
+            while (this.params.length < n) {
+              this.params.push({
+                topo: "inherit",
+                R: 26,
+                r: 6,
+                k: 0,
+                tau: 0,
+                lam: 1,
+              });
+              this.cache.push(null);
+            }
+          },
+          fromOverrides(i) {
+            const pick = (pfx, k, def) => {
+              const el = $(pfx + "_" + k);
+              return el ? (k === "topo" ? el.value : +el.value) : def;
+            };
+            return {
+              topo: pick("u" + "ABCD"[i], "topo", "inherit"),
+              R: pick("u" + "ABCD"[i], "R", 26),
+              r: pick("u" + "ABCD"[i], "r", 6),
+              k: pick("u" + "ABCD"[i], "k", 0),
+              tau: pick("u" + "ABCD"[i], "tau", 0),
+              lam: pick("u" + "ABCD"[i], "lambda", 1),
+            };
+          },
+          // build only for index i, reading base Manifold params as defaults
+          buildFor(i) {
+            const base = Manifold.params;
+            const P = Object.assign({}, base);
+            const O = this.params[i] || {};
+            if (O.topo && O.topo !== "inherit") P.topo = O.topo;
+            if (typeof O.R === "number") P.R = O.R;
+            if (typeof O.r === "number") P.r = O.r;
+            if (typeof O.k === "number") P.k = base.k + O.k;
+            if (typeof O.tau === "number") P.twist = base.twist + O.tau;
+            P.couple = base.couple * (O.lam ?? 1);
+            // build mesh like Manifold.build
+            if (P.topo === "none") {
+              this.cache[i] = null;
+              return;
+            }
+            const U = P.uSegs,
+              V = P.vSegs,
+              pts = [];
+            for (let u = 0; u < U; u++) {
+              const uu = u / (U - 1);
+              for (let v = 0; v < V; v++) {
+                const vv = v / (V - 1);
+                let x = 0,
+                  y = 0,
+                  z = 0;
+                if (P.topo === "torus") {
+                  const th = uu * 2 * Math.PI,
+                    ph = vv * 2 * Math.PI;
+                  const nx = P.R + P.r * Math.cos(ph);
+                  x = nx * Math.cos(th);
+                  y = P.r * Math.sin(ph);
+                  z = nx * Math.sin(th);
+                } else if (P.topo === "klein") {
+                  const u2 = uu * 2 * Math.PI,
+                    v2 = vv * 2 * Math.PI;
+                  const c = Math.cos(u2),
+                    s = Math.sin(u2);
+                  const A = { re: Math.cos(v2), im: Math.sin(v2) };
+                  const wre = Math.cos(u2 / 2) * A.re - Math.sin(u2 / 2) * A.im;
+                  const wim = Math.cos(u2 / 2) * A.im + Math.sin(u2 / 2) * A.re;
+                  const rt = P.twist || 0;
+                  const ca = Math.cos(rt),
+                    sa = Math.sin(rt);
+                  const wRe = wre * ca - wim * sa,
+                    wIm = wre * sa + wim * ca;
+                  x = (P.R + wRe * P.r) * c;
+                  y = wIm * P.r;
+                  z = (P.R + wRe * P.r) * s;
+                } else if (P.topo === "hyperbolic") {
+                  const a = (uu - 0.5) * 2,
+                    b = (vv - 0.5) * 2,
+                    k = P.k;
+                  const cosh = (t) => (Math.exp(t) + Math.exp(-t)) / 2,
+                    sinh = (t) => (Math.exp(t) - Math.exp(-t)) / 2;
+                  x = P.R * Math.sinh(k * a);
+                  y = P.r * b;
+                  z = P.R * (cosh(k * a) - 1);
+                }
+                // tiny noise to animate
+                const t = performance.now() * 0.0007;
+                const noise = Manifold.params.noise || 0;
+                x += noise * Math.sin(0.7 * x + 1.3 * z + t);
+                y += noise * Math.cos(0.6 * y + 0.9 * x - 0.5 * t);
+                z += noise * Math.sin(0.5 * z + 1.1 * y + 0.7 * t);
+                pts.push([x, y, z]);
+              }
+            }
+            this.cache[i] = { pts, U: P.uSegs, V: P.vSegs, params: P };
+          },
+          buildAll() {
+            this.ensure(getWorlds().length);
+            for (let i = 0; i < getWorlds().length; i++) {
+              this.params[i] = this.fromOverrides(i);
+              this.buildFor(i);
+            }
+          },
+          fieldAtFor(i, pos) {
+            const C = this.cache[i];
+            if (!C) return [0, 0, 0];
+            const P = C.params;
+            // nearest point approx
+            let bestDist = 1e9,
+              best = null;
+            for (
+              let k = 0;
+              k < C.pts.length;
+              k += Math.max(1, Math.floor(C.pts.length / 1024))
+            ) {
+              const q = C.pts[k];
+              const dx = q[0] - pos[0],
+                dy = q[1] - pos[1],
+                dz = q[2] - pos[2];
+              const d2 = dx * dx + dy * dy + dz * dz;
+              if (d2 < bestDist) {
+                bestDist = d2;
+                best = q;
+              }
+            }
+            if (!best) return [0, 0, 0];
+            const dx = best[0] - pos[0],
+              dy = best[1] - pos[1],
+              dz = best[2] - pos[2];
+            const r = Math.sqrt(bestDist) + 1e-6;
+            let Fx = dx / (r * r),
+              Fy = dy / (r * r),
+              Fz = dz / (r * r);
+            // twist tangential
+            const tw = P.twist || 0;
+            const tx = -Fz * tw * 0.1,
+              tz = Fx * tw * 0.1;
+            Fx += tx;
+            Fz += tz;
+            // curvature bias
+            Fx += P.k * 0.05 * dx;
+            Fy += P.k * 0.02 * dy;
+            Fz += P.k * 0.05 * dz;
+            return [Fx * P.couple, Fy * P.couple, Fz * P.couple];
+          },
+        };
+        // Hook changes to rebuild per‑universe manifolds
+        [
+          "uA_topo",
+          "uA_R",
+          "uA_r",
+          "uA_k",
+          "uA_tau",
+          "uA_lambda",
+          "uB_topo",
+          "uB_R",
+          "uB_r",
+          "uB_k",
+          "uB_tau",
+          "uB_lambda",
+          "uC_topo",
+          "uC_R",
+          "uC_r",
+          "uC_k",
+          "uC_tau",
+          "uC_lambda",
+          "uD_topo",
+          "uD_R",
+          "uD_r",
+          "uD_k",
+          "uD_tau",
+          "uD_lambda",
+        ].forEach((id) => {
+          const el = $(id);
+          if (el) {
+            const fn = () => {
+              ManifoldPU.buildAll();
+              uploadGeometry();
+            };
+            el.addEventListener("input", fn);
+            el.addEventListener("change", fn);
+          }
+        });
+
+        class EcoNode {
+          constructor(x, y, z) {
+            this.p = [x, y, z];
+            this.v = [
+              (Math.random() - 0.5) * 0.2,
+              (Math.random() - 0.5) * 0.2,
+              (Math.random() - 0.5) * 0.2,
+            ];
+            this.m = 1;
+            this.c = [Math.random(), Math.random(), Math.random()];
+            this.age = 0;
+          }
+        }
+        class EcoPath {
+          constructor(a, b) {
+            this.a = a;
+            this.b = b;
+            this.str = 1;
+            this.age = 0;
+          }
+        }
+        class EcoNetwork {
+          constructor(idx) {
+            this.idx = idx;
+            this.nodes = [];
+            this.paths = [];
+          }
+          seed(n = 16, rad = 20) {
+            for (let i = 0; i < n; i++) {
+              const th = Math.random() * 2 * Math.PI,
+                ph = Math.acos(2 * Math.random() - 1);
+              const r = rad * (0.3 + 0.7 * Math.random());
+              const x = r * Math.sin(ph) * Math.cos(th),
+                y = r * Math.cos(ph),
+                z = r * Math.sin(ph) * Math.sin(th);
+              this.nodes.push(new EcoNode(x, y, z));
+            }
+            for (let i = 1; i < this.nodes.length; i++) {
+              const j = Math.floor(Math.random() * i);
+              this.paths.push(new EcoPath(j, i));
+            }
+          }
+        }
+        const Ecosystem = {
+          enabled: true,
+          nets: [],
+          params: {
+            nets: 5,
+            paths: 18,
+            growth: 0.001,
+            mitosis: 0.001,
+            merge: 0.00001,
+            exchange: 0.001,
+            flock: 1.2,
+            diff: 1.0,
+            bind: true,
+            showTopo: true,
+          },
+          ensure() {
+            const want = +($("#ecoNetworks")?.value || this.params.nets);
+            while (this.nets.length < want) {
+              const N = new EcoNetwork(this.nets.length);
+              N.seed(
+                +($("#ecoPaths")?.value || this.params.paths),
+                20 + 10 * Math.random()
+              );
+              this.nets.push(N);
+            }
+            while (this.nets.length > want) {
+              this.nets.pop();
+            }
+          },
+          setFromUI() {
+            this.enabled = $("#ecoEnable")?.checked ?? true;
+            this.params.nets = +($("#ecoNetworks")?.value || this.params.nets);
+            this.params.paths = +($("#ecoPaths")?.value || this.params.paths);
+            this.params.growth = +($("#ecoGrow")?.value || this.params.growth);
+            this.params.mitosis = +(
+              $("#ecoMitosis")?.value || this.params.mitosis
+            );
+            this.params.merge = +($("#ecoMerge")?.value || this.params.merge);
+            this.params.exchange = +(
+              $("#ecoExchange")?.value || this.params.exchange
+            );
+            this.params.flock = +($("#ecoFlock")?.value || this.params.flock);
+            this.params.diff = +($("#ecoDiff")?.value || this.params.diff);
+            this.params.bind = $("#ecoBind")?.checked ?? true;
+            this.params.showTopo = $("#ecoTopo")?.checked ?? true;
+            this.ensure();
+          },
+          step(dt) {
+            if (!this.enabled) return;
+            const G = +($("#gravSlider")?.value || 1.0);
+            for (const net of this.nets) {
+              for (const nd of net.nodes) {
+                let cx = 0,
+                  cy = 0,
+                  cz = 0;
+                const K = 4;
+                for (let k = 0; k < K; k++) {
+                  const o =
+                    net.nodes[Math.floor(Math.random() * net.nodes.length)];
+                  cx += o.p[0];
+                  cy += o.p[1];
+                  cz += o.p[2];
+                }
+                cx /= K;
+                cy /= K;
+                cz /= K;
+                nd.v[0] += (cx - nd.p[0]) * 0.0005 * this.params.flock;
+                nd.v[1] += (cy - nd.p[1]) * 0.0005 * this.params.flock;
+                nd.v[2] += (cz - nd.p[2]) * 0.0005 * this.params.flock;
+                if (this.params.bind && window._bodies?.length) {
+                  let best = null,
+                    bd2 = 1e9;
+                  for (const b of window._bodies) {
+                    const dx = b.p[0] - nd.p[0],
+                      dy = b.p[1] - nd.p[1],
+                      dz = b.p[2] - nd.p[2];
+                    const d2 = dx * dx + dy * dy + dz * dz;
+                    if (d2 < bd2) {
+                      bd2 = d2;
+                      best = b;
+                    }
+                  }
+                  if (best) {
+                    nd.v[0] += G * 0.0002 * (best.p[0] - nd.p[0]);
+                    nd.v[1] += G * 0.0002 * (best.p[1] - nd.p[1]);
+                    nd.v[2] += G * 0.0002 * (best.p[2] - nd.p[2]);
+                  }
+                }
+                const f =
+                  typeof fieldAtAll === "function"
+                    ? fieldAtAll(nd.p)
+                    : [0, 0, 0];
+                nd.v[0] += f[0] * 0.02;
+                nd.v[1] += f[1] * 0.02;
+                nd.v[2] += f[2] * 0.02;
+                nd.v[0] += (Math.random() - 0.5) * 0.02;
+                nd.v[1] += (Math.random() - 0.5) * 0.02;
+                nd.v[2] += (Math.random() - 0.5) * 0.02;
+                nd.p[0] += nd.v[0] * dt;
+                nd.p[1] += nd.v[1] * dt;
+                nd.p[2] += nd.v[2] * dt;
+                nd.age += dt;
+              }
+              if (Math.random() < this.params.growth) {
+                const a = Math.floor(Math.random() * net.nodes.length);
+                const b = Math.floor(Math.random() * net.nodes.length);
+                if (a !== b) net.paths.push(new EcoPath(a, b));
+              }
+              if (Math.random() < this.params.merge && net.paths.length > 0)
+                net.paths.splice(
+                  Math.floor(Math.random() * net.paths.length),
+                  1
+                );
+              if (
+                Math.random() < this.params.mitosis &&
+                net.nodes.length < 256
+              ) {
+                const pick =
+                  net.nodes[Math.floor(Math.random() * net.nodes.length)];
+                const n2 = new EcoNode(
+                  pick.p[0] + (Math.random() - 0.5) * 2,
+                  pick.p[1] + (Math.random() - 0.5) * 2,
+                  pick.p[2] + (Math.random() - 0.5) * 2
+                );
+                net.nodes.push(n2);
+                net.paths.push(
+                  new EcoPath(net.nodes.indexOf(pick), net.nodes.length - 1)
+                );
+              }
+            }
+          },
+        };
+        [
+          "ecoEnable",
+          "ecoNetworks",
+          "ecoPaths",
+          "ecoGrow",
+          "ecoMitosis",
+          "ecoMerge",
+          "ecoExchange",
+          "ecoFlock",
+          "ecoDiff",
+          "ecoBind",
+          "ecoTopo",
+        ].forEach((id) => {
+          const el = $(id);
+          if (el) {
+            const fn = () => {
+              Ecosystem.setFromUI();
+              uploadGeometry();
+            };
+            ["input", "change"].forEach((ev) => el.addEventListener(ev, fn));
+          }
+        });
+        setTimeout(() => {
+          Ecosystem.setFromUI();
+        }, 0);
+
+        
+  function pushRing(pos, r){
+    try{
+      if(!($("#burstRings")?.checked)) return;
+      const ov = $("#overlay"); if(!ov) return;
+      const div = document.createElement("div"); div.className="ring";
+      const scr = worldToScreen(pos, VP);
+      const px = scr[0], py=scr[1];
+      Object.assign(div.style, {left:(px-r*2)+"px", top:(py-r*2)+"px", width:(r*4)+"px", height:(r*4)+"px"});
+      ov.appendChild(div);
+      setTimeout(()=>div.remove(), 900);
+    }catch(e){}
+  }
+function worldToScreen(p, VP) {
+          const x = p[0],
+            y = p[1],
+            z = p[2],
+            w = 1.0;
+          const cx = VP[0] * x + VP[4] * y + VP[8] * z + VP[12] * w;
+          const cy = VP[1] * x + VP[5] * y + VP[9] * z + VP[13] * w;
+          const cw = VP[3] * x + VP[7] * y + VP[11] * z + VP[15] * w;
+          if (cw === 0) return [0.5, 0.5, 0.1];
+          const ndcX = cx / cw,
+            ndcY = cy / cw;
+          return [ndcX * 0.5 + 0.5, ndcY * 0.5 + 0.5, 0.12 / Math.max(0.3, cw)];
+        }
+
+        // GL programs
+        const vsMain = `#version 300 es
+layout(location=0) in vec3 aP;
+layout(location=1) in vec3 aC;
+uniform mat4 uVP;
+out vec3 vC;
+void main(){
+  gl_Position = uVP * vec4(aP,1.0);
+  gl_PointSize = 4.5;
+  vC = aC;
+}`;
+        const fsMain = `#version 300 es
+precision highp float;
+in vec3 vC;
+uniform bool uPoint;
+out vec4 o;
+void main(){
+  if(uPoint){
+    float d = length(gl_PointCoord - 0.5);
+    if(d > 0.5) discard;
+  }
+  o = vec4(vC,1.0);
+}`;
+
+        const vsQuad = `#version 300 es
+layout(location=0) in vec2 aPos;
+out vec2 vUV;
+void main(){ vUV = aPos*0.5 + 0.5; gl_Position = vec4(aPos,0,1); }`;
+        const fsMultiLens = `#version 300 es
+precision highp float;
+in vec2 vUV;
+uniform sampler2D uTex;
+uniform int uLensCount;
+uniform vec3 uLens[8];      // xy=center (UV), z=radius
+uniform float uStrength[8];
+uniform mat2 uRot[8];
+out vec4 o;
+void main(){
+  vec2 uv = vUV;
+  vec2 delta = vec2(0.0);
+  for(int i=0;i<8;i++){
+    if(i>=uLensCount) break;
+    vec2 d = uv - uLens[i].xy;
+    d = uRot[i] * d;
+    float r = length(d);
+    float rad = max(0.0001, uLens[i].z);
+    if(r < rad){
+      float k = uStrength[i] * (rad - r) / rad;
+      delta -= d * k;
+    }
+  }
+  o = texture(uTex, uv + delta);
+}`;
+
+        const fsNeb = `#version 300 es
+precision highp float;
+in vec2 vUV;
+out vec4 o;
+uniform float uTime, uHue, uAmp, uMag, uChaos;
+uniform int   uEnable;
+vec3 hue2rgb(float h){
+  float r = abs(h*6.0-3.0)-1.0;
+  float g = 2.0-abs(h*6.0-2.0);
+  float b = 2.0-abs(h*6.0-4.0);
+  return clamp(vec3(r,g,b), 0.0, 1.0);
+}
+void main(){
+  if(uEnable==0){ o=vec4(0); return; }
+  vec2 uv = vUV*2.0-1.0;
+  float rr = length(uv);
+  float wave = 0.5 + 0.5*sin(12.0*rr + uTime*uChaos);
+  float glow = exp(-3.0*rr*rr) * uAmp * wave;
+  vec3 base = hue2rgb(fract(uHue/360.0));
+  vec3 tint = base + uMag*vec3(0.2,0.5,1.0);
+  o = vec4(tint*glow, glow);
+}`;
+
+        const fsShield = `#version 300 es
+precision highp float;
+in vec2 vUV;
+out vec4 o;
+uniform float uT, uAmp, uTempo, uEntropy, uInfo;
+uniform int g,e,s,w;
+float F(vec2 uv){
+  float k=0.0;
+  if(g==1) k += .36/ max(1e-3, length(uv));
+  if(e==1) k += .28 * sin(10.0*uv.x)*cos(10.0*uv.y);
+  if(s==1) k += .60 * exp(-10.0*length(uv));
+  if(w==1) k += .22 * sin(30.0*length(uv));
+  return k;
+}
+void main(){
+  vec2 uv = vUV*2.0-1.0;
+  float f = F(uv);
+  float mixH = clamp(uInfo - uEntropy*0.5, 0.0, 2.0);
+  float t = uT * uTempo;
+  vec3 col = vec3(
+    sin(f*2.0 + t + mixH),
+    cos(f*1.0 + t*0.7),
+    sin(f*0.5 + t*1.3 + mixH*0.5)
+  );
+  o = vec4((col*0.5+0.5)*uAmp, uAmp*0.6);
+}`;
+
+        const prog = link(
+          gl,
+          compile(gl, vsMain, gl.VERTEX_SHADER),
+          compile(gl, fsMain, gl.FRAGMENT_SHADER)
+        );
+        const lensPr = link(
+          gl,
+          compile(gl, vsQuad, gl.VERTEX_SHADER),
+          compile(gl, fsMultiLens, gl.FRAGMENT_SHADER)
+        );
+        const nebPr = link(
+          gl,
+          compile(gl, vsQuad, gl.VERTEX_SHADER),
+          compile(gl, fsNeb, gl.FRAGMENT_SHADER)
+        );
+        const shPr = link(
+          deepGL,
+          compile(deepGL, vsQuad, deepGL.VERTEX_SHADER),
+          compile(deepGL, fsShield, deepGL.FRAGMENT_SHADER)
+        );
+        const fsFog = `#version 300 es
+  precision highp float; out vec4 o; uniform vec2 uRes; uniform float uT; uniform float uAmp; uniform float uScat; uniform float uHue; uniform float uQN; uniform float uEM;
+  float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453123); }
+  float noise(in vec2 x){ vec2 i=floor(x), f=fract(x); float a=hash(i), b=hash(i+vec2(1,0)), c=hash(i+vec2(0,1)), d=hash(i+vec2(1,1)); vec2 u=f*f*(3.0-2.0*f); return mix(a,b,u.x)+ (c-a)*u.y*(1.0-u.x) + (d-b)*u.x*u.y; }
+  float fbm(vec2 x){ float v=0.0; float a=.5; for(int i=0;i<5;i++){ v+=a*noise(x); x*=2.0; a*=.55; } return v; }
+  vec3 h2rgb(float h){ float s=1.0; float v=1.0; h=fract(h); vec3 k=vec3(5.0,3.0,1.0)/3.0; vec3 p=abs(fract(vec3(h)+k)*6.0-3.0); return v*mix(vec3(1.0), clamp(p-1.0,0.0,1.0), s); }
+  void main(){ vec2 uv=gl_FragCoord.xy/uRes.xy; float t=uT; float n=fbm(uv*2.0 + t*0.05) + uQN*fbm(uv*6.0 - t*0.11); float em = uEM*fbm(uv*4.0 + t*0.13); float fog = uAmp * (0.6*n + 0.4*em); vec3 c = h2rgb(uHue/360.0); o = vec4(c * fog, clamp(fog*0.85, 0.0, 0.95)); }`;
+        const fogPr = link(
+          deepGL,
+          compile(deepGL, vsQuad, deepGL.VERTEX_SHADER),
+          compile(deepGL, fsFog, deepGL.FRAGMENT_SHADER)
+        );
+        const uFogRes = deepGL.getUniformLocation(fogPr, "uRes"),
+          uFogT = deepGL.getUniformLocation(fogPr, "uT"),
+          uFogAmp = deepGL.getUniformLocation(fogPr, "uAmp"),
+          uFogSca = deepGL.getUniformLocation(fogPr, "uScat"),
+          uFogHue = deepGL.getUniformLocation(fogPr, "uHue"),
+          uFogQN = deepGL.getUniformLocation(fogPr, "uQN"),
+          uFogEM = deepGL.getUniformLocation(fogPr, "uEM");
+
+        // === Stream Ribbon shader ===
+        const vsStream = `#version 300 es
+  layout(location=0) in vec3 aPos;
+  layout(location=1) in vec3 aTan;
+  layout(location=2) in float aSide;
+  layout(location=3) in vec3 aCol;
+  uniform mat4 uVPs;
+  uniform vec3 uEye;
+  uniform float uWidth;
+  out vec3 vC;
+  void main(){
+    vec3 viewDir = normalize(uEye - aPos);
+    vec3 right = normalize(cross(viewDir, aTan));
+    vec3 p = aPos + right * aSide * uWidth;
+    gl_Position = uVPs * vec4(p,1.0);
+    vC = aCol;
+  }`;
+        const fsStream = `#version 300 es
+  precision highp float;
+  in vec3 vC;
+  out vec4 o;
+  void main(){ o = vec4(vC, 1.0); }`;
+        const streamPr = link(
+          gl,
+          compile(gl, vsStream, gl.VERTEX_SHADER),
+          compile(gl, fsStream, gl.FRAGMENT_SHADER)
+        );
+        const uVPs = gl.getUniformLocation(streamPr, "uVPs");
+        const uEye = gl.getUniformLocation(streamPr, "uEye");
+        const uWidth = gl.getUniformLocation(streamPr, "uWidth");
+
+        uVP = gl.getUniformLocation(prog, "uVP");
+        uPoint = gl.getUniformLocation(prog, "uPoint");
+        const uLensTex = gl.getUniformLocation(lensPr, "uTex");
+        uLensCnt = gl.getUniformLocation(lensPr, "uLensCount");
+        uLensArr = gl.getUniformLocation(lensPr, "uLens[0]");
+        uStrArr = gl.getUniformLocation(lensPr, "uStrength[0]");
+        uNebEn = gl.getUniformLocation(nebPr, "uEnable");
+        uNebT = gl.getUniformLocation(nebPr, "uTime");
+        uNebHue = gl.getUniformLocation(nebPr, "uHue");
+        uNebAmp = gl.getUniformLocation(nebPr, "uAmp");
+        uNebMag = gl.getUniformLocation(nebPr, "uMag");
+        uNebCh = gl.getUniformLocation(nebPr, "uChaos");
+        uShT = deepGL.getUniformLocation(shPr, "uT");
+        uShAmp = deepGL.getUniformLocation(shPr, "uAmp");
+        uShTmp = deepGL.getUniformLocation(shPr, "uTempo");
+        uShEnt = deepGL.getUniformLocation(shPr, "uEntropy");
+        uShInf = deepGL.getUniformLocation(shPr, "uInfo");
+        uShG = deepGL.getUniformLocation(shPr, "g");
+        uShE = deepGL.getUniformLocation(shPr, "e");
+        uShS = deepGL.getUniformLocation(shPr, "s");
+        uShW = deepGL.getUniformLocation(shPr, "w");
+
+        // Quad VAOs
+        function makeQuad(glx) {
+          const vao = glx.createVertexArray();
+          glx.bindVertexArray(vao);
+          const b = glx.createBuffer();
+          glx.bindBuffer(glx.ARRAY_BUFFER, b);
+          glx.bufferData(
+            glx.ARRAY_BUFFER,
+            new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]),
+            glx.STATIC_DRAW
+          );
+          glx.enableVertexAttribArray(0);
+          glx.vertexAttribPointer(0, 2, glx.FLOAT, false, 0, 0);
+          glx.bindVertexArray(null);
+          return vao;
+        }
+        const quadVAO = makeQuad(gl);
+        const deepQuadVAO = makeQuad(deepGL);
+        // early globals to avoid TDZ on first calls
+        var fbo = null;
+        var points = [],
+          colors = [],
+          trails = [],
+          trailCols = [],
+          trailSegments = [];
+
+        // FBO (declared earlier to avoid TDZ)
+        // let fbo=null;
+        function createFBO() {
+          if (fbo) {
+            if (fbo.depth) gl.deleteRenderbuffer(fbo.depth);
+            if (fbo.fb) gl.deleteFramebuffer(fbo.fb);
+            if (fbo.tex) gl.deleteTexture(fbo.tex);
+          }
+          const tex = gl.createTexture();
+          gl.bindTexture(gl.TEXTURE_2D, tex);
+          gl.texImage2D(
+            gl.TEXTURE_2D,
+            0,
+            gl.RGBA8,
+            canvas.width,
+            canvas.height,
+            0,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            null
+          );
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+          const depth = gl.createRenderbuffer();
+          gl.bindRenderbuffer(gl.RENDERBUFFER, depth);
+          gl.renderbufferStorage(
+            gl.RENDERBUFFER,
+            gl.DEPTH_COMPONENT16,
+            canvas.width,
+            canvas.height
+          );
+          const fb = gl.createFramebuffer();
+          gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+          gl.framebufferTexture2D(
+            gl.FRAMEBUFFER,
+            gl.COLOR_ATTACHMENT0,
+            gl.TEXTURE_2D,
+            tex,
+            0
+          );
+          gl.framebufferRenderbuffer(
+            gl.FRAMEBUFFER,
+            gl.DEPTH_ATTACHMENT,
+            gl.RENDERBUFFER,
+            depth
+          );
+          gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+          fbo = { fb, tex, depth };
+        }
+
+        // Geometry buffers
+        const vao = gl.createVertexArray();
+
+        const streamVAO = gl.createVertexArray();
+        const streamPosB = gl.createBuffer();
+        const streamTanB = gl.createBuffer();
+        const streamSideB = gl.createBuffer();
+        const streamColB = gl.createBuffer();
+        let streamPos = [],
+          streamTan = [],
+          streamSide = [],
+          streamCol = [];
+
+        const trailVAO = gl.createVertexArray();
+        const posB = gl.createBuffer(),
+          colB = gl.createBuffer();
+        const trailPosB = gl.createBuffer(),
+          trailColB = gl.createBuffer();
+        points = points || [];
+        colors = colors || [];
+        trails = trails || [];
+        trailCols = trailCols || [];
+        trailSegments = trailSegments || [];
+        function pushPoint(p, c) {
+          points.push(p[0], p[1], p[2]);
+          colors.push(c[0], c[1], c[2]);
+        }
+        function pushTrail(path, c) {
+          for (let i = 0; i < path.length; i++) {
+            const p = path[i],
+              t = i / path.length;
+            trails.push(p[0], p[1], p[2]);
+            trailCols.push(c[0] * t, c[1] * t, c[2] * t);
+          }
+        }
+        function uploadGeometry(nowT = 0) {
+          const useRK4 = document.getElementById("rk4Enable")?.checked;
+          const steps = +(document.getElementById("rk4Steps")?.value || 600);
+          const dtRK = +(document.getElementById("rk4dt")?.value || 0.02);
+          points.length = 0;
+          colors.length = 0;
+          trails.length = 0;
+          trailCols.length = 0;
+          for (const b of world.bodies) {
+            let col = colorFor(b);
+            if (b.type === "Pulsar") {
+              const k = b.pulse || 1;
+              col = [col[0] * k, col[1] * k, col[2] * k];
+            }
+            pushPoint(b.p, col);
+            if (world.showTraj) {
+              if (useRK4) {
+                b._predPath = rk4Path(b, steps, dtRK);
+                pushTrail(b._predPath, col);
+              } else {
+                pushTrail(b.path, col);
+              }
+            }
+          }
+          // points
+          gl.bindVertexArray(vao);
+          gl.bindBuffer(gl.ARRAY_BUFFER, posB);
+          gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array(points),
+            gl.DYNAMIC_DRAW
+          );
+          gl.enableVertexAttribArray(0);
+          gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+          gl.bindBuffer(gl.ARRAY_BUFFER, colB);
+          gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array(colors),
+            gl.DYNAMIC_DRAW
+          );
+          gl.enableVertexAttribArray(1);
+          gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, 0);
+
+          // upload and draw stream ribbons
+          if (streamPos.length > 0) {
+            gl.bindVertexArray(streamVAO);
+            gl.bindBuffer(gl.ARRAY_BUFFER, streamPosB);
+            gl.bufferData(
+              gl.ARRAY_BUFFER,
+              new Float32Array(streamPos),
+              gl.DYNAMIC_DRAW
+            );
+            gl.enableVertexAttribArray(0);
+            gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+            gl.bindBuffer(gl.ARRAY_BUFFER, streamTanB);
+            gl.bufferData(
+              gl.ARRAY_BUFFER,
+              new Float32Array(streamTan),
+              gl.DYNAMIC_DRAW
+            );
+            gl.enableVertexAttribArray(1);
+            gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, 0);
+            gl.bindBuffer(gl.ARRAY_BUFFER, streamSideB);
+            gl.bufferData(
+              gl.ARRAY_BUFFER,
+              new Float32Array(streamSide),
+              gl.DYNAMIC_DRAW
+            );
+            gl.enableVertexAttribArray(2);
+            gl.vertexAttribPointer(2, 1, gl.FLOAT, false, 0, 0);
+            gl.bindBuffer(gl.ARRAY_BUFFER, streamColB);
+            gl.bufferData(
+              gl.ARRAY_BUFFER,
+              new Float32Array(streamCol),
+              gl.DYNAMIC_DRAW
+            );
+            gl.enableVertexAttribArray(3);
+            gl.vertexAttribPointer(3, 3, gl.FLOAT, false, 0, 0);
+
+            gl.useProgram(streamPr);
+            // use last VP and camera position from render (set there)
+            gl.uniformMatrix4fv(
+              uVPs,
+              false,
+              window._lastVP || new Float32Array(16)
+            );
+            gl.uniform3f(
+              uEye,
+              window._lastEye?.[0] || 0,
+              window._lastEye?.[1] || 0,
+              window._lastEye?.[2] || 120
+            );
+            gl.uniform1f(uWidth, 0.8);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, streamPos.length / 3);
+            gl.bindVertexArray(null);
+          }
+          gl.bindVertexArray(null);
+          // compute per‑body trail segments to avoid cross‑object links
+          trailSegments.length = 0;
+          let _cursor = 0;
+          for (const b of world.bodies) {
+            let _count = 0;
+            if (world.showTraj) {
+              const useRK4 = document.getElementById("rk4Enable")?.checked;
+              _count = useRK4
+                ? b._predPath
+                  ? b._predPath.length
+                  : 0
+                : b.path
+                ? b.path.length
+                : 0;
+            }
+            if (_count >= 2)
+              trailSegments.push({ start: _cursor, count: _count });
+            _cursor += _count;
+          }
+          // manifold cloud
+          if (Manifold.params.show && Manifold.cache) {
+            for (const q of Manifold.cache.pts) {
+              pushPoint(q, [0.6, 0.8, 1.0]);
+            }
+            if ($("maniStream")?.checked) {
+              streamPos.length = 0;
+              streamTan.length = 0;
+              streamSide.length = 0;
+              streamCol.length = 0;
+              const N = +($("maniStreamN")?.value || 20),
+                L = +($("maniStreamL")?.value || 200);
+              for (let sI = 0; sI < N; sI++) {
+                const idx = Math.floor(
+                  Math.random() * Manifold.cache.pts.length
+                );
+                let p0 = Manifold.cache.pts[idx].slice();
+                let path = [];
+                let dt = 0.05;
+                for (let st = 0; st < L; st++) {
+                  const f = Manifold.fieldAt(p0);
+                  p0 = [
+                    p0[0] + f[0] * dt,
+                    p0[1] + f[1] * dt,
+                    p0[2] + f[2] * dt,
+                  ];
+                  path.push(p0.slice());
+                }
+                // build triangle strip vertices for ribbon
+                const col = [0.8, 0.6, 1.0];
+                for (let k = 1; k < path.length; k++) {
+                  const a = path[k - 1],
+                    b = path[k];
+                  const tx = b[0] - a[0],
+                    ty = b[1] - a[1],
+                    tz = b[2] - a[2];
+                  const Lseg = Math.hypot(tx, ty, tz) || 1;
+                  const tnx = tx / Lseg,
+                    tny = ty / Lseg,
+                    tnz = tz / Lseg;
+                  // two verts at a
+                  streamPos.push(a[0], a[1], a[2]);
+                  streamTan.push(tnx, tny, tnz);
+                  streamSide.push(-1);
+                  streamCol.push(col[0], col[1], col[2]);
+                  streamPos.push(a[0], a[1], a[2]);
+                  streamTan.push(tnx, tny, tnz);
+                  streamSide.push(1);
+                  streamCol.push(col[0], col[1], col[2]);
+                  // two verts at b
+                  streamPos.push(b[0], b[1], b[2]);
+                  streamTan.push(tnx, tny, tnz);
+                  streamSide.push(-1);
+                  streamCol.push(col[0], col[1], col[2]);
+                  streamPos.push(b[0], b[1], b[2]);
+                  streamTan.push(tnx, tny, tnz);
+                  streamSide.push(1);
+                  streamCol.push(col[0], col[1], col[2]);
+                }
+              }
+            }
+          }
+
+          // ECO TOPO
+          if (
+            typeof Ecosystem !== "undefined" &&
+            Ecosystem.enabled &&
+            Ecosystem.params.showTopo
+          ) {
+            for (const net of Ecosystem.nets) {
+              for (const e of net.paths) {
+                const a = net.nodes[e.a]?.p,
+                  b = net.nodes[e.b]?.p;
+                if (!a || !b) continue;
+                pushTrail([a.slice(), b.slice()], [0.9, 0.7, 0.4]);
+              }
+            }
+          }
+          // trails
+          gl.bindVertexArray(trailVAO);
+          gl.bindBuffer(gl.ARRAY_BUFFER, trailPosB);
+          gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array(trails),
+            gl.DYNAMIC_DRAW
+          );
+          gl.enableVertexAttribArray(0);
+          gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+          gl.bindBuffer(gl.ARRAY_BUFFER, trailColB);
+          gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array(trailCols),
+            gl.DYNAMIC_DRAW
+          );
+          gl.enableVertexAttribArray(1);
+          gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, 0);
+          gl.bindVertexArray(null);
+        }
+
+        // Lenses
+        class Lens {
+          constructor(i) {
+            this.id = i;
+            this.enabled = true;
+            this.mode = "world";
+            this.mass = 10.0;
+            this.radius = 0.18;
+            this.strength = 0.9;
+            this.pos = [i * 2 - 1.5, 0, 0];
+            this.u = 0.25 + 0.12 * i;
+            this.v = 0.5;
+            this.yaw = 0;
+            this.pitch = 0;
+            this.roll = 0;
+            this.showGR = true;
+          }
+          quat() {
+            const toR = Math.PI / 180;
+            const cy = Math.cos(this.yaw * toR * 0.5),
+              sy = Math.sin(this.yaw * toR * 0.5);
+            const cp = Math.cos(this.pitch * toR * 0.5),
+              sp = Math.sin(this.pitch * toR * 0.5);
+            const cr = Math.cos(this.roll * toR * 0.5),
+              sr = Math.sin(this.roll * toR * 0.5);
+            return {
+              w: cr * cp * cy + sr * sp * sy,
+              x: sr * cp * cy - cr * sp * sy,
+              y: cr * sp * cy + sr * cp * sy,
+              z: cr * cp * sy - sr * sp * cy,
+            };
+          }
+          schwarzschildRadius() {
+            const M = this.mass * 1e24;
+            return (2 * G_SI * M) / (C_SI * C_SI);
+          }
+          timeDilation(rMeters) {
+            const rs = this.schwarzschildRadius();
+            const f = Math.max(
+              1e-9,
+              1.0 - rs / Math.max(rs * 1.00001, rMeters)
+            );
+            return Math.sqrt(f);
+          }
+          energyJoules() {
+            return this.mass * 1e24 * C_SI * C_SI;
+          }
+          darkMatterWeight(globalDM) {
+            return this.mass * 1e24 * globalDM;
+          }
+        }
+        const lenses = [];
+        function ensureLenses(n) {
+          while (lenses.length < n) lenses.push(new Lens(lenses.length));
+          while (lenses.length > n) lenses.pop();
+          rebuildLensUI();
+        }
+        function rebuildLensUI() {
+          const box = $("lensList");
+          box.innerHTML = "";
+          lenses.forEach((L, i) => {
+            const q = L.quat();
+            const fs = document.createElement("fieldset");
+            fs.innerHTML = `
+        <legend>Lens ${i + 1}</legend>
+        <div class="row">
+          <label><input data-k="enabled" type="checkbox" ${
+            L.enabled ? "checked" : ""
+          }/> Enabled</label>
+          <label>Mode <select data-k="mode"><option ${
+            L.mode === "world" ? "selected" : ""
+          } value="world">World</option><option ${
+              L.mode === "screen" ? "selected" : ""
+            } value="screen">Screen</option></select></label>
+        </div>
+        <div class="row">
+          <label>Mass <input data-k="mass" type="range" min="0" max="800" step="1" value="${
+            L.mass
+          }"/><span>${L.mass.toFixed(0)}</span></label>
+          <label>Radius <input data-k="radius" type="range" min="0.02" max="0.48" step="0.01" value="${
+            L.radius
+          }"/><span>${L.radius.toFixed(2)}</span></label>
+        </div>
+        <div class="row">
+          <label>Strength <input data-k="strength" type="range" min="0" max="2" step="0.01" value="${
+            L.strength
+          }"/><span>${L.strength.toFixed(2)}</span></label>
+          <label><input data-k="showGR" type="checkbox" ${
+            L.showGR ? "checked" : ""
+          }/> Show GR</label>
+        </div>
+        <div class="row">
+          <label>Yaw° <input data-k="yaw" type="range" min="-180" max="180" step="1" value="${
+            L.yaw
+          }"/><span>${L.yaw | 0}</span></label>
+          <label>Pitch° <input data-k="pitch" type="range" min="-180" max="180" step="1" value="${
+            L.pitch
+          }"/><span>${L.pitch | 0}</span></label>
+        </div>
+        <div class="row">
+          <label>Roll° <input data-k="roll" type="range" min="-180" max="180" step="1" value="${
+            L.roll
+          }"/><span>${L.roll | 0}</span></label>
+          <label>U <input data-k="u" type="range" min="0" max="1" step="0.001" value="${
+            L.u
+          }"/><span>${L.u.toFixed(3)}</span></label>
+        </div>
+        <div class="row">
+          <label>V <input data-k="v2" type="range" min="0" max="1" step="0.001" value="${
+            L.v
+          }"/><span>${L.v.toFixed(3)}</span></label>
+          <label>X <input data-k="px" type="range" min="-12" max="12" step="0.01" value="${
+            L.pos[0]
+          }"/><span>${L.pos[0].toFixed(2)}</span></label>
+        </div>
+        <div class="row">
+          <label>Y <input data-k="py" type="range" min="-8" max="8" step="0.01" value="${
+            L.pos[1]
+          }"/><span>${L.pos[1].toFixed(2)}</span></label>
+          <label>Z <input data-k="pz" type="range" min="-12" max="12" step="0.01" value="${
+            L.pos[2]
+          }"/><span>${L.pos[2].toFixed(2)}</span></label>
+        </div>
+        <div class="mini mono">q = [${q.w.toFixed(3)}, ${q.x.toFixed(
+              3
+            )}, ${q.y.toFixed(3)}, ${q.z.toFixed(3)}]</div>
+        <div class="mini mono">h = ${H_SI.toExponential(
+          3
+        )} J·s · E = ${L.energyJoules().toExponential(
+              2
+            )} J · DM≈ ${L.darkMatterWeight(
+              +$("darkMatter").value
+            ).toExponential(2)} kg</div>
+      `;
+            fs.querySelectorAll("input,select").forEach((inp) => {
+              inp.addEventListener("input", (e) => {
+                const k = e.target.dataset.k;
+                const v =
+                  e.target.type === "checkbox"
+                    ? e.target.checked
+                    : parseFloat(e.target.value);
+                const span = e.target.parentElement.querySelector("span");
+                if (span && !Number.isNaN(v))
+                  span.textContent =
+                    typeof v === "number"
+                      ? Math.abs(v) >= 1
+                        ? v.toFixed(
+                            k === "radius" || k === "u" || k === "v2"
+                              ? 2
+                              : k.startsWith("p")
+                              ? 2
+                              : 0
+                          )
+                        : v.toFixed(3)
+                      : "";
+                if (k === "enabled") L.enabled = !!v;
+                else if (k === "mode") L.mode = e.target.value;
+                else if (k === "mass") L.mass = +v;
+                else if (k === "radius") L.radius = +v;
+                else if (k === "strength") L.strength = +v;
+                else if (k === "yaw") L.yaw = +v;
+                else if (k === "pitch") L.pitch = +v;
+                else if (k === "roll") L.roll = +v;
+                else if (k === "u") L.u = +v;
+                else if (k === "v2") L.v = +v;
+                else if (k === "px") L.pos[0] = +v;
+                else if (k === "py") L.pos[1] = +v;
+                else if (k === "pz") L.pos[2] = +v;
+                else if (k === "showGR") L.showGR = !!e.target.checked;
+                const qNow = L.quat();
+                fs.querySelectorAll(
+                  ".mini.mono"
+                )[0].textContent = `q = [${qNow.w.toFixed(3)}, ${qNow.x.toFixed(
+                  3
+                )}, ${qNow.y.toFixed(3)}, ${qNow.z.toFixed(3)}]`;
+                fs.querySelectorAll(
+                  ".mini.mono"
+                )[1].textContent = `h = ${H_SI.toExponential(
+                  3
+                )} J·s · E = ${L.energyJoules().toExponential(
+                  2
+                )} J · DM≈ ${L.darkMatterWeight(
+                  +$("darkMatter").value
+                ).toExponential(2)} kg`;
+              });
+            });
+            box.appendChild(fs);
+          });
+        }
+
+        // Scene builder
+        function buildScene() {
+          world.reset();
+          const scene = $("sceneSel").value;
+          const planets = +$("planetSlider").value | 0,
+            moons = +$("moonSlider").value | 0,
+            evenMoon = $("moonDistToggle").checked;
+          const comets = +$("cometSlider").value | 0,
+            meteors = +$("meteorSlider").value | 0,
+            ast = +$("asteroidSlider").value | 0,
+            bhs = +$("bhSlider").value | 0;
+          const stars = +$("starCount").value | 0,
+            clusters = +$("galClusterCount").value | 0,
+            starsPer = +$("clusterStarCount").value | 0;
+          const pulsars = +$("pulsarCount").value | 0,
+            neutrons = +$("neutronCount").value | 0,
+            quasars = +$("quasarCount").value | 0;
+          const nebulas = +$("nebulaCount").value | 0,
+            subClusters = +$("subClusterCount").value | 0;
+
+          function add(o) {
+            world.add(new Body(o));
+          }
+          function addStar(o) {
+            world.add(new Body({ type: "Star", ...o }));
+          }
+          function addPlanet(o) {
+            world.add(new Body({ type: "Planet", ...o }));
+          }
+          function addMoon(o) {
+            world.add(new Body({ type: "Moon", ...o }));
+          }
+          function addComet(o) {
+            world.add(new Body({ type: "Comet", ...o }));
+          }
+          function addMeteor(o) {
+            world.add(new Body({ type: "Meteor", ...o }));
+          }
+          function addAst(o) {
+            world.add(new Body({ type: "Asteroid", ...o }));
+          }
+          function addBH(o) {
+            world.add(new Body({ type: "BlackHole", ...o }));
+          }
+          function addPulsar(o) {
+            world.add(new Body({ type: "Pulsar", ...o }));
+          }
+          function addNeutron(o) {
+            world.add(new Body({ type: "NeutronStar", ...o }));
+          }
+          function addQuasar(o) {
+            world.add(new Body({ type: "Quasar", ...o }));
+          }
+          function addNebulaObj(o) {
+            world.add(new Body({ type: "NebulaObj", ...o }));
+          }
+          function addClusterMarker(o) {
+            world.add(new Body({ type: "Cluster", ...o }));
+          }
+
+          const rand = (a = 1, b = 0) => Math.random() * (a - b) + b;
+
+          if (scene === "munsellQ") {
+            const cols = (
+              window.mqPalette || [
+                "#FF0000",
+                "#00FF00",
+                "#0000FF",
+                "#FFFF00",
+                "#FF00FF",
+                "#00FFFF",
+              ]
+            ).map((hex) => hexToRGB01(hex));
+            world.add(
+              new Body({
+                type: "Star",
+                m: 40000,
+                p: [0, 0, 0],
+                v: [0, 0, 0],
+                r: 2.2,
+                c: cols[0] || [1, 0.9, 0.7],
+                moving: false,
+                name: "Munsell Core",
+              })
+            );
+            const N = +document.getElementById("starCount").value || 600;
+            for (let i = 0; i < N; i++) {
+              const u = i / Math.max(1, N - 1);
+              const rr = 18 + 50 * u + 4 * Math.sin(14 * u);
+              const th = 6.28318 * u * 10 + 2 * Math.sin(10 * u);
+              const pos = [
+                rr * Math.cos(th),
+                6 * Math.sin(2 * u),
+                rr * Math.sin(th),
+              ];
+              const vmag = Math.sqrt((1 * 40000) / Math.max(2, rr));
+              const vel = [(-pos[2] * vmag) / rr, 0, (pos[0] * vmag) / rr];
+              const cc = cols[i % cols.length] || [0.8, 0.8, 1];
+              world.add(
+                new Body({
+                  type: "Star",
+                  m: Math.random() * 2 + 0.1,
+                  p: pos,
+                  v: vel,
+                  r: 0.26,
+                  c: cc,
+                  name: "MunsellStar",
+                })
+              );
+            }
+            for (
+              let i = 0;
+              i < +document.getElementById("planetSlider").value;
+              i++
+            ) {
+              const a = 6 + i * 3.0;
+              const th = Math.random() * 6.28318;
+              const pos = [a * Math.cos(th), 0, a * Math.sin(th)];
+              const vmag = Math.sqrt((1 * 40000) / Math.max(2, a)) * 0.98;
+              const vel = [(-pos[2] * vmag) / a, 0, (pos[0] * vmag) / a];
+              const cc = cols[(i + 3) % cols.length] || [0.8, 0.7, 0.6];
+              world.add(
+                new Body({
+                  type: "Planet",
+                  m: Math.random() * 5 + 0.1,
+                  p: pos,
+                  v: vel,
+                  r: 0.5,
+                  c: cc,
+                  name: "PalettePlanet",
+                })
+              );
+            }
+          } else if (scene === "solar") {
+            addStar({
+              m: 333000,
+              p: [0, 0, 0],
+              v: [0, 0, 0],
+              r: 1.8,
+              c: [1, 0.95, 0.82],
+              moving: false,
+              name: "Sol",
+            });
+            for (let i = 0; i < planets; i++) {
+              const a = 5 + i * 3.4 + rand(1.2, -0.6);
+              const th = Math.random() * Math.PI * 2,
+                hz = rand(0.15, -0.15);
+              const pos = [a * Math.cos(th), hz, a * Math.sin(th)];
+              const vmag = Math.sqrt((1 * world.bodies[0].m) / a) * 0.98;
+              const vel = [(-pos[2] * vmag) / a, 0, (pos[0] * vmag) / a];
+              const col = [rand(1, 0.6), rand(1, 0.6), rand(1, 0.6)];
+              addPlanet({
+                m: rand(0.1, 10),
+                q: rand(1, -1) * 0.1,
+                p: pos,
+                v: vel,
+                r: 0.55,
+                c: col,
+                moving: true,
+                name: "Planet",
+              });
+              const moonCount = Math.floor(moons / Math.max(1, planets));
+              for (let m = 0; m < moonCount; m++) {
+                const rad = evenMoon
+                  ? 0.5 + 0.25 * m
+                  : 0.4 + Math.random() * 0.6;
+                const ang = Math.random() * 6.28318;
+                const mp = [
+                  pos[0] + rad * Math.cos(ang),
+                  pos[1] + rad * rand(0.15, -0.15),
+                  pos[2] + rad * Math.sin(ang),
+                ];
+                const vv = Math.sqrt((1 * 0.05) / rad);
+                const mv = [-Math.sin(ang) * vv, 0, Math.cos(ang) * vv];
+                addMoon({
+                  m: rand(0.001, 0.05),
+                  p: mp,
+                  v: [vel[0] + mv[0], vel[1] + mv[1], vel[2] + mv[2]],
+                  r: 0.18,
+                  c: [0.9, 0.9, 1],
+                  name: "Moon",
+                });
+              }
+            }
+            for (let i = 0; i < ast; i++) {
+              const rr = 8 + i * 0.4,
+                ang = Math.random() * 6.28318,
+                hz = Math.random() * 0.15 - 0.075;
+              const pos = [rr * Math.cos(ang), hz, rr * Math.sin(ang)];
+              const vmag = Math.sqrt((1 * world.bodies[0].m) / rr) * 0.85;
+              const vel = [(-pos[2] * vmag) / rr, 0, (pos[0] * vmag) / rr];
+              addAst({
+                m: rand(0.01, 0.2),
+                q: rand(1, -1) * 0.1,
+                p: pos,
+                v: vel,
+                r: 0.2,
+                c: [0.8, 0.7, 0.6],
+                name: "Ast",
+              });
+            }
+            for (let i = 0; i < comets; i++) {
+              const a = 120 + Math.random() * 200,
+                th = Math.random() * 6.28318;
+              const pos = [
+                a * Math.cos(th),
+                Math.random() * 20 - 10,
+                a * Math.sin(th),
+              ];
+              const vel = [-pos[2] * 0.004, -0.02, pos[0] * 0.004];
+              addComet({
+                m: 0.05,
+                q: rand(1, -1) * 0.1,
+                p: pos,
+                v: vel,
+                r: 0.28,
+                c: [0.9, 0.9, 1],
+                name: "Comet",
+              });
+            }
+            for (let i = 0; i < meteors; i++) {
+              const a = rand(6, 80),
+                th = Math.random() * 6.28318,
+                pos = [a * Math.cos(th), rand(0.1, -0.1), a * Math.sin(th)];
+              const vel = [-pos[2] * 0.01, 0, pos[0] * 0.01];
+              addMeteor({
+                m: 0.005,
+                p: pos,
+                v: vel,
+                r: 0.1,
+                c: [0.9, 0.7, 0.4],
+                name: "Meteor",
+              });
+            }
+            for (let i = 0; i < bhs; i++) {
+              const a = rand(30, 180),
+                th = Math.random() * 6.28318,
+                pos = [a * Math.cos(th), rand(1, -1), a * Math.sin(th)];
+              addBH({
+                m: 5e5,
+                p: pos,
+                v: [0, 0, 0],
+                r: 0.6,
+                c: [0.7, 0.8, 1.0],
+                name: "BH",
+              });
+            }
+          } else if (scene === "galaxy") {
+            addStar({
+              m: 40000,
+              p: [0, 0, 0],
+              v: [0, 0, 0],
+              r: 2.2,
+              c: [1, 0.9, 0.7],
+              moving: false,
+              name: "Core",
+            });
+            for (let i = 0; i < stars; i++) {
+              const rr = 12 + Math.random() * 60,
+                ang = Math.random() * 6.28318,
+                hz = Math.random() * 2 - 1;
+              const pos = [rr * Math.cos(ang), hz, rr * Math.sin(ang)];
+              const vmag =
+                Math.sqrt((1 * world.bodies[0].m) / rr) *
+                (0.8 + 0.4 * Math.random());
+              const vel = [-Math.sin(ang) * vmag, 0, Math.cos(ang) * vmag];
+              addStar({
+                m: Math.random() * 3 + 0.05,
+                q: Math.random() * 0.2 - 0.1,
+                p: pos,
+                v: vel,
+                r: 0.32,
+                c: [
+                  Math.random() * 0.3 + 0.7,
+                  Math.random() * 0.3 + 0.7,
+                  Math.random() * 0.3 + 0.7,
+                ],
+                name: "Star",
+              });
+            }
+          } else if (scene === "cluster") {
+            for (let g = 0; g < clusters; g++) {
+              const center = [
+                Math.random() * 400 - 200,
+                Math.random() * 80 - 40,
+                Math.random() * 400 - 200,
+              ];
+              const M = Math.random() * 39000 + 1000;
+              addClusterMarker({
+                m: M,
+                p: center,
+                v: [0, 0, 0],
+                r: 2.0,
+                c: [1, 0.9, 0.7],
+                moving: false,
+                name: "Core",
+              });
+              for (let i = 0; i < starsPer; i++) {
+                const rr = 12 + Math.random() * 80,
+                  ang = Math.random() * 6.28318,
+                  hz = Math.random() * 2 - 1;
+                const pos = [
+                  center[0] + rr * Math.cos(ang),
+                  center[1] + hz,
+                  center[2] + rr * Math.sin(ang),
+                ];
+                const vmag =
+                  Math.sqrt((1 * M) / rr) * (0.8 + 0.4 * Math.random());
+                const vel = [-Math.sin(ang) * vmag, 0, Math.cos(ang) * vmag];
+                addStar({
+                  m: Math.random() * 3 + 0.05,
+                  q: Math.random() * 0.2 - 0.1,
+                  p: pos,
+                  v: vel,
+                  r: 0.3,
+                  c: [
+                    Math.random() * 0.3 + 0.7,
+                    Math.random() * 0.3 + 0.7,
+                    Math.random() * 0.3 + 0.7,
+                  ],
+                  name: "Star",
+                });
+              }
+            }
+          } else if (scene === "cosmos") {
+            for (let i = 0; i < Math.max(60, stars / 5); i++) {
+              addStar({
+                m: Math.random() * 5990 + 10,
+                p: [
+                  Math.random() * 800 - 400,
+                  Math.random() * 300 - 150,
+                  Math.random() * 800 - 400,
+                ],
+                v: [0, 0, 0],
+                r: 0.6,
+                c: [
+                  Math.random() * 0.3 + 0.7,
+                  Math.random() * 0.3 + 0.7,
+                  Math.random() * 0.3 + 0.7,
+                ],
+                moving: true,
+                name: "Mass",
+              });
+            }
+          } else if (scene === "uniphi") {
+            addStar({
+              m: 50000,
+              p: [0, 0, 0],
+              v: [0, 0, 0],
+              r: 1.8,
+              c: [1, 0.9, 0.8],
+              moving: false,
+              name: "Core",
+            });
+            for (let i = 0; i < stars; i++) {
+              const u = i / Math.max(1, stars - 1);
+              const rr = 10 + 60 * u + 6 * Math.sin(8 * u);
+              const th = 6.28318 * u * 10 + 2 * Math.sin(12 * u);
+              const pos = [
+                rr * Math.cos(th),
+                8 * Math.sin(2 * u),
+                rr * Math.sin(th),
+              ];
+              const vmag = Math.sqrt((1 * world.bodies[0].m) / rr);
+              const vel = [(-pos[2] * vmag) / rr, 0, (pos[0] * vmag) / rr];
+              addStar({
+                m: Math.random() * 1.95 + 0.05,
+                q: Math.random() * 0.2 - 0.1,
+                p: pos,
+                v: vel,
+                r: 0.28,
+                c: [0.8 + 0.2 * Math.sin(i), 0.8, 1.0],
+                name: "PhiStar",
+              });
+            }
+          } else if (scene === "hyperbolic") {
+            addStar({
+              m: 10000,
+              p: [0, 0, 0],
+              v: [0, 0, 0],
+              r: 1.6,
+              c: [1, 0.95, 0.8],
+              moving: false,
+              name: "Focus",
+            });
+            for (let i = 0; i < stars; i++) {
+              const u = i / Math.max(1, stars - 1);
+              const r = Math.tanh(0.015 * stars * u) * 80.0;
+              const a = 14.0 * u * u * 6.28318;
+              const pos = [
+                r * Math.cos(a),
+                0.2 * Math.sinh(u * 2 - 1),
+                r * Math.sin(a),
+              ];
+              const vmag = Math.sqrt((1 * world.bodies[0].m) / Math.max(2, r));
+              const vel = [
+                (-pos[2] * vmag) / Math.max(2, r),
+                0,
+                (pos[0] * vmag) / Math.max(2, r),
+              ];
+              addStar({
+                m: Math.random() * 1.97 + 0.03,
+                q: Math.random() * 0.2 - 0.1,
+                p: pos,
+                v: vel,
+                r: 0.26,
+                c: [0.9, 0.8, 1.0],
+                name: "HypStar",
+              });
+            }
+          }
+
+          // Advanced objects (any scene)
+
+          for (let i = 0; i < pulsars; i++) {
+            const pos = [rand(100, -100), rand(20, -20), rand(100, -100)];
+            world.add(
+              new Body({
+                type: "Pulsar",
+                m: 5,
+                p: pos,
+                v: [0, 0, 0],
+                r: 0.6,
+                c: [0.9, 0.9, 1],
+                name: "Pulsar",
+              })
+            );
+          }
+          for (let i = 0; i < neutrons; i++) {
+            const pos = [rand(100, -100), rand(20, -20), rand(100, -100)];
+            world.add(
+              new Body({
+                type: "NeutronStar",
+                m: 8,
+                p: pos,
+                v: [0, 0, 0],
+                r: 0.45,
+                c: [0.7, 0.8, 1],
+                name: "Neutron",
+              })
+            );
+          }
+          for (let i = 0; i < quasars; i++) {
+            const pos = [rand(200, -200), rand(40, -40), rand(200, -200)];
+            world.add(
+              new Body({
+                type: "Quasar",
+                m: 5e4,
+                p: pos,
+                v: [0, 0, 0],
+                r: 0.9,
+                c: [1, 0.95, 0.95],
+                name: "Quasar",
+              })
+            );
+          }
+          for (let i = 0; i < nebulas; i++) {
+            const pos = [rand(160, -160), rand(40, -40), rand(160, -160)];
+            world.add(
+              new Body({
+                type: "NebulaObj",
+                m: 0.1,
+                p: pos,
+                v: [0, 0, 0],
+                r: 0.0,
+                c: [0, 0, 0],
+                moving: false,
+                name: "Nebula",
+              })
+            );
+          }
+          for (let i = 0; i < subClusters; i++) {
+            const center = [rand(80, -80), rand(10, -10), rand(80, -80)];
+            for (let k = 0; k < 80; k++) {
+              const rr = rand(2, 12),
+                ang = Math.random() * 6.28318;
+              const pos = [
+                center[0] + rr * Math.cos(ang),
+                center[1] + rand(0.3, -0.3),
+                center[2] + rr * Math.sin(ang),
+              ];
+              const vel = [-Math.sin(ang) * 0.6, 0, Math.cos(ang) * 0.6];
+              world.add(
+                new Body({
+                  type: "Star",
+                  m: rand(0.01, 0.2),
+                  p: pos,
+                  v: vel,
+                  r: 0.2,
+                  c: [0.9, 0.9, 1.0],
+                  name: "SubStar",
+                })
+              );
+            }
+          }
+
+          log(`Scene ${scene} built · bodies=${world.bodies.length}`);
+          rebuildMirrors();
+          applyUniverseOverrides();
+          Manifold.build();
+          ManifoldPU.buildAll();
+        }
+
+        // Camera & input
+        let yaw = 0.6,
+          pitch = 0.3,
+          dist = +$("camRadSlider").value;
+        $("camRadSlider").addEventListener(
+          "input",
+          () => (dist = +$("camRadSlider").value)
+        );
+        let dragging = false,
+          lastX = 0,
+          lastY = 0,
+          pan = [0, 0, 0];
+
+        canvas.addEventListener("pointerdown", (e) => {
+          dragging = true;
+          lastX = e.clientX;
+          lastY = e.clientY;
+          canvas.setPointerCapture(e.pointerId);
+        });
+        addEventListener("pointermove", (e) => {
+          if (!dragging) return;
+          const dx = e.clientX - lastX,
+            dy = e.clientY - lastY;
+          lastX = e.clientX;
+          lastY = e.clientY;
+          yaw += dx * 0.003;
+          pitch += dy * 0.003;
+          pitch = Math.max(-1.5, Math.min(1.5, pitch));
+        });
+        addEventListener("pointerup", () => {
+          dragging = false;
+        });
+        addEventListener(
+          "wheel",
+          (e) => {
+            if (e.ctrlKey) return;
+            dist *= 1 + Math.sign(e.deltaY) * 0.065;
+            dist = Math.max(10, Math.min(900, dist));
+          },
+          { passive: true }
+        );
+        const keys = new Set();
+        addEventListener("keydown", (e) => {
+          keys.add(e.key);
+          if (e.key.toLowerCase() === "p") {
+            savePNG();
+          }
+        });
+        addEventListener("keyup", (e) => keys.delete(e.key));
+        function handlePan(dt) {
+          const s = 20 * dt;
+          const forward = [-Math.sin(yaw), 0, -Math.cos(yaw)];
+          const right = [Math.cos(yaw), 0, -Math.sin(yaw)];
+          if (keys.has("w") || keys.has("ArrowUp")) {
+            pan[0] += forward[0] * s;
+            pan[2] += forward[2] * s;
+          }
+          if (keys.has("s") || keys.has("ArrowDown")) {
+            pan[0] -= forward[0] * s;
+            pan[2] -= forward[2] * s;
+          }
+          if (keys.has("a") || keys.has("ArrowLeft")) {
+            pan[0] -= right[0] * s;
+            pan[2] -= right[2] * s;
+          }
+          if (keys.has("d") || keys.has("ArrowRight")) {
+            pan[0] += right[0] * s;
+            pan[2] += right[2] * s;
+          }
+        }
+        function savePNG() {
+          const a = document.createElement("a");
+          a.download = "uniphiglow-v6.png";
+          a.href = canvas.toDataURL("image/png");
+          a.click();
+        }
+        $("exportBtn").addEventListener("click", savePNG);
+
+        // Programs
+        // gl = canvas.getContext("webgl2",{antialias:true, preserveDrawingBuffer:true});
+        // deep = document.getElementById("deepField");
+        deepGL = deep.getContext("webgl2", { antialias: false });
+        uVP = gl.getUniformLocation(prog, "uVP");
+        uPoint = gl.getUniformLocation(prog, "uPoint");
+
+        // Render helpers
+        function renderWorld(VP, now) {
+          uploadGeometry(now);
+          gl.useProgram(prog);
+          gl.uniformMatrix4fv(uVP, false, VP);
+          window._lastVP = VP;
+          window._lastEye = eye;
+          if (document.getElementById("trajChk").checked && trails.length > 0) {
+            gl.bindVertexArray(trailVAO);
+            gl.uniform1i(uPoint, false);
+            for (const seg of trailSegments) {
+              if (seg.count >= 2)
+                gl.drawArrays(gl.LINE_STRIP, seg.start, seg.count);
+            }
+            gl.bindVertexArray(null);
+          }
+          if (points.length > 0) {
+            gl.bindVertexArray(vao);
+            gl.uniform1i(uPoint, true);
+            gl.drawArrays(gl.POINTS, 0, points.length / 3);
+            gl.bindVertexArray(null);
+          }
+        }
+
+        // Collision prediction
+        function predictCollisionsVP(vp, steps = 360) {
+          const preds = [];
+          const dt = 0.05;
+          for (let i = 0; i < world.bodies.length; i++)
+            for (let j = i + 1; j < world.bodies.length; j++) {
+              const A = world.bodies[i],
+                B = world.bodies[j];
+              let pA = [...A.p],
+                vA = [...A.v],
+                pB = [...B.p],
+                vB = [...B.v];
+              for (let s = 0; s < steps; s++) {
+                const dx = pB[0] - pA[0],
+                  dy = pB[1] - pA[1],
+                  dz = pB[2] - pA[2];
+                const r = Math.hypot(dx, dy, dz);
+                if (r < (A.r + B.r) * 1.2) {
+                  const SA = worldToScreen(pA, vp),
+                    SB = worldToScreen(pB, vp);
+                  preds.push({
+                    t: s * dt,
+                    i,
+                    j,
+                    uA: SA[0],
+                    vA: SA[1],
+                    uB: SB[0],
+                    vB: SB[1],
+                  });
+                  break;
+                }
+                pA = [
+                  pA[0] + vA[0] * dt,
+                  pA[1] + vA[1] * dt,
+                  pA[2] + vA[2] * dt,
+                ];
+                pB = [
+                  pB[0] + vB[0] * dt,
+                  pB[1] + vB[1] * dt,
+                  pB[2] + vB[2] * dt,
+                ];
+              }
+            }
+          return preds.slice(0, 24);
+        }
+
+        // Deep field
+        // uLensTex  = gl.getUniformLocation(lensPr,"uTex");
+        uLensCnt = gl.getUniformLocation(lensPr, "uLensCount");
+        uLensArr = gl.getUniformLocation(lensPr, "uLens[0]");
+        uStrArr = gl.getUniformLocation(lensPr, "uStrength[0]");
+        uNebEn = gl.getUniformLocation(nebPr, "uEnable");
+        uNebT = gl.getUniformLocation(nebPr, "uTime");
+        uNebHue = gl.getUniformLocation(nebPr, "uHue");
+        uNebAmp = gl.getUniformLocation(nebPr, "uAmp");
+        uNebMag = gl.getUniformLocation(nebPr, "uMag");
+        uNebCh = gl.getUniformLocation(nebPr, "uChaos");
+        uShT = deepGL.getUniformLocation(shPr, "uT");
+        uShAmp = deepGL.getUniformLocation(shPr, "uAmp");
+        uShTmp = deepGL.getUniformLocation(shPr, "uTempo");
+        uShEnt = deepGL.getUniformLocation(shPr, "uEntropy");
+        uShInf = deepGL.getUniformLocation(shPr, "uInfo");
+        uShG = deepGL.getUniformLocation(shPr, "g");
+        uShE = deepGL.getUniformLocation(shPr, "e");
+        uShS = deepGL.getUniformLocation(shPr, "s");
+        uShW = deepGL.getUniformLocation(shPr, "w");
+
+        function drawDeepField(now) {
+          if (!$("shieldEnable").checked) return;
+          deepGL.enable(deepGL.BLEND);
+          deepGL.blendFunc(deepGL.SRC_ALPHA, deepGL.ONE);
+          deepGL.useProgram(shPr);
+          deepGL.uniform1f(uShT, now * 0.001);
+          deepGL.uniform1f(uShAmp, +$("shieldAmp").value);
+          deepGL.uniform1f(uShTmp, +$("shieldTempo").value);
+          deepGL.uniform1f(uShEnt, +$("entropy").value);
+          deepGL.uniform1f(uShInf, +$("information").value);
+          deepGL.uniform1i(uShG, $("shieldGrav").checked ? 1 : 0);
+          deepGL.uniform1i(uShE, $("shieldEM").checked ? 1 : 0);
+          deepGL.uniform1i(uShS, $("shieldStrong").checked ? 1 : 0);
+          deepGL.uniform1i(uShW, $("shieldWeak").checked ? 1 : 0);
+          deepGL.bindVertexArray(deepQuadVAO);
+          deepGL.drawArrays(deepGL.TRIANGLE_STRIP, 0, 4);
+          deepGL.bindVertexArray(null);
+          deepGL.disable(deepGL.BLEND);
+        }
+
+        // Main frame
+        let lastT = performance.now();
+        
+  // === Collisions / Bursts / Transformations ===
+  const Bursts = [];
+  function spawnBurst(pos, strength, radius){
+    Bursts.push({p:[...pos], s:strength, r:radius, t:0});
+    try{ pushRing(pos, radius); }catch(e){}
+    if($("#burstNetworks")?.checked){ try{
+      const en = new EcoNetwork(Ecosystem.nets.length);
+      en.seed(12+Math.floor(Math.random()*8), 4+Math.random()*10);
+      for(const nd of en.nodes){ nd.p[0]+=pos[0]; nd.p[1]+=pos[1]; nd.p[2]+=pos[2]; }
+      Ecosystem.nets.push(en);
+    }catch(e){} }
+  }
+  function applyBursts(dt){
+    for(let i=Bursts.length-1;i>=0;i--){
+      const b=Bursts[i]; b.t+=dt;
+      if(window._bodies){
+        for(const o of _bodies){
+          const dx=o.p[0]-b.p[0], dy=o.p[1]-b.p[1], dz=o.p[2]-b.p[2];
+          const d=Math.hypot(dx,dy,dz)+1e-3;
+          if(d<b.r){
+            const k=(+($("#burstStrength")?.value||3.0)) * (1.0 - d/b.r);
+            o.v[0]+=k*dx/d*0.5; o.v[1]+=k*dy/d*0.5; o.v[2]+=k*dz/d*0.5;
+          }
+        }
+      }
+      if(b.t>3.5) Bursts.splice(i,1);
+    }
+  }
+  function collisionStep(dt){
+    if(!window._bodies || !($("#burstEnable")?.checked)) return;
+    const TR = +($("#transformThresh")?.value||1.5);
+    const FP = +($("#fragProb")?.value||0.2);
+    for(let i=0;i<_bodies.length;i++){
+      const A=_bodies[i];
+      for(let j=i+1;j<_bodies.length;j++){
+        const B=_bodies[j];
+        const dx=B.p[0]-A.p[0], dy=B.p[1]-A.p[1], dz=B.p[2]-A.p[2];
+        const d2=dx*dx+dy*dy+dz*dz; const rad=(A.r||1)+(B.r||1);
+        if(d2 < (rad*rad)){
+          const pos=[(A.p[0]+B.p[0])*0.5,(A.p[1]+B.p[1])*0.5,(A.p[2]+B.p[2])*0.5];
+          spawnBurst(pos, +($("#burstStrength")?.value||3.0), +($("#burstRadius")?.value||18));
+          const msum=(A.m||1)+(B.m||1);
+          if(msum>TR){
+            A.m=msum; A.r = Math.cbrt(msum); A.type = (msum>3? "neutron":"star");
+            _bodies.splice(j,1); j--;
+          }else if(Math.random()<FP){
+            const m = (B.m||1)*0.5; const r=Math.max(0.5, Math.cbrt(m)); const vkick=0.8;
+            const B1={...B, m:r, r:r, p:[B.p[0]+r,B.p[1],B.p[2]], v:[(Math.random()-0.5)*vkick,(Math.random()-0.5)*vkick,(Math.random()-0.5)*vkick]};
+            const B2={...B, m:r, r:r, p:[B.p[0]-r,B.p[1],B.p[2]], v:[(Math.random()-0.5)*vkick,(Math.random()-0.5)*vkick,(Math.random()-0.5)*vkick]};
+            _bodies.splice(j,1,B1,B2); j++;
+          }else{
+            const d=Math.sqrt(d2)+1e-6; const nx=dx/d, ny=dy/d, nz=dz/d;
+            A.v[0]-=nx*0.5; A.v[1]-=ny*0.5; A.v[2]-=nz*0.5;
+            B.v[0]+=nx*0.5; B.v[1]+=ny*0.5; B.v[2]+=nz*0.5;
+          }
+        }
+      }
+    }
+  }
+function frame(now) {
+    // compute dt early for all subsystems
+    let dt = Math.min(0.04, (now - (lastT||now)) / 1000);
+    lastT = now;
+
+    collisionStep(dt||0.016);
+    applyBursts(dt||0.016);
+
+          if (typeof window._bodies !== "undefined") {
+            const stars = window._bodies.filter(
+              (b) => b.type === "star" || b.isStar
+            );
+            for (const b of window._bodies) {
+              let rad = 0;
+              for (const sStar of stars) {
+                const dx = b.p[0] - sStar.p[0],
+                  dy = b.p[1] - sStar.p[1],
+                  dz = b.p[2] - sStar.p[2];
+                const r2 = dx * dx + dy * dy + dz * dz + 1e-3;
+                rad += (sStar.lum || 1) / r2;
+              }
+              if (rad > 0.03 && ($("#photoelectric")?.checked ?? true)) {
+                b.v[0] += 0.001 * rad * b.p[0];
+                b.v[1] += 0.001 * rad * b.p[1];
+                b.v[2] += 0.001 * rad * b.p[2];
+              }
+            }
+          }
+
+         
+
+          // dt computed at frame start
+           if (typeof Ecosystem !== "undefined") {
+            Ecosystem.step(dt || 0.016);
+          }
+          
+          lastT = now;
+          handlePan(dt);
+
+          
+
+          // Camera
+          const fov = (+$("fovSlider").value * Math.PI) / 180;
+          const proj = perspective(
+            fov,
+            canvas.width / canvas.height,
+            0.1,
+            4000.0
+          );
+          eye = [
+            pan[0] + Math.sin(yaw) * dist,
+            pan[1] + 8 * Math.sin(pitch),
+            pan[2] + Math.cos(yaw) * dist,
+          ];
+          const VP = mul(
+            proj,
+            lookAt(eye, [pan[0], pan[1], pan[2]], [0, 1, 0])
+          );
+          updateDiagnostics();
+
+
+          // Physics
+          for (const W of getWorlds()) {
+            W.step(dt, now * 0.001);
+          }
+          computePredictions();
+
+          // 1) world → FBO
+          gl.bindFramebuffer(gl.FRAMEBUFFER, fbo.fb);
+          gl.enable(gl.DEPTH_TEST);
+          gl.clearColor(0, 0, 0, 1);
+          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+          renderWorld(VP, now * 0.001);
+          gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+          gl.disable(gl.DEPTH_TEST);
+
+          // 2) lenses
+          gl.viewport(0, 0, canvas.width, canvas.height);
+          gl.useProgram(lensPr);
+          gl.activeTexture(gl.TEXTURE0);
+          gl.bindTexture(gl.TEXTURE_2D, fbo.tex);
+          gl.uniform1i(uLensTex, 0);
+          const centers = [],
+            strengths = [];
+          clearOverlay();
+          lenses.forEach((L) => {
+            if (!L.enabled) return;
+            if (L.mode === "screen") {
+              centers.push(L.u, L.v, L.radius);
+              strengths.push(L.strength);
+              if (L.showGR && $("showGRTags").checked) {
+                const rMeters = Math.max(
+                  1,
+                  L.radius * Math.min(canvas.width, canvas.height) * LEN_UNIT
+                );
+                const rs = (2 * G_SI * (L.mass * 1e24)) / (C_SI * C_SI);
+                const td = Math.sqrt(
+                  Math.max(1e-9, 1.0 - rs / Math.max(rs * 1.00001, rMeters))
+                );
+                tag(
+                  "grL" + L.id,
+                  `t'/t=${td.toFixed(4)} · rₛ=${rs.toExponential(2)}m`,
+                  L.u,
+                  L.v - 0.03
+                );
+                dot("dot" + L.id, L.u, L.v);
+              }
+            } else {
+              const s = worldToScreen(L.pos, VP);
+              centers.push(s[0], s[1], L.radius);
+              strengths.push(L.strength);
+              if (L.showGR && $("showGRTags").checked) {
+                const rMeters = Math.max(
+                  1,
+                  Math.hypot(L.pos[0], L.pos[1], L.pos[2]) * LEN_UNIT
+                );
+                const rs = (2 * G_SI * (L.mass * 1e24)) / (C_SI * C_SI);
+                const td = Math.sqrt(
+                  Math.max(1e-9, 1.0 - rs / Math.max(rs * 1.00001, rMeters))
+                );
+                tag(
+                  "grL" + L.id,
+                  `t'/t=${td.toFixed(4)} · rₛ=${rs.toExponential(2)}m`,
+                  s[0],
+                  s[1] - 0.03
+                );
+                dot("dot" + L.id, s[0], s[1]);
+              }
+            }
+          });
+          const MAX = 8;
+          const count = Math.min(MAX, Math.floor(centers.length / 3));
+          const posArr = new Float32Array(MAX * 3);
+          posArr.set(new Float32Array(centers.slice(0, MAX * 3)));
+          const strArr = new Float32Array(MAX);
+          strArr.set(new Float32Array(strengths.slice(0, MAX)));
+          gl.uniform1i(uLensCnt, count);
+          gl.uniform3fv(uLensArr, posArr);
+          gl.uniform1fv(uStrArr, strArr);
+          for (let i = 0; i < count; i++) {
+            const L = lenses[i];
+            const a = ((L.yaw + L.roll) * Math.PI) / 180;
+            const c = Math.cos(a),
+              s = Math.sin(a);
+            gl.uniformMatrix2fv(
+              gl.getUniformLocation(lensPr, "uRot[" + i + "]"),
+              false,
+              new Float32Array([c, -s, s, c])
+            );
+          }
+          gl.bindVertexArray(quadVAO);
+          gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+          gl.bindVertexArray(null);
+
+          // 3) nebula overlay
+          gl.enable(gl.BLEND);
+          gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+          gl.useProgram(nebPr);
+          gl.uniform1i(uNebEn, $("nebChk").checked ? 1 : 0);
+          gl.uniform1f(uNebT, now * 0.001 * +$("nebTime").value);
+          gl.uniform1f(uNebHue, +$("nebHue").value);
+          gl.uniform1f(uNebAmp, +$("nebAmp").value);
+          gl.uniform1f(uNebMag, +$("nebMag").value);
+          gl.uniform1f(uNebCh, +$("nebChaos").value);
+          gl.bindVertexArray(quadVAO);
+          gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+          gl.bindVertexArray(null);
+          gl.disable(gl.BLEND);
+
+          // 4) deep field
+          drawDeepField(now);
+
+          // 5) overlays
+          if (document.getElementById("predChk").checked) {
+            const preds = predictCollisionsVP(VP, 360);
+            const list = document.getElementById("predictions");
+            list.innerHTML = preds
+              .map((p) => `⟲ ${p.t.toFixed(1)}s → Body #${p.i} ↔ #${p.j}`)
+              .join("<br/>");
+            preds.forEach((p, idx) => {
+              ring("predA" + idx, p.uA, p.vA, 22);
+              ring("predB" + idx, p.uB, p.vB, 22);
+            });
+          } else document.getElementById("predictions").textContent = "";
+          requestAnimationFrame(frame);
+        }
+
+        // Presets (includes Uniphiglow defaults)
+        document.getElementById("presetSel").addEventListener("input", () => {
+          const p = document.getElementById("presetSel").value;
+          const S = (id, val) => {
+            const el = document.getElementById(id);
+            el.value = val;
+            el.dispatchEvent(new Event("input"));
+          };
+          if (p === "uniphiglow") {
+            S("sceneSel", "solar");
+            S("planetSlider", 6);
+            S("moonSlider", 0);
+            S("cometSlider", 10);
+            S("meteorSlider", 8);
+            S("asteroidSlider", 25);
+            S("bhSlider", 0);
+            S("galClusterCount", 5);
+            S("clusterStarCount", 200);
+            S("pulsarCount", 2);
+            S("pulsarPeriod", 33);
+            S("neutronCount", 2);
+            S("quasarCount", 1);
+            S("nebulaCount", 2);
+            S("subClusterCount", 1);
+            S("univAge", 13.8);
+            S("scaleExp", 0);
+            S("lensCount", 0);
+            ensureLenses(1);
+            rebuildLensUI();
+            buildScene();
+            log("Preset: Uniphiglow Defaults");
+          } else if (p === "random") {
+            const scenarios = [
+              "solar",
+              "galaxy",
+              "cluster",
+              "cosmos",
+              "uniphi",
+              "hyperbolic",
+            ];
+            S(
+              "sceneSel",
+              scenarios[Math.floor(Math.random() * scenarios.length)]
+            );
+            S("planetSlider", Math.floor(Math.random() * 12));
+            S("cometSlider", Math.floor(Math.random() * 50));
+            S("meteorSlider", Math.floor(Math.random() * 300));
+            S("asteroidSlider", Math.floor(Math.random() * 200));
+            S("bhSlider", Math.floor(Math.random() * 5));
+            S("starCount", Math.round((Math.random() * 2900) / 50) * 50 + 100);
+            S("galClusterCount", Math.floor(Math.random() * 10) + 1);
+            S("clusterStarCount", (Math.floor(Math.random() * 28) + 2) * 50);
+            S("pulsarCount", Math.floor(Math.random() * 8));
+            S("neutronCount", Math.floor(Math.random() * 10));
+            S("quasarCount", Math.floor(Math.random() * 4));
+            S("nebulaCount", Math.floor(Math.random() * 6));
+            S("subClusterCount", Math.floor(Math.random() * 3));
+            S("entropy", Math.random() * 2);
+            S("information", Math.random() * 2);
+            S("darkMatter", Math.random() * 2);
+            S("matterRatio", Math.random());
+            S("lensCount", Math.floor(Math.random() * 6));
+            buildScene();
+            log("Preset: random");
+          } else if (p === "demo-lenses") {
+            S("sceneSel", "galaxy");
+            S("starCount", 1200);
+            S("lensCount", 3);
+            ensureLenses(3);
+            lenses[0].mode = "screen";
+            lenses[0].u = 0.35;
+            lenses[0].v = 0.45;
+            lenses[0].radius = 0.22;
+            lenses[0].strength = 0.85;
+            lenses[1].mode = "world";
+            lenses[1].pos = [6, 0, -4];
+            lenses[1].radius = 0.16;
+            lenses[1].strength = 1.1;
+            lenses[1].yaw = 30;
+            lenses[2].mode = "screen";
+            lenses[2].u = 0.72;
+            lenses[2].v = 0.55;
+            lenses[2].radius = 0.18;
+            lenses[2].strength = 0.95;
+            lenses[2].roll = -20;
+            rebuildLensUI();
+            buildScene();
+            log("Preset: demo lenses");
+          } else if (p === "solar-min") {
+            S("sceneSel", "solar");
+            S("planetSlider", 8);
+            S("asteroidSlider", 60);
+            S("cometSlider", 10);
+            S("bhSlider", 0);
+            S("lensCount", 1);
+            buildScene();
+            log("Preset: solar minimal");
+          } else if (p === "cluster-dense") {
+            S("sceneSel", "cluster");
+            S("galClusterCount", 8);
+            S("clusterStarCount", 1200);
+            S("lensCount", 2);
+            S("entropy", 0.6);
+            S("information", 1.2);
+            buildScene();
+            log("Preset: cluster dense");
+          } else if (p === "hyperspiral") {
+            S("sceneSel", "uniphi");
+            S("starCount", 1800);
+            S("hypStrength", 0.45);
+            S("sceneBlend", 0.25);
+            S("lensCount", 2);
+            buildScene();
+            log("Preset: hyperspiral");
+          } else if (p === "order") {
+            S("entropy", 0.0);
+            S("information", 1.8);
+            S("darkMatter", 0.2);
+            S("sceneSel", "galaxy");
+            S("lensCount", 1);
+            buildScene();
+            log("Preset: order (low entropy)");
+          } else if (p === "chaos") {
+            S("entropy", 2.0);
+            S("information", 0.3);
+            S("darkMatter", 1.4);
+            S("sceneSel", "cosmos");
+            S("lensCount", 4);
+            buildScene();
+            log("Preset: chaos (high entropy)");
+          } else if (p === "known") {
+            S("sceneSel", "galaxy");
+            S("starCount", 1500);
+            S("lensCount", 0);
+            buildScene();
+            log("Preset: known");
+          }
+        });
+
+        // Wiring
+        [
+          "sceneSel",
+          "planetSlider",
+          "moonSlider",
+          "moonDistToggle",
+          "cometSlider",
+          "meteorSlider",
+          "asteroidSlider",
+          "bhSlider",
+          "starCount",
+          "galClusterCount",
+          "clusterStarCount",
+          "pulsarCount",
+          "pulsarPeriod",
+          "neutronCount",
+          "quasarCount",
+          "nebulaCount",
+          "subClusterCount",
+          "nebChk",
+          "nebHue",
+          "nebAmp",
+          "nebMag",
+          "nebTime",
+          "nebChaos",
+          "gravChk",
+          "gravSlider",
+          "emChk",
+          "emScale",
+          "entropy",
+          "information",
+          "darkMatter",
+          "matterRatio",
+          "timeScale",
+          "trajChk",
+          "collChk",
+          "planeChk",
+          "trailSlider",
+          "hypStrength",
+          "sceneBlend",
+          "univAge",
+          "scaleExp",
+          "gasEnable",
+          "gasDensity",
+          "gasFlow",
+          "radEnable",
+          "radLevel",
+          "stoch",
+          "rk4Enable",
+          "rk4Steps",
+          "rk4dt",
+          "trajColorMode",
+        ].forEach((id) =>
+          document.getElementById(id).addEventListener("input", buildScene)
+        );
+
+        document
+          .getElementById("lensCount")
+          .addEventListener("input", () =>
+            ensureLenses(+document.getElementById("lensCount").value | 0)
+          );
+        document.getElementById("resetBtn").addEventListener("click", () => {
+          buildScene();
+        });
+
+        // Init
+        resize();
+        ensureLenses(+document.getElementById("lensCount").value | 0);
+        buildScene();
+        requestAnimationFrame(frame);
+
+        // Auto‑apply Uniphiglow defaults on load so planets/comets/etc. are visible immediately
+        document.getElementById("presetSel").value = "uniphiglow";
+        document.getElementById("presetSel").dispatchEvent(new Event("input"));
+      })();
+    </script>
+  </body>
+</html>
+
+          // Update fog uniforms from UI
+          gl.uniform1f(uFogAmp, +($("fogAmp")?.value||1.0));
+          gl.uniform1f(uFogScatter, +($("fogScatter")?.value||0.6));
+          gl.uniform1f(uFogHue, (+($("fogHue")?.value||220))/360.0);
+          gl.uniform1f(uFogTime, (+($("fogTime")?.value||1.0))* (now*0.001));
+          gl.uniform1f(uFogQ, +($("fogQ")?.value||0.35));
+          gl.uniform1f(uFogEM, +($("fogEM")?.value||0.7));
+          gl.uniform1i(uFogEnable, ($("fogEnable")?.checked?1:0));
+

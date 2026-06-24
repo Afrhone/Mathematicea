@@ -1,0 +1,4687 @@
+{
+  "slug": "phi-quantum-functorial-alphabet",
+  "name": "PHI Quantum Functorial Alphabet",
+  "extends": "functorial-alphabet",
+  "version": "0.3.0",
+  "description": "Quantum-semantics preset: maps Flowforms graphèmes into superposed semantic states, decision-tree heuristics, and optional IBM Quantum Runtime execution.",
+  "semantics": {
+    "functor": "QΦ: Graphème × CorpusMode × Modus → HilbertState → DecisionTrace → VectorMorph",
+    "hilbertSpace": "H = span{|root⟩,|bridge⟩,|form⟩,|rhythm⟩,|nature⟩,|momentum⟩,|axiom⟩,|latent⟩}",
+    "stateEquation": "|ψ_g⟩ = normalize(Σ_k a_k(g, ξ, corpus, modus) |k⟩)",
+    "measurement": "m ~ Born(|a_k|²), then decision tree projects m into a morph action.",
+    "latentDynamics": "z_{t+1}=z_t + dt·(A(z_t,ψ_g) - ∇V_shape(z_t) + intuition_noise(ψ_g))"
+  },
+  "ibmQuantum": {
+    "mode": "local-by-default",
+    "env": [
+      "IBM_QUANTUM_TOKEN",
+      "IBM_QUANTUM_INSTANCE",
+      "IBM_QUANTUM_CHANNEL=ibm_quantum_platform",
+      "FLOWFORMS_QUANTUM_MODE=local|ibm"
+    ],
+    "runtimePrimitives": [
+      "SamplerV2",
+      "EstimatorV2"
+    ],
+    "defaultShots": 1024,
+    "privacy": "tokens are never stored in browser assets; pass them only through env/secrets."
+  },
+  "bi": {
+    "decisionTargets": [
+      "keep",
+      "smooth",
+      "branch",
+      "compress",
+      "export",
+      "ask-agent"
+    ],
+    "metrics": [
+      "coherence",
+      "entropy",
+      "curvature",
+      "rhythm",
+      "semantic-tension",
+      "corpus-affinity",
+      "modus-confidence"
+    ],
+    "treeRoot": "semantic-tension",
+    "output": "BI JSON + CSV + planche annotations"
+  },
+  "basisStates": [
+    "|000⟩ Root anchor",
+    "|001⟩ Bridge relation",
+    "|010⟩ Form vessel",
+    "|011⟩ Rhythm pulse",
+    "|100⟩ Nature branch",
+    "|101⟩ Momentum vector",
+    "|110⟩ Axiom center",
+    "|111⟩ Latent intuition"
+  ],
+  "alphabetQuantumMap": [
+    {
+      "char": "A",
+      "unicode": 65,
+      "family": "root",
+      "features": {
+        "loopness": 0.7,
+        "aspect": 0.621,
+        "rhythm": 0.51,
+        "momentum": 1,
+        "axiom": 0.5,
+        "branch": 0.5,
+        "bridge": 0.465
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1789
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1056
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.125
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1075
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1031
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.16
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1094
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1104
+        }
+      ],
+      "dominantState": "|000⟩ Root anchor",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "B",
+      "unicode": 66,
+      "family": "bridge",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.659,
+        "rhythm": 0.6,
+        "momentum": 0.994,
+        "axiom": 0.25,
+        "branch": 0.5,
+        "bridge": 0.8
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1157
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1895
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1216
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1143
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1024
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1582
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.089
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1093
+        }
+      ],
+      "dominantState": "|001⟩ Bridge relation",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "C",
+      "unicode": 67,
+      "family": "form",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.617,
+        "rhythm": 0.52,
+        "momentum": 0.798,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1248
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1051
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.195
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1188
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0992
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1499
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0983
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1088
+        }
+      ],
+      "dominantState": "|010⟩ Form vessel",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "D",
+      "unicode": 68,
+      "family": "form",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.617,
+        "rhythm": 0.61,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1199
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.101
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1874
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1221
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0953
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1686
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0944
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1114
+        }
+      ],
+      "dominantState": "|010⟩ Form vessel",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "E",
+      "unicode": 69,
+      "family": "rhythm",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.626,
+        "rhythm": 0.87,
+        "momentum": 0.669,
+        "axiom": 0.25,
+        "branch": 0.5,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1184
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1059
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1291
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.2069
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1067
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1279
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0927
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1125
+        }
+      ],
+      "dominantState": "|011⟩ Rhythm pulse",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "F",
+      "unicode": 70,
+      "family": "form",
+      "features": {
+        "loopness": 0.8,
+        "aspect": 0.605,
+        "rhythm": 0.13,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.667,
+        "bridge": 0.51
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1186
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1145
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1879
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.0849
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1232
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1679
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.094
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.109
+        }
+      ],
+      "dominantState": "|010⟩ Form vessel",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "G",
+      "unicode": 71,
+      "family": "momentum",
+      "features": {
+        "loopness": 0.7,
+        "aspect": 0.604,
+        "rhythm": 0.05,
+        "momentum": 0.896,
+        "axiom": 0.5,
+        "branch": 0.5,
+        "bridge": 0.465
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1201
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1123
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1342
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.081
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1096
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.2226
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1163
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1039
+        }
+      ],
+      "dominantState": "|101⟩ Momentum vector",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "H",
+      "unicode": 72,
+      "family": "bridge",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.641,
+        "rhythm": 0.51,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.5,
+        "bridge": 0.8
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1156
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1912
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1239
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1077
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1033
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1603
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0898
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1082
+        }
+      ],
+      "dominantState": "|001⟩ Bridge relation",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "I",
+      "unicode": 73,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.3,
+        "aspect": 0.962,
+        "rhythm": 0.26,
+        "momentum": 0.511,
+        "axiom": 0.75,
+        "branch": 0.167,
+        "bridge": 0.285
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.155
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1045
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1168
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1004
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0895
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1231
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.2136
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.0971
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "J",
+      "unicode": 74,
+      "family": "momentum",
+      "features": {
+        "loopness": 0.3,
+        "aspect": 0.737,
+        "rhythm": 0.35,
+        "momentum": 0.524,
+        "axiom": 0.5,
+        "branch": 0.167,
+        "bridge": 0.285
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1412
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1078
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1363
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1108
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0923
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.182
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1271
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1025
+        }
+      ],
+      "dominantState": "|101⟩ Momentum vector",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "K",
+      "unicode": 75,
+      "family": "bridge",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.659,
+        "rhythm": 0.78,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.5,
+        "bridge": 0.8
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1132
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1855
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1191
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.128
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1002
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1556
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0871
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1114
+        }
+      ],
+      "dominantState": "|001⟩ Bridge relation",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "L",
+      "unicode": 76,
+      "family": "momentum",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.652,
+        "rhythm": 0.7,
+        "momentum": 0.821,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1234
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.102
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1308
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1319
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0962
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.2101
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0953
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1103
+        }
+      ],
+      "dominantState": "|101⟩ Momentum vector",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "M",
+      "unicode": 77,
+      "family": "nature",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.562,
+        "rhythm": 0.96,
+        "momentum": 0.721,
+        "axiom": 0.25,
+        "branch": 0.75,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1103
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1022
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1291
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1506
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1776
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1286
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0895
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.112
+        }
+      ],
+      "dominantState": "|100⟩ Nature branch",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "N",
+      "unicode": 78,
+      "family": "nature",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.581,
+        "rhythm": 0.88,
+        "momentum": 0.839,
+        "axiom": 0.25,
+        "branch": 0.75,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1123
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.0964
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1286
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1428
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1788
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.142
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0901
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1089
+        }
+      ],
+      "dominantState": "|100⟩ Nature branch",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "O",
+      "unicode": 79,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.5,
+        "aspect": 0.591,
+        "rhythm": 0.34,
+        "momentum": 1,
+        "axiom": 0.75,
+        "branch": 0.333,
+        "bridge": 0.375
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1151
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1015
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1304
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.0971
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0928
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1641
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1945
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1045
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "P",
+      "unicode": 80,
+      "family": "bridge",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.676,
+        "rhythm": 0.43,
+        "momentum": 0.745,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.8
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1253
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.2033
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1293
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1079
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0964
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1398
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0955
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1025
+        }
+      ],
+      "dominantState": "|001⟩ Bridge relation",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "Q",
+      "unicode": 81,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.581,
+        "rhythm": 0.69,
+        "momentum": 1,
+        "axiom": 0.75,
+        "branch": 0.5,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1084
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.0993
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1241
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1195
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1001
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1554
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1842
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1091
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "R",
+      "unicode": 82,
+      "family": "bridge",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.676,
+        "rhythm": 0.78,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.5,
+        "bridge": 0.8
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1143
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1855
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.118
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.128
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1002
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1556
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0871
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1114
+        }
+      ],
+      "dominantState": "|001⟩ Bridge relation",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "S",
+      "unicode": 83,
+      "family": "rhythm",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.629,
+        "rhythm": 0.7,
+        "momentum": 0.531,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1274
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1066
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1384
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1957
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1006
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1234
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0996
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1083
+        }
+      ],
+      "dominantState": "|011⟩ Rhythm pulse",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "T",
+      "unicode": 84,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.579,
+        "rhythm": 0.79,
+        "momentum": 0.87,
+        "axiom": 0.75,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1115
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.0959
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.128
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1327
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0905
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1447
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1898
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1069
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "U",
+      "unicode": 85,
+      "family": "form",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.607,
+        "rhythm": 0.88,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1153
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.0976
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1821
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1445
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0921
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.163
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0912
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1141
+        }
+      ],
+      "dominantState": "|010⟩ Form vessel",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "V",
+      "unicode": 86,
+      "family": "form",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.581,
+        "rhythm": 0.34,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1209
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1038
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1965
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1025
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.098
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1733
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.097
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.108
+        }
+      ],
+      "dominantState": "|010⟩ Form vessel",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "W",
+      "unicode": 87,
+      "family": "nature",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.571,
+        "rhythm": 0.6,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.75,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1116
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1029
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1293
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1157
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1787
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1609
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0901
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1108
+        }
+      ],
+      "dominantState": "|100⟩ Nature branch",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "X",
+      "unicode": 88,
+      "family": "bridge",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.6,
+        "rhythm": 0.52,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.8
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1148
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1943
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1288
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1103
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0921
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1629
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0912
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1056
+        }
+      ],
+      "dominantState": "|001⟩ Bridge relation",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "Y",
+      "unicode": 89,
+      "family": "momentum",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.594,
+        "rhythm": 0.61,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.75,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1125
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.096
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1271
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1161
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1254
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.2274
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0897
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1059
+        }
+      ],
+      "dominantState": "|101⟩ Momentum vector",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "Z",
+      "unicode": 90,
+      "family": "rhythm",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.594,
+        "rhythm": 0.87,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.5,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1112
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1012
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1255
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1977
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1019
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1583
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0886
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1155
+        }
+      ],
+      "dominantState": "|011⟩ Rhythm pulse",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "a",
+      "unicode": 97,
+      "family": "root",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.507,
+        "rhythm": 0.96,
+        "momentum": 0.581,
+        "axiom": 0.25,
+        "branch": 0.5,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1731
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1053
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1371
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1552
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1061
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1189
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0923
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.112
+        }
+      ],
+      "dominantState": "|000⟩ Root anchor",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "b",
+      "unicode": 98,
+      "family": "bridge",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.655,
+        "rhythm": 0.88,
+        "momentum": 0.7,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.8
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1182
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.194
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1248
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1443
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.092
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1288
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0911
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1068
+        }
+      ],
+      "dominantState": "|001⟩ Bridge relation",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "c",
+      "unicode": 99,
+      "family": "form",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.548,
+        "rhythm": 0.34,
+        "momentum": 0.516,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1268
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1109
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.2137
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1095
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1047
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1269
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1037
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1039
+        }
+      ],
+      "dominantState": "|010⟩ Form vessel",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "d",
+      "unicode": 100,
+      "family": "form",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.663,
+        "rhythm": 0.43,
+        "momentum": 0.687,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1315
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.108
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1953
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1141
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1019
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1412
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1009
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.107
+        }
+      ],
+      "dominantState": "|010⟩ Form vessel",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "e",
+      "unicode": 101,
+      "family": "rhythm",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.545,
+        "rhythm": 0.69,
+        "momentum": 0.729,
+        "axiom": 0.25,
+        "branch": 0.5,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1158
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1082
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.138
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1848
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1091
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1371
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0948
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1121
+        }
+      ],
+      "dominantState": "|011⟩ Rhythm pulse",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "f",
+      "unicode": 102,
+      "family": "momentum",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.622,
+        "rhythm": 0.61,
+        "momentum": 0.831,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1225
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1029
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1341
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1244
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0971
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.2136
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0961
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1094
+        }
+      ],
+      "dominantState": "|101⟩ Momentum vector",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "g",
+      "unicode": 103,
+      "family": "nature",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.525,
+        "rhythm": 0.87,
+        "momentum": 0.572,
+        "axiom": 0.25,
+        "branch": 0.75,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1114
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1053
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1357
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.145
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1829
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.118
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0922
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1096
+        }
+      ],
+      "dominantState": "|100⟩ Nature branch",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "h",
+      "unicode": 104,
+      "family": "bridge",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.636,
+        "rhythm": 0.79,
+        "momentum": 0.844,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.8
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1161
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1926
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1252
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1339
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0913
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.143
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0905
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1073
+        }
+      ],
+      "dominantState": "|001⟩ Bridge relation",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "i",
+      "unicode": 105,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.3,
+        "aspect": 0.944,
+        "rhythm": 0.71,
+        "momentum": 0.284,
+        "axiom": 0.75,
+        "branch": 0.167,
+        "bridge": 0.285
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1497
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.102
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1151
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1373
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0874
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1006
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.2084
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.0995
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "j",
+      "unicode": 106,
+      "family": "momentum",
+      "features": {
+        "loopness": 0.3,
+        "aspect": 0.681,
+        "rhythm": 0.17,
+        "momentum": 0.353,
+        "axiom": 0.5,
+        "branch": 0.167,
+        "bridge": 0.285
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1433
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1128
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1471
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1013
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0966
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1666
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.133
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.0994
+        }
+      ],
+      "dominantState": "|101⟩ Momentum vector",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "k",
+      "unicode": 107,
+      "family": "bridge",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.64,
+        "rhythm": 0.6,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.5,
+        "bridge": 0.8
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1144
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1894
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1228
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1142
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1023
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1588
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0889
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1093
+        }
+      ],
+      "dominantState": "|001⟩ Bridge relation",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "l",
+      "unicode": 108,
+      "family": "momentum",
+      "features": {
+        "loopness": 0.2,
+        "aspect": 0.931,
+        "rhythm": 0.35,
+        "momentum": 0.495,
+        "axiom": 0.25,
+        "branch": 0.167,
+        "bridge": 0.24
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1622
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1077
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1264
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1144
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0953
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1836
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1074
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1029
+        }
+      ],
+      "dominantState": "|101⟩ Momentum vector",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "m",
+      "unicode": 109,
+      "family": "nature",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.431,
+        "rhythm": 0.78,
+        "momentum": 0.556,
+        "axiom": 0.25,
+        "branch": 0.75,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1082
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1077
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1355
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1386
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1871
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1191
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0943
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1095
+        }
+      ],
+      "dominantState": "|100⟩ Nature branch",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "n",
+      "unicode": 110,
+      "family": "nature",
+      "features": {
+        "loopness": 0.2,
+        "aspect": 0.534,
+        "rhythm": 0.53,
+        "momentum": 0.267,
+        "axiom": 0.25,
+        "branch": 0.75,
+        "bridge": 0.24
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1234
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1019
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1488
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1238
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.2016
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1025
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1016
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.0963
+        }
+      ],
+      "dominantState": "|100⟩ Nature branch",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "o",
+      "unicode": 111,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.467,
+        "rhythm": 0.79,
+        "momentum": 0.556,
+        "axiom": 0.75,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1094
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1001
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.137
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1385
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0945
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1182
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.198
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1042
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "p",
+      "unicode": 112,
+      "family": "bridge",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.62,
+        "rhythm": 0.88,
+        "momentum": 0.611,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.8
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1172
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1961
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1286
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1458
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.093
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1214
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0921
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1059
+        }
+      ],
+      "dominantState": "|001⟩ Bridge relation",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "q",
+      "unicode": 113,
+      "family": "form",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.539,
+        "rhythm": 0.51,
+        "momentum": 0.602,
+        "axiom": 0.25,
+        "branch": 0.5,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1194
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.112
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.2032
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1177
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1128
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1284
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0981
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1085
+        }
+      ],
+      "dominantState": "|010⟩ Form vessel",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "r",
+      "unicode": 114,
+      "family": "bridge",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.529,
+        "rhythm": 0.43,
+        "momentum": 0.458,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.8
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1195
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.2103
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.145
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1116
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0997
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1156
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0987
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.0996
+        }
+      ],
+      "dominantState": "|001⟩ Bridge relation",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "s",
+      "unicode": 115,
+      "family": "rhythm",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.548,
+        "rhythm": 0.52,
+        "momentum": 0.345,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1281
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1121
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1522
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1797
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1058
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1122
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1047
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1052
+        }
+      ],
+      "dominantState": "|011⟩ Rhythm pulse",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "t",
+      "unicode": 116,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.549,
+        "rhythm": 0.61,
+        "momentum": 0.739,
+        "axiom": 0.75,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.114
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.0996
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1352
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1205
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.094
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1357
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1971
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1038
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "u",
+      "unicode": 117,
+      "family": "form",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.476,
+        "rhythm": 0.7,
+        "momentum": 0.617,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1157
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1053
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.2056
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1362
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0994
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1304
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0984
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.109
+        }
+      ],
+      "dominantState": "|010⟩ Form vessel",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "v",
+      "unicode": 118,
+      "family": "form",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.462,
+        "rhythm": 0.79,
+        "momentum": 0.618,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1138
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1043
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.2022
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1444
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0985
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1293
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0975
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1101
+        }
+      ],
+      "dominantState": "|010⟩ Form vessel",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "w",
+      "unicode": 119,
+      "family": "rhythm",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.394,
+        "rhythm": 0.88,
+        "momentum": 0.383,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1117
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1064
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1399
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.2235
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1004
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1098
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0994
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1088
+        }
+      ],
+      "dominantState": "|011⟩ Rhythm pulse",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "x",
+      "unicode": 120,
+      "family": "bridge",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.475,
+        "rhythm": 0.34,
+        "momentum": 0.779,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.8
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1129
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.2047
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1414
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1015
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.097
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1444
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0961
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1019
+        }
+      ],
+      "dominantState": "|001⟩ Bridge relation",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "y",
+      "unicode": 121,
+      "family": "momentum",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.611,
+        "rhythm": 0.43,
+        "momentum": 0.389,
+        "axiom": 0.25,
+        "branch": 0.75,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1287
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1088
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1427
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1149
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1421
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.16
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1017
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1011
+        }
+      ],
+      "dominantState": "|101⟩ Momentum vector",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "z",
+      "unicode": 122,
+      "family": "rhythm",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.474,
+        "rhythm": 0.69,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.5,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1075
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1045
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1346
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1784
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1053
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1635
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0915
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1148
+        }
+      ],
+      "dominantState": "|011⟩ Rhythm pulse",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "0",
+      "unicode": 48,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.5,
+        "aspect": 0.615,
+        "rhythm": 0.61,
+        "momentum": 1,
+        "axiom": 0.75,
+        "branch": 0.333,
+        "bridge": 0.375
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1134
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.0988
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1252
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1156
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0903
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1597
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1892
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1078
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "1",
+      "unicode": 49,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.836,
+        "rhythm": 0.7,
+        "momentum": 0.631,
+        "axiom": 0.75,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1339
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1159
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1293
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0943
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1251
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1978
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1038
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "2",
+      "unicode": 50,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.619,
+        "rhythm": 0.96,
+        "momentum": 1,
+        "axiom": 0.75,
+        "branch": 0.5,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1071
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.0961
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1177
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1416
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0969
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1504
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1783
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1119
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "3",
+      "unicode": 51,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.628,
+        "rhythm": 0.88,
+        "momentum": 0.445,
+        "axiom": 0.75,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1193
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.0998
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1297
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1478
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0942
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1081
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1975
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1035
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "4",
+      "unicode": 52,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.648,
+        "rhythm": 0.34,
+        "momentum": 0.849,
+        "axiom": 0.75,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1221
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1011
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1299
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.0998
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0954
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.15
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.2
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1018
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "5",
+      "unicode": 53,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.605,
+        "rhythm": 0.6,
+        "momentum": 0.748,
+        "axiom": 0.75,
+        "branch": 0.5,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1148
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1038
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1281
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1168
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1046
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1335
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1925
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1059
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "6",
+      "unicode": 54,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.615,
+        "rhythm": 0.52,
+        "momentum": 0.616,
+        "axiom": 0.75,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1213
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1022
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1338
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1156
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0965
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1265
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.2023
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1018
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "7",
+      "unicode": 55,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.594,
+        "rhythm": 0.61,
+        "momentum": 0.908,
+        "axiom": 0.75,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1142
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.0974
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.129
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1178
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.092
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1514
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1928
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1053
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "8",
+      "unicode": 56,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.8,
+        "aspect": 0.588,
+        "rhythm": 0.04,
+        "momentum": 1,
+        "axiom": 0.75,
+        "branch": 0.667,
+        "bridge": 0.51
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1128
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1099
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1282
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.0761
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1182
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1611
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.191
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1026
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "9",
+      "unicode": 57,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.583,
+        "rhythm": 0.79,
+        "momentum": 0.387,
+        "axiom": 0.75,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1184
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1016
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1353
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1406
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0959
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1051
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.201
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.102
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "☉",
+      "unicode": 9737,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.5,
+        "aspect": 0.582,
+        "rhythm": 0.88,
+        "momentum": 0.989,
+        "axiom": 0.75,
+        "branch": 0.333,
+        "bridge": 0.375
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.108
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.0958
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1236
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1373
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0875
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1535
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1835
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1106
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "φ",
+      "unicode": 966,
+      "family": "bridge",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.578,
+        "rhythm": 0.51,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.5,
+        "bridge": 0.8
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1116
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1911
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1282
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1077
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1032
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1603
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0897
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1082
+        }
+      ],
+      "dominantState": "|001⟩ Bridge relation",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "ψ",
+      "unicode": 968,
+      "family": "nature",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.569,
+        "rhythm": 0.6,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.75,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1115
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1029
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1294
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1157
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1787
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1609
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0901
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1108
+        }
+      ],
+      "dominantState": "|100⟩ Nature branch",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "λ",
+      "unicode": 955,
+      "family": "momentum",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.61,
+        "rhythm": 0.52,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1188
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1005
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1318
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1135
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0948
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.238
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0939
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1087
+        }
+      ],
+      "dominantState": "|101⟩ Momentum vector",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "∞",
+      "unicode": 8734,
+      "family": "bridge",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.476,
+        "rhythm": 0.61,
+        "momentum": 0.422,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.8
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1146
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.2076
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1435
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1261
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0984
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1109
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0975
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1015
+        }
+      ],
+      "dominantState": "|001⟩ Bridge relation",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "〰",
+      "unicode": 12336,
+      "family": "rhythm",
+      "features": {
+        "loopness": 0.4,
+        "aspect": 0.269,
+        "rhythm": 0.7,
+        "momentum": 0.483,
+        "axiom": 0.25,
+        "branch": 0.333,
+        "bridge": 0.33
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1084
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1106
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1358
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.203
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1044
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1233
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1034
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1112
+        }
+      ],
+      "dominantState": "|011⟩ Rhythm pulse",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "✦",
+      "unicode": 10022,
+      "family": "axiom",
+      "features": {
+        "loopness": 0.7,
+        "aspect": 0.615,
+        "rhythm": 0.96,
+        "momentum": 1,
+        "axiom": 0.75,
+        "branch": 0.5,
+        "bridge": 0.465
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1063
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.0987
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1173
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.1408
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.0963
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1496
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.1773
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1137
+        }
+      ],
+      "dominantState": "|110⟩ Axiom center",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    },
+    {
+      "char": "⌁",
+      "unicode": 8961,
+      "family": "rhythm",
+      "features": {
+        "loopness": 0.6,
+        "aspect": 0.531,
+        "rhythm": 0.05,
+        "momentum": 1,
+        "axiom": 0.25,
+        "branch": 0.5,
+        "bridge": 0.42
+      },
+      "qubits": 3,
+      "basisStates": [
+        {
+          "state": "|000⟩ Root anchor",
+          "probability": 0.1205
+        },
+        {
+          "state": "|001⟩ Bridge relation",
+          "probability": 0.1135
+        },
+        {
+          "state": "|010⟩ Form vessel",
+          "probability": 0.1459
+        },
+        {
+          "state": "|011⟩ Rhythm pulse",
+          "probability": 0.12
+        },
+        {
+          "state": "|100⟩ Nature branch",
+          "probability": 0.1144
+        },
+        {
+          "state": "|101⟩ Momentum vector",
+          "probability": 0.1776
+        },
+        {
+          "state": "|110⟩ Axiom center",
+          "probability": 0.0995
+        },
+        {
+          "state": "|111⟩ Latent intuition",
+          "probability": 0.1086
+        }
+      ],
+      "dominantState": "|101⟩ Momentum vector",
+      "decisionHeuristic": {
+        "if": [
+          "coherence < 0.42",
+          "entropy > 1.72",
+          "dominantState = latent intuition"
+        ],
+        "then": [
+          "increase tension smoothing",
+          "sample more variants",
+          "ask agent to explain ambiguity"
+        ],
+        "else": [
+          "commit morph",
+          "export SVG/font candidate"
+        ]
+      }
+    }
+  ],
+  "ui": {
+    "presetBadge": "Φ Quantum",
+    "primaryTab": "Quantum Lab",
+    "statusFormula": "QΦ(g, corpus, modus) ⇒ |ψ⟩ ⇒ decision tree ⇒ morph action"
+  }
+}

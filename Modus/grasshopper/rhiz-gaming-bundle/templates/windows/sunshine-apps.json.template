@@ -1,0 +1,22 @@
+{
+  "apps": [
+    {
+      "name": "Desktop",
+      "image-path": "",
+      "prep-cmd": "",
+      "detached": [
+        "explorer.exe"
+      ]
+    },
+    {
+      "name": "Steam Big Picture",
+      "cmd": "C:\\Program Files (x86)\\Steam\\steam.exe",
+      "args": "-bigpicture"
+    },
+    {
+      "name": "Playnite Fullscreen",
+      "cmd": "C:\\Users\\Administrator\\AppData\\Local\\Programs\\Playnite\\Playnite.FullscreenApp.exe",
+      "args": ""
+    }
+  ]
+}

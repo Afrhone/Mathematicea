@@ -1,0 +1,40 @@
+version: "3.9"
+networks:
+  gateway-public: {driver: overlay, attachable: true}
+  cluster-core: {external: true}
+  mcp-net: {external: true}
+  model-net: {external: true}
+secrets:
+  bootstrap_signing_key: {external: true}
+  jwt_secret: {external: true}
+services:
+  gateway:
+    image: traefik:v3.0
+    command:
+      - --providers.swarm=true
+      - --providers.swarm.exposedbydefault=false
+      - --entrypoints.websecure.address=:443
+      - --api.dashboard=false
+      - --accesslog=true
+      - --log.level=INFO
+    ports:
+      - {target: 443, published: 443, protocol: tcp, mode: host}
+    networks: [gateway-public, cluster-core, mcp-net, model-net]
+    deploy:
+      placement: {constraints: [node.labels.gateway == true]}
+  bootstrap-api:
+    image: local/rhiz-bootstrap-api:latest
+    networks: [gateway-public, cluster-core]
+    secrets: [bootstrap_signing_key, jwt_secret]
+    environment:
+      CLUSTER_NAME: main-rhiz
+      GATEWAY_URL: https://gateway.cluster.exosys.xyz
+      SWARM_MANAGER_ADDR: 192.168.0.40:2377
+      WG_ENTRY_ENDPOINT: gateway.cluster.exosys.xyz:51872
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.bootstrap.rule=Host(`gateway.cluster.exosys.xyz`) && PathPrefix(`/bootstrap`)
+        - traefik.http.routers.bootstrap.entrypoints=websecure
+        - traefik.http.routers.bootstrap.tls=true
+        - traefik.http.services.bootstrap.loadbalancer.server.port=8080

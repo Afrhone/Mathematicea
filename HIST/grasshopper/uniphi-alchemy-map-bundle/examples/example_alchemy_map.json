@@ -1,0 +1,102 @@
+{
+  "project": "Spectra \u2014 Nebula Field UI Pass",
+  "date": "2026-02-19",
+  "phase": 4,
+  "intent": "Unify shader controls + observability into a single calm cockpit that still feels alive.",
+  "axioms": [
+    "Solve et Coagula",
+    "Veritas in Structura",
+    "Testis facit Mundum"
+  ],
+  "ingredients": [
+    {
+      "key": "aether",
+      "rating": 5,
+      "note": "The universe-feel is the north star: everything must glow with meaning."
+    },
+    {
+      "key": "mercurius",
+      "rating": 4,
+      "note": "Controls, telemetry, and visuals must flow together without friction."
+    },
+    {
+      "key": "sulfur",
+      "rating": 3,
+      "note": "Keep one human pulse in the interface: warmth, not just precision."
+    },
+    {
+      "key": "sal",
+      "rating": 4,
+      "note": "Naming + grouping is the truth layer; no slider without a reason."
+    },
+    {
+      "key": "vessel",
+      "rating": 4,
+      "note": "Single-file deployment, predictable state, no dependencies."
+    },
+    {
+      "key": "catalyst",
+      "rating": 4,
+      "note": "Allow playful toggles (hue, EM, magnetism) to invite discovery."
+    },
+    {
+      "key": "noise",
+      "rating": 3,
+      "note": "Seeded randomness as oracle, not as clutter."
+    },
+    {
+      "key": "guardian",
+      "rating": 3,
+      "note": "Safe defaults, but not a cage; keep the door open."
+    },
+    {
+      "key": "witness",
+      "rating": 4,
+      "note": "The \u2018aha\u2019 moment: one button that reveals the universe behind the numbers."
+    }
+  ],
+  "operations": [
+    {
+      "key": "calcination",
+      "notes": "Kill duplicate controls; keep only what changes experience. Constraint: single-file, offline."
+    },
+    {
+      "key": "dissolution",
+      "notes": "Prototype UI grouping fast; let the shader run wild while controls settle."
+    },
+    {
+      "key": "separation",
+      "notes": "Core: (1) field params, (2) color/energy, (3) observability. Decorations later."
+    },
+    {
+      "key": "conjunction",
+      "notes": "Bind UI -> shader uniforms -> telemetry in one loop, with stable naming."
+    },
+    {
+      "key": "fermentation",
+      "notes": "Leave one unknown: emergent interference patterns from parameter coupling."
+    },
+    {
+      "key": "distillation",
+      "notes": "Refactor: remove 2 sliders, merge 2 metrics, rename 5 params for clarity."
+    },
+    {
+      "key": "coagulation",
+      "notes": "Ship: a single HTML file + a one-page readme; witness: screen-recorded 30s tour."
+    }
+  ],
+  "archetypes": [
+    "cosmic_chemist",
+    "net_weaver",
+    "poet_witness"
+  ],
+  "shadow_loop": "release_shyness",
+  "counter_spell": "Ship the smallest living ritual; refinement can orbit the release.",
+  "balance_next_step": "Add one concrete anchor line in the UI (\u2018temperature of the void: \u2026\u2019) and publish the file.",
+  "ritual": {
+    "anchor": "The laptop fan warms the room like a small sun.",
+    "stake": "I want the cockpit to welcome curiosity instead of intimidating it.",
+    "spell": "So I let noise become constellations, and structure become a gentle handrail.",
+    "paragraph": "The laptop fan warms the room like a small sun. I want the cockpit to welcome curiosity instead of intimidating it. So I let noise become constellations, and structure become a gentle handrail."
+  }
+}

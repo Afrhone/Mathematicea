@@ -1,0 +1,8 @@
+dns_ui:
+  provider: technitium
+  public_dns_ips:
+    - CHANGE_ME_PUBLIC_DNS_IP1
+    - CHANGE_ME_PUBLIC_DNS_IP2
+  tld: .phi
+  manage_over_ui: true
+  nomulus_stub: true

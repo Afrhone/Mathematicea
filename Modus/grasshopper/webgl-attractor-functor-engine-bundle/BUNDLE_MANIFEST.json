@@ -1,0 +1,16 @@
+{
+  "name": "webgl-attractor-functor-engine-bundle",
+  "created": "2026-05-27T20:21:57Z",
+  "ports": {
+    "web": 8096
+  },
+  "modules": [
+    "polynomial roots",
+    "multi-dimensional ODE attractor",
+    "stochastic vector field",
+    "gravitational lens inspired flux",
+    "functor cycle sign flip",
+    "WebGL particle renderer",
+    "interactive metrics UI"
+  ]
+}

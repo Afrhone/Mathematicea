@@ -1,0 +1,63 @@
+:root {
+  color-scheme: dark;
+  --bg: #07080b;
+  --panel: rgba(0,0,0,0.45);
+  --line: rgba(255,255,255,0.12);
+  --text: #e8e9ee;
+  --muted: rgba(232,233,238,0.72);
+  --accent: rgba(139,232,197,0.75);
+  --radius: 18px;
+}
+
+html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; overflow: hidden; }
+#wrap { position: fixed; inset: 0; display: grid; grid-template-columns: 420px 1fr; gap: 10px; padding: 12px; box-sizing: border-box; }
+@media (max-width: 980px) { #wrap { grid-template-columns: 1fr; grid-template-rows: auto 1fr; overflow:auto; } body{ overflow:auto; } }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+  padding: 14px;
+  overflow: auto;
+}
+h1 { font-size: 16px; margin: 0 0 10px; font-weight: 700; }
+h2 { font-size: 12px; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+label { display:block; font-size: 12px; margin: 8px 0 4px; color: var(--muted); }
+input, select, button {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 13px;
+  padding: 9px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.05);
+  color: var(--text);
+}
+input[type="range"] { padding: 0; }
+button { cursor: pointer; }
+button:hover { background: rgba(255,255,255,0.09); }
+
+.row { display:grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.row3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.badges { display:flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.badge { font-size: 11px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,0.04); color: var(--muted); }
+.tiny { font-size: 11px; color: var(--muted); line-height: 1.35; }
+.hr { height:1px; background: var(--line); margin: 10px 0; }
+
+.stage { position: relative; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); background: rgba(0,0,0,0.20); }
+#canvasMain { display:block; width: 100%; height: 100%; }
+.stageGrid { display:grid; grid-template-rows: 1fr 180px; gap: 10px; height: calc(100vh - 24px); }
+@media (max-width: 980px) { .stageGrid { height: 72vh; } }
+
+.subgrid { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 180px; }
+.subpanel { position: relative; border-radius: var(--radius); overflow:hidden; border: 1px solid var(--line); background: rgba(0,0,0,0.22); }
+.subpanel canvas { width:100%; height:100%; display:block; }
+.caption { position:absolute; left: 10px; top: 8px; font-size: 11px; color: var(--muted); background: rgba(0,0,0,0.35); padding: 4px 8px; border-radius: 999px; border: 1px solid var(--line); }
+
+.meter { height: 10px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,0.05); overflow:hidden; }
+.meter > div { height:100%; width:0%; background: var(--accent); }
+.metricline { display:flex; justify-content: space-between; gap: 10px; font-size: 12px; }
+.metricline b { font-weight: 700; }
+pre { margin:0; white-space: pre-wrap; word-break: break-word; font-size: 12px; color: rgba(232,233,238,0.86); }
+.chip { display:inline-block; padding: 2px 8px; border-radius: 999px; border:1px solid var(--line); margin: 2px 6px 2px 0; font-size: 11px; color: rgba(232,233,238,0.82); }

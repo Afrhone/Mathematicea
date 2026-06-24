@@ -1,0 +1,19 @@
+{
+  "schema_id": "uniphi.entropic-cipher.u24.v1",
+  "byte0": {
+    "bits_0_1": "triptych_domain",
+    "bits_2_3": "commutation_class",
+    "bits_4_5": "arrow_mode",
+    "bits_6_7": "proof_level"
+  },
+  "byte1": {
+    "bits_0_2": "directive_block_id",
+    "bits_3_5": "sequential_principle_id",
+    "bits_6_7": "domain_resolution_mode"
+  },
+  "byte2": {
+    "bits_0_3": "state_space_cluster_id",
+    "bits_4_6": "fidelity_band",
+    "bit_7": "quasi_invariant_flag"
+  }
+}

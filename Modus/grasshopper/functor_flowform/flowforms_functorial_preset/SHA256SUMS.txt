@@ -1,0 +1,4 @@
+2d234d115575dcfd12995f79965395ea90a9474ae544c37c7531a5c93dc8b158  web/index.html
+a9d6f8c724657a127c4c82b030d5884baaf266311e124b5060aa913b8a229737  web/assets/presets/functorial-alphabet.json
+055a7d2fcfc0c838f7b9242adfacc7218c0c38f2b6a400aa7e1c4712e55bd4a7  web/js/flowforms-presets.js
+5a174b8fa0a51c11039f14033d467cc9744bae9ccf0e9cd574c8c877ccf1e1e1  docs/FUNCTORIAL-ALPHABET-PRESET.md

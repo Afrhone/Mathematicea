@@ -1,0 +1,6 @@
+services:
+  phoneme-cipher:
+    build: .
+    ports:
+      - "8909:8909"
+    restart: unless-stopped

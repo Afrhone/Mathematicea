@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RHIZ deployment envelope",
+  "type": "object",
+  "required": ["kind", "version", "authority", "task", "target", "gates"],
+  "properties": {
+    "kind": {"const": "rhiz.deployment-envelope"},
+    "version": {"type": "string"},
+    "authority": {"type": "object"},
+    "task": {"type": "object"},
+    "target": {"type": "object"},
+    "gates": {
+      "type": "object",
+      "properties": {
+        "dry_run": {"type": "boolean"},
+        "allow_deploy": {"type": "boolean"},
+        "allow_lxd_mutation": {"type": "boolean"},
+        "operator_approval": {"type": "boolean"}
+      }
+    },
+    "rollback": {"type": "object"}
+  }
+}

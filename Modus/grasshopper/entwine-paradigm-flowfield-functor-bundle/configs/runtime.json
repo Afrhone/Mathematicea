@@ -1,0 +1,14 @@
+{
+  "year_zero": true,
+  "zero_point_mark": "0",
+  "sdr": {
+    "factau_rhiz": "192.168.0.4",
+    "spectrum_url": "http://192.168.0.4:8099/spectrum"
+  },
+  "safety": {
+    "simulation_only": true,
+    "physical_force_field": false,
+    "time_dilation_claim": false,
+    "energy_extraction_claim": false
+  }
+}
