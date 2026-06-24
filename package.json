@@ -1,0 +1,18 @@
+{
+  "name": "mathematicea-compute-engine",
+  "version": "0.1.0",
+  "description": "Function orchestration agent and compute engine generalisation module for Mathematicea.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "demo": "node src/index.js"
+  },
+  "keywords": [
+    "compute-engine",
+    "orchestration",
+    "copernican",
+    "taxonomy"
+  ],
+  "license": "UNLICENSED"
+}
