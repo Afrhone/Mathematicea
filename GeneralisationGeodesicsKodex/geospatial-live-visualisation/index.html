@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Geospatial Live Visualisation · Compute Field</title>
+  <link rel="stylesheet" href="./src/styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <p class="kicker">live geospatial compute engine</p>
+        <h1>Earth flux field · telemetry lattice</h1>
+        <p class="sub">Offline-first visualization for stations, tracks, vector fields, thermodynamic/kinetic guards, and WebSocket/NDJSON live streams.</p>
+      </div>
+      <div class="status-pill" id="status">booting</div>
+    </section>
+
+    <section class="workspace">
+      <aside class="panel">
+        <h2>Controls</h2>
+        <label>Projection
+          <select id="projection">
+            <option value="equirect">Equirectangular</option>
+            <option value="mercator">Mercator</option>
+            <option value="orthographic">Orthographic bubble</option>
+          </select>
+        </label>
+        <label>Field layer
+          <select id="fieldMode">
+            <option value="flux">Flux amplitude</option>
+            <option value="thermal">Thermal potential</option>
+            <option value="kinetic">Kinetic stream</option>
+            <option value="curl">Electrodynamic curl proxy</option>
+            <option value="entropy">Entropy guard</option>
+          </select>
+        </label>
+        <label>Mock stream rate <span id="rateLabel">12 Hz</span>
+          <input id="rate" type="range" min="1" max="60" value="12" />
+        </label>
+        <label>Turn gain <span id="gainLabel">1.00</span>
+          <input id="gain" type="range" min="0" max="300" value="100" />
+        </label>
+        <div class="row">
+          <button id="toggleStream">Pause stream</button>
+          <button id="resetView">Reset view</button>
+        </div>
+        <button id="geoBtn">Use browser geolocation</button>
+        <label>WebSocket URL
+          <input id="wsUrl" type="text" placeholder="ws://127.0.0.1:8787/telemetry" />
+        </label>
+        <button id="connectWs">Connect WebSocket</button>
+        <label>Paste NDJSON telemetry
+          <textarea id="ndjson" rows="6" placeholder='{"id":"node-a","lat":46.948,"lon":7.447,"alt":540,"temperature":288,"vx":0.2,"vy":0.1,"vz":0.0}'></textarea>
+        </label>
+        <button id="ingestNdjson">Ingest NDJSON</button>
+      </aside>
+
+      <section class="map-card">
+        <canvas id="map"></canvas>
+        <div class="hud">
+          <div><span>events</span><strong id="events">0</strong></div>
+          <div><span>L-energy</span><strong id="energy">0</strong></div>
+          <div><span>entropy</span><strong id="entropy">0</strong></div>
+          <div><span>curl</span><strong id="curl">0</strong></div>
+          <div><span>source</span><strong id="source">mock</strong></div>
+        </div>
+      </section>
+    </section>
+
+    <section class="log-card">
+      <h2>Agent log</h2>
+      <pre id="log"></pre>
+    </section>
+  </main>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

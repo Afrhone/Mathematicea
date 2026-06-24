@@ -1,0 +1,19 @@
+{
+  "name": "surface-holography-hypercluster",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "WebGPU/WebGL/Three.js math generator for hypercomplex surface holography and cosmological local-cluster bubble symmetry.",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "serve:standalone": "python3 scripts/serve.py"
+  },
+  "dependencies": {
+    "@vitejs/plugin-basic-ssl": "latest",
+    "three": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {}
+}

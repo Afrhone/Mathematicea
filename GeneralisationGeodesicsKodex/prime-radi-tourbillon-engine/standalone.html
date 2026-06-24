@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Prime Radi Tourbillon Propeller Clock — Standalone</title>
+<style>
+  html,body{margin:0;height:100%;background:#05030a;color:#f4f0ff;font-family:ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial;overflow:hidden}
+  canvas{display:block;width:100vw;height:100vh;background:radial-gradient(circle at 50% 25%,#201348 0,#070411 52%,#020104 100%)}
+  .panel{position:fixed;left:16px;top:16px;max-width:430px;padding:14px 16px;border:1px solid rgba(255,255,255,.14);border-radius:18px;background:rgba(4,3,10,.72);backdrop-filter:blur(12px);box-shadow:0 20px 90px rgba(0,0,0,.38)}
+  h1{font-size:17px;margin:0 0 7px}.txt{font-size:12px;line-height:1.45;color:#cec7ff}.grid{margin-top:10px;display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.m{font-size:11px;background:rgba(255,255,255,.07);border-radius:10px;padding:7px}.m b{display:block;color:white;font-size:13px}
+  .controls{position:fixed;right:16px;bottom:16px;width:min(350px,calc(100vw - 32px));padding:14px;border:1px solid rgba(255,255,255,.14);border-radius:18px;background:rgba(4,3,10,.72);backdrop-filter:blur(12px);display:grid;gap:8px}label{display:grid;font-size:11px;color:#d6cffd;gap:3px}input{width:100%}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<section class="panel">
+  <h1>Prime Radi Tourbillon Propeller Clock</h1>
+  <div class="txt">Standalone canvas build: prime-indexed clock mechanics, UV Möbius grid, toy thermodynamic guard, curl/divergence visual pulses.</div>
+  <div id="metrics" class="grid"></div>
+</section>
+<section class="controls">
+  <label>Prime torque <input id="torque" type="range" min="0" max="4" step="0.01" value="1.2"></label>
+  <label>Thermal bath <input id="thermal" type="range" min="0.01" max="2.5" step="0.01" value="0.55"></label>
+  <label>UV curvature <input id="curvature" type="range" min="0" max="3" step="0.01" value="1.1"></label>
+  <label>Standard-model mix <input id="smMix" type="range" min="0" max="1" step="0.01" value="0.42"></label>
+</section>
+<script>
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d'),metrics=document.getElementById('metrics');
+const sliders={torque:document.getElementById('torque'),thermal:document.getElementById('thermal'),curvature:document.getElementById('curvature'),smMix:document.getElementById('smMix')};
+function resize(){canvas.width=innerWidth*devicePixelRatio;canvas.height=innerHeight*devicePixelRatio;ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0)}addEventListener('resize',resize);resize();
+function isPrime(n){if(n<2)return false;if(n===2)return true;if(n%2===0)return false;for(let d=3;d*d<=n;d+=2)if(n%d===0)return false;return true}
+function firstPrimes(n){const a=[];let k=2;while(a.length<n){if(isPrime(k))a.push(k);k++}return a}
+const primes=firstPrimes(16),phi=(1+Math.sqrt(5))/2,ga=Math.PI*(3-Math.sqrt(5));
+function fieldAt(u,v,t,cfg){const cu=(u-.5)*2,cv=(v-.5)*2,theta=Math.atan2(cv,cu),rad=Math.hypot(cu,cv)+1e-6;let amp=0,swirl=0;for(let i=0;i<primes.length;i++){const p=primes[i],phase=t*(.013+1/(p*8))+i*ga;amp+=Math.sin(theta*p+phase+cfg.curvature*Math.sin(rad*p))/p;swirl+=Math.cos(rad*p*phi-phase)/Math.sqrt(p)}const mobius=Math.sin(theta*.5+t*.006)*Math.cos(rad*Math.PI*cfg.curvature);const higgs=1/(1+Math.exp(-4*(amp-.12)));const noise=cfg.thermal*.05*Math.sin((u*233+v*377+t)*.37);return {v:cfg.torque*amp+cfg.smMix*higgs+mobius*.25+noise,swirl,higgs}}
+function color(x,mix){x=Math.max(0,Math.min(1,x*.5+.5));return `rgb(${Math.floor((.1+x*(.6+.25*mix))*255)},${Math.floor((.08+Math.sin(x*Math.PI)*.72)*255)},${Math.floor((.28+(1-x)*.64)*255)})`}
+function entropy(vals,bins=24){let mn=Infinity,mx=-Infinity;for(const v of vals){mn=Math.min(mn,v);mx=Math.max(mx,v)}if(mx<=mn)return 0;const h=Array(bins).fill(0);for(const v of vals)h[Math.max(0,Math.min(bins-1,Math.floor((v-mn)/(mx-mn)*bins)))]++;let e=0;for(const n of h)if(n){const p=n/vals.length;e-=p*Math.log(p)}return e}
+let tick=0;
+function loop(){tick++;const cfg=Object.fromEntries(Object.entries(sliders).map(([k,e])=>[k,+e.value]));const w=innerWidth,h=innerHeight,cx=w/2,cy=h/2;ctx.clearRect(0,0,w,h);ctx.globalCompositeOperation='lighter';
+const vals=[];for(let j=0;j<80;j++){const v=j/79;for(let i=0;i<120;i++){const u=i/119,f=fieldAt(u,v,tick,cfg);vals.push(f.v);const theta=u*Math.PI*2,strip=(v-.5)*2,twist=theta*.5,r=105+70*strip*Math.cos(twist)+f.v*24;const z=strip*Math.sin(twist)+f.v*.7;const scale=1/(1+z*.18);const x=cx+Math.cos(theta+tick*.001)*r*scale,y=cy+Math.sin(theta+tick*.001)*r*scale;ctx.fillStyle=color(f.v,cfg.smMix);ctx.globalAlpha=.38;ctx.beginPath();ctx.arc(x,y,1.3+Math.abs(f.v)*1.5,0,Math.PI*2);ctx.fill();}}
+ctx.lineWidth=1.2;for(let b=0;b<12;b++){const p=primes[b],base=tick*(.009+1/(p*40))+b*ga;ctx.beginPath();for(let k=0;k<140;k++){const q=k/139,a=base+q*Math.PI*2*3,r=42+p*8+q*120,tors=Math.sin(a*p+tick*.01)*cfg.torque*.22;const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r+Math.sin(q*Math.PI+tors)*55;if(k)ctx.lineTo(x,y);else ctx.moveTo(x,y)}ctx.strokeStyle=color(Math.sin(p)+cfg.torque*.2,cfg.smMix);ctx.globalAlpha=.58;ctx.stroke();}
+ctx.globalCompositeOperation='source-over';const e=vals.reduce((s,x)=>s+x*x,0)/vals.length,en=entropy(vals);metrics.innerHTML=[['tick',tick],['L-energy',e.toFixed(5)],['entropy',en.toFixed(4)],['primes',primes.slice(0,6).join(', ')],['guard',Number.isFinite(e)&&e>=0?'OK':'CHECK'],['mode','standalone']].map(([a,b])=>`<div class=m><b>${b}</b>${a}</div>`).join('');requestAnimationFrame(loop)}loop();
+</script>
+</body>
+</html>

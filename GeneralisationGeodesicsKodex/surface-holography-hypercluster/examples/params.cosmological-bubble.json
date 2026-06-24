@@ -1,0 +1,18 @@
+{
+  "resolution": 144,
+  "amplitude": 0.42,
+  "holography": 0.92,
+  "entanglement": 0.78,
+  "supersymmetry": 0.64,
+  "asymmetry": 0.24,
+  "bubble": 1.1,
+  "curl": 0.72,
+  "divergence": 0.36,
+  "spin": 0.21,
+  "wave": 0.89,
+  "thetaOperand": 2.414,
+  "g": 0.61803398875,
+  "df": 3.236,
+  "mode": 5,
+  "pointSize": 0.015
+}

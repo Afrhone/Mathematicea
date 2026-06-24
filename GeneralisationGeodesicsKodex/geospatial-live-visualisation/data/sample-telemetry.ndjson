@@ -1,0 +1,6 @@
+{"id":"bern-rhiz","lat":46.948,"lon":7.447,"alt":540,"temperature":286.15,"vx":0.20,"vy":0.12,"vz":0.01,"charge":0.40,"quality":0.95}
+{"id":"europa-proxy","lat":63.0,"lon":-45.0,"alt":0,"temperature":241.0,"vx":-0.16,"vy":0.28,"vz":0.03,"charge":-0.20,"quality":0.82}
+{"id":"ceres-compass","lat":14.6,"lon":-87.1,"alt":1200,"temperature":300.2,"vx":0.30,"vy":-0.34,"vz":0.02,"charge":0.70,"quality":0.78}
+{"id":"ganymede-node","lat":-23.5,"lon":133.8,"alt":95,"temperature":294.2,"vx":-0.42,"vy":0.20,"vz":0.06,"charge":0.10,"quality":0.86}
+{"id":"io-pulse","lat":35.7,"lon":139.7,"alt":44,"temperature":291.2,"vx":0.08,"vy":0.54,"vz":-0.01,"charge":1.10,"quality":0.91}
+{"id":"deimos-conj","lat":40.4,"lon":-3.7,"alt":650,"temperature":289.1,"vx":-0.31,"vy":0.18,"vz":0.04,"charge":-0.50,"quality":0.84}

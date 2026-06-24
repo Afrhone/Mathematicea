@@ -1,0 +1,22 @@
+{
+  "name": "geospatial-live-visualisation",
+  "intent": "live telemetry + compute field + geospatial canvas visualisation",
+  "sources": [
+    { "kind": "mock", "rateHz": 12 },
+    { "kind": "ndjson", "url": "./data/sample-telemetry.ndjson" },
+    { "kind": "websocket", "url": "ws://127.0.0.1:8787/telemetry" },
+    { "kind": "browser-geolocation" }
+  ],
+  "compute": {
+    "grid": { "nx": 120, "ny": 60 },
+    "layers": ["flux", "thermal", "kinetic", "curl", "entropy"],
+    "guards": ["finite-field", "positive-temperature", "non-negative-entropy", "bounded-quality"]
+  },
+  "visualisation": {
+    "projection": "equirect",
+    "supportedProjections": ["equirect", "mercator", "orthographic"],
+    "offlineFirst": true,
+    "tileProvider": "none",
+    "renderer": "canvas2d"
+  }
+}
