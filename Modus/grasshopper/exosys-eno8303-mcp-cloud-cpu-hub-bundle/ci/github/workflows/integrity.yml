@@ -1,0 +1,10 @@
+name: exosys-hub-integrity
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash -n scripts/network/*.sh scripts/swap/*.sh scripts/cpu/*.sh scripts/cloud/*.sh scripts/lxd/*.sh
+      - run: python3 -m json.tool directives/exosys-hub.directive.json >/dev/null
+      - run: cp config/exosys.env.example .env && docker compose -f compose/compose.exosys-hub.yml config >/dev/null

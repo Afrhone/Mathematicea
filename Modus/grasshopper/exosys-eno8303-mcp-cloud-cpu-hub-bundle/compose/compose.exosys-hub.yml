@@ -1,0 +1,49 @@
+services:
+  admin-dashboard:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    env_file: ../.env
+    volumes: ["../services/admin-dashboard:/app","../config:/app/config:ro","${DATA_ROOT:-/var/lib/exosys-hub}:${DATA_ROOT:-/var/lib/exosys-hub}"]
+    ports: ["${ADMIN_DASHBOARD_PORT:-7190}:7190"]
+    restart: unless-stopped
+  mcp-cpu-hub:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    env_file: ../.env
+    volumes: ["../services/mcp-cpu-hub:/app","${DATA_ROOT:-/var/lib/exosys-hub}:${DATA_ROOT:-/var/lib/exosys-hub}"]
+    ports: ["${MCP_CPU_HUB_PORT:-7191}:7191"]
+    restart: unless-stopped
+  google-agent-gateway:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    env_file: ../.env
+    volumes: ["../services/google-agent-gateway:/app"]
+    ports: ["${GOOGLE_AGENT_GATEWAY_PORT:-7192}:7192"]
+    restart: unless-stopped
+  ibm-quantum-gateway:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    env_file: ../.env
+    volumes: ["../services/ibm-quantum-gateway:/app"]
+    ports: ["${IBM_QUANTUM_GATEWAY_PORT:-7193}:7193"]
+    restart: unless-stopped
+  substack-bridge:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    env_file: ../.env
+    volumes: ["../services/substack-bridge:/app","${DATA_ROOT:-/var/lib/exosys-hub}:${DATA_ROOT:-/var/lib/exosys-hub}"]
+    ports: ["${SUBSTACK_BRIDGE_PORT:-7194}:7194"]
+    restart: unless-stopped
+  gamelab-orchestrator:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    env_file: ../.env
+    volumes: ["../services/gamelab-orchestrator:/app"]
+    ports: ["${GAMELAB_ORCHESTRATOR_PORT:-7195}:7195"]
+    restart: unless-stopped

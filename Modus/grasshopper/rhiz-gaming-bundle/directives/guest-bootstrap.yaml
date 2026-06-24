@@ -1,0 +1,16 @@
+guest_bootstrap:
+  base_packages:
+    - qemu-guest-agent
+    - cloud-init
+    - curl
+    - ca-certificates
+    - gnupg
+    - lsb-release
+    - jq
+    - git
+  enable:
+    docker: true
+    lxd: true
+  users:
+    - name: ubuntu
+      groups: [sudo]

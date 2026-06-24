@@ -1,0 +1,8 @@
+# name,ip,role,notes
+sigmo-rhiz,192.168.0.34,gpu-legacy-k5000,Fedora43 K5000 legacy diagnostics
+llama-gpu,192.168.0.125,model-primary,llama.cpp endpoint
+gpu-compute,192.168.0.52,mcp-compute,LXD/gpu-compute peer
+niurk-19,192.168.0.0,app-client,replace exact IP
+niurk-72,192.168.0.0,hypergraph-client,replace exact IP
+niurk-42,192.168.0.0,integrity-agent,replace exact IP
+rhiz-fach,192.168.0.0,app-plane,replace exact IP

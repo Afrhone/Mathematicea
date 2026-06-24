@@ -1,0 +1,30 @@
+{
+  "manifest": "axio-mo-hist-invariant-gates",
+  "version": "0.1.0",
+  "gates": [
+    {
+      "id": "host.identity",
+      "proof": "hostname && id"
+    },
+    {
+      "id": "lxd.socket",
+      "proof": "lxc list"
+    },
+    {
+      "id": "lxd.storage",
+      "proof": "lxc storage show $LXD_STORAGE"
+    },
+    {
+      "id": "ceph.keyring",
+      "proof": "test -f $CEPH_KEYRING"
+    },
+    {
+      "id": "ceph.rbd",
+      "proof": "rbd --id $CEPH_CLIENT --cluster $CEPH_CLUSTER --pool $CEPH_POOL ls"
+    },
+    {
+      "id": "dojo.http",
+      "proof": "curl -fsS http://127.0.0.1:$DOJO_PORT/health"
+    }
+  ]
+}

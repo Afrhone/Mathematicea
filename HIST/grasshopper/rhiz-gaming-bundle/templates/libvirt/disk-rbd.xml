@@ -1,0 +1,8 @@
+<disk type='network' device='disk'>
+  <driver name='qemu' type='raw' cache='none' io='native' discard='unmap'/>
+  <auth username='__CEPH_CLIENT__'>
+    <secret type='ceph' uuid='__SECRET_UUID__'/>
+  </auth>
+  <source protocol='rbd' name='__CEPH_POOL__/__RBD_IMAGE__'/>
+  <target dev='__TARGET_DEV__' bus='virtio'/>
+</disk>

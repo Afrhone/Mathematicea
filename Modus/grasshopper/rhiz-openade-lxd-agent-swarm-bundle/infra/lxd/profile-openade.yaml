@@ -1,0 +1,17 @@
+config:
+  security.nesting: "true"
+  limits.cpu: "8"
+  limits.memory: 24GiB
+description: RHIZ OpenADE sandbox VM profile
+devices:
+  root:
+    path: /
+    pool: rhiz-storage
+    size: 180GiB
+    type: disk
+  eth0:
+    name: eth0
+    nictype: bridged
+    parent: br0
+    type: nic
+name: rhiz-openade-vm

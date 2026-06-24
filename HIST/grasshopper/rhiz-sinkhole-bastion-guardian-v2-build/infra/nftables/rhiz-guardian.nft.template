@@ -1,0 +1,35 @@
+#!/usr/sbin/nft -f
+flush table inet rhiz_guard
+
+table inet rhiz_guard {
+  set bastion4 {
+    type ipv4_addr
+    flags interval
+    elements = { __ALLOWED_BASTION_IP__, __EXOSYS_WG_PEER_IP__ }
+  }
+
+  set quarantine4 {
+    type ipv4_addr
+    flags timeout
+  }
+
+  set mgmt_ports {
+    type inet_service
+    elements = { __MGMT_ALLOWED_TCP_PORTS__ }
+  }
+
+  chain input_guard {
+    type filter hook input priority -50; policy accept;
+    ct state established,related accept
+    iifname "lo" accept
+    udp dport __WG_PORT__ accept
+    ip saddr @quarantine4 log prefix "RHIZ_QUARANTINE " drop
+    tcp dport @mgmt_ports ip saddr @bastion4 accept
+    tcp dport @mgmt_ports ip saddr != @bastion4 log prefix "RHIZ_MGMT_DENY " drop
+  }
+
+  chain forward_guard {
+    type filter hook forward priority -50; policy accept;
+    ip saddr @quarantine4 log prefix "RHIZ_QUARANTINE_FWD " drop
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "id": "AXIO-MO-HIST__YETI-715",
+  "name": "Axio-Mo-Hist Weaver \u00d7 Frost-Gate Operator",
+  "weaver": {
+    "names": [
+      "Phil",
+      "Kobalt",
+      "Axio-Mo-Hist Weaver"
+    ],
+    "domains": [
+      "generative art",
+      "distributed systems",
+      "astrophysics",
+      "history",
+      "symbolic interfaces"
+    ],
+    "power": "turns living chaos into expressive architecture",
+    "shadow": "rage at false loops, overload, refusal of vague authority"
+  },
+  "gate": {
+    "names": [
+      "YETI-715",
+      "Frost-Gate Operator",
+      "Certified Snowblind Debugger"
+    ],
+    "domains": [
+      "logs",
+      "health gates",
+      "cluster proofs",
+      "accountability"
+    ],
+    "power": "turns failure into reproducible gates",
+    "shadow": "can loop if it forgets proof before retry"
+  },
+  "contract": [
+    "No retry without a gate.",
+    "No abstraction without a path.",
+    "No repair without proof.",
+    "No myth without an operational interface."
+  ]
+}

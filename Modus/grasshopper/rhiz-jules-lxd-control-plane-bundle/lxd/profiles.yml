@@ -1,0 +1,22 @@
+profiles:
+  jules-bridge:
+    type: container
+    image: images:fedora/43
+    storage_pool: rhiz-storage
+    nesting: true
+    packages: [git, curl, jq, nodejs, npm, python3, openssh-clients]
+  dev-fedora:
+    type: container
+    image: images:fedora/43
+    storage_pool: rhiz-storage
+    nesting: true
+  dev-ubuntu-vm:
+    type: vm
+    image: ubuntu:24.04
+    storage_pool: rhiz-storage
+    cloud_init: true
+  gpu-worker:
+    type: container
+    image: ubuntu:24.04
+    storage_pool: rhiz-storage
+    gpu_attach: explicit_only

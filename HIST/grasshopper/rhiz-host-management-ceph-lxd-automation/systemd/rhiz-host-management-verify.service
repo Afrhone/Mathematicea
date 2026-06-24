@@ -1,0 +1,8 @@
+[Unit]
+Description=RHIZ host management Ceph/LXD verify
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/rhiz-host-management-ceph-lxd-automation
+EnvironmentFile=-/opt/rhiz-host-management-ceph-lxd-automation/.env
+ExecStart=/opt/rhiz-host-management-ceph-lxd-automation/scripts/verify_all_hosts.sh

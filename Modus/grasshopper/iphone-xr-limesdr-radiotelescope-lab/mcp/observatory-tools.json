@@ -1,0 +1,12 @@
+{
+  "name": "iphone-limesdr-observatory",
+  "base_url": "http://localhost:8098",
+  "auth": "Bearer ${MCP_SHARED_TOKEN}",
+  "tools": [
+    "observatory.health",
+    "observatory.telemetry.latest",
+    "observatory.lens.metrics",
+    "observatory.sdr.spectrogram",
+    "observatory.feedback.push"
+  ]
+}

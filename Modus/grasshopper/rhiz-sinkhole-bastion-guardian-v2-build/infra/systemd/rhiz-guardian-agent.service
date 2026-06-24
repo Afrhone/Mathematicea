@@ -1,0 +1,12 @@
+[Unit]
+Description=RHIZ Guardian Agent
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+EnvironmentFile=-/etc/rhiz-guardian/agent.env
+ExecStart=/usr/bin/python3 /opt/rhiz-guardian/agent/rhiz_guardian_agent.py
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=multi-user.target

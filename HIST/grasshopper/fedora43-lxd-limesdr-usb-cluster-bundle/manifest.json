@@ -1,0 +1,11 @@
+{
+  "name": "fedora43-lxd-limesdr-usb-cluster-bundle",
+  "generated_at": "2026-05-26T22:46:34.577195Z",
+  "defaults": {
+    "LXD_TARGET": "factau-rhiz",
+    "LXD_TARGET_IP": "192.168.0.4",
+    "LXD_IMAGE": "ubuntu:25.04",
+    "LXD_STORAGE": "rhiz-storage",
+    "LXD_INSTANCE": "limesdr-usb-lab"
+  }
+}

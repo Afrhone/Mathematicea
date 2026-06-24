@@ -1,0 +1,11 @@
+services:
+  metrology-lab:
+    build: ./metrology_lab
+    container_name: rhizome-metrology-lab
+    env_file: .env
+    ports:
+      - "${GATEWAY_PORT:-7150}:7150"
+    volumes:
+      - ${DATA_ROOT:-/var/lib/rhizome-metrology}:${DATA_ROOT:-/var/lib/rhizome-metrology}
+      - /etc/ceph:/etc/ceph:ro
+    restart: unless-stopped

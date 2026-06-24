@@ -1,0 +1,7 @@
+config:
+  security.nesting: "true"
+  limits.cpu: "4"
+  limits.memory: 4GiB
+description: Ubuntu 25.04 LimeSDR-USB lab profile
+devices: {}
+name: limesdr-usb-plucky

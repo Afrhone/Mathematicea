@@ -1,0 +1,93 @@
+<domain type='kvm'>
+  <name>__VM_NAME__</name>
+  <memory unit='MiB'>__RAM_MB__</memory>
+  <currentMemory unit='MiB'>__RAM_MB__</currentMemory>
+  <vcpu placement='static'>__VCPUS__</vcpu>
+  <iothreads>1</iothreads>
+  <os>
+    <type arch='x86_64' machine='__MACHINE__'>hvm</type>
+    <loader readonly='yes' secure='yes' type='pflash'>__OVMF_CODE__</loader>
+    <nvram template='__OVMF_VARS_TEMPLATE__'>__NVRAM_FILE__</nvram>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+    <hyperv mode='custom'>
+      <relaxed state='on'/>
+      <vapic state='on'/>
+      <spinlocks state='on' retries='8191'/>
+      <vendor_id state='on' value='rhizcascade01'/>
+    </hyperv>
+    <kvm>
+      <hidden state='on'/>
+    </kvm>
+    <vmport state='off'/>
+    <smm state='on'/>
+  </features>
+  __CPUTUNE__
+  <cpu mode='__CPU_MODE__' check='none' migratable='off'/>
+  <clock offset='localtime'>
+    <timer name='rtc' tickpolicy='catchup'/>
+    <timer name='pit' tickpolicy='delay'/>
+    <timer name='hpet' present='no'/>
+    <timer name='hypervclock' present='yes'/>
+  </clock>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type='network' device='disk'>
+      <driver name='qemu' type='raw' cache='none' io='native' discard='unmap'/>
+      <auth username='__CEPH_AUTH_USER__'>
+        <secret type='ceph' uuid='__CEPH_SECRET_UUID__'/>
+      </auth>
+      <source protocol='rbd' name='__CEPH_POOL__/__RBD_IMAGE__'>
+        __CEPH_HOSTS__
+      </source>
+      <target dev='vda' bus='__DISK_BUS__'/>
+      <boot order='1'/>
+    </disk>
+    <controller type='scsi' model='virtio-scsi'/>
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <source file='__WINDOWS_ISO__'/>
+      <target dev='sda' bus='sata'/>
+      <readonly/>
+      <boot order='2'/>
+    </disk>
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <source file='__VIRTIO_ISO__'/>
+      <target dev='sdb' bus='sata'/>
+      <readonly/>
+    </disk>
+    <controller type='usb' model='qemu-xhci'/>
+    <interface type='bridge'>
+      <source bridge='__BRIDGE__'/>
+      <model type='__NETWORK_MODEL__'/>
+    </interface>
+    <graphics type='spice' autoport='yes' listen='__SPICE_LISTEN__'>
+      <listen type='address' address='__SPICE_LISTEN__'/>
+    </graphics>
+    <video>
+      <model type='__VIDEO_FALLBACK__' heads='1' primary='yes'/>
+    </video>
+    <input type='tablet' bus='usb'/>
+    <input type='keyboard' bus='usb'/>
+    <input type='mouse' bus='usb'/>
+    <sound model='ich9'/>
+    <audio id='1' type='spice'/>
+    <tpm model='tpm-crb'>
+      <backend type='emulator' version='2.0'/>
+    </tpm>
+    <channel type='unix'>
+      <target type='virtio' name='org.qemu.guest_agent.0'/>
+    </channel>
+    <hostdev mode='subsystem' type='pci' managed='yes'>
+      <driver name='vfio'/>
+      <source>
+        <address domain='__GPU_VIDEO_DOMAIN__' bus='__GPU_VIDEO_BUS__' slot='__GPU_VIDEO_SLOT__' function='__GPU_VIDEO_FUNC__'/>
+      </source>
+    </hostdev>
+    __GPU_AUDIO_XML__
+    <memballoon model='none'/>
+  </devices>
+</domain>

@@ -1,0 +1,41 @@
+cluster:
+  name: rhizome
+  fabric: lxd-ceph
+  orchestrator: ark-rhiz
+  strategy: "read-only MCP probes by default; deployment behind explicit env gates"
+  nodes:
+    - name: ark-rhiz
+      address: 192.168.0.40:8444
+      roles: [lxd-database, ceph-client, orchestrator]
+      priority: primary
+    - name: sigmo-rhiz
+      address: 192.168.0.34:8444
+      roles: [lxd-database-leader, ceph-client, workflow]
+      priority: primary
+    - name: rhiz-woute
+      address: 192.168.0.33:8444
+      roles: [join-candidate, vm-migration]
+      priority: repair
+    - name: rhiz-ueth
+      address: 192.168.0.2:8444
+      roles: [ceph-mds-observed, guest-target]
+      priority: secondary
+    - name: factau-rhiz
+      address: 192.168.0.4:8444
+      roles: [optional]
+      priority: secondary
+  storage:
+    cephfs_pool: cephfs-shared
+    cephfs_source: lxd-cephfs
+    rbd_pool: lxd-rbd-ark
+    vm_pool: rhiz-storage
+    models_mount: /srv/models
+  workloads:
+    ai_container: llama-gpu
+    default_vm: niurk-19
+    migration_candidate: niurk-72
+  network:
+    bridge: br0
+    vm_nic: lan0
+    vm_ip: 192.168.0.124/24
+    gateway: 192.168.0.123

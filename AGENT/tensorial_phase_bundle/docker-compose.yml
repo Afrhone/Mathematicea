@@ -1,0 +1,9 @@
+services:
+  tensorial-phase-lab:
+    build: .
+    container_name: tensorial-phase-lab
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/workspace
+    restart: unless-stopped

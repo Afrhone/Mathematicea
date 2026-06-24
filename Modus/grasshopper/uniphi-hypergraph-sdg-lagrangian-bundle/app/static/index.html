@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Uniphi — Hypergraph SDG + Lagrangien</title>
+  <style>
+    :root{color-scheme:dark; --bg:#07080b; --panel:rgba(0,0,0,.45); --line:rgba(255,255,255,.12); --text:#e8e9ee; --muted:rgba(232,233,238,.72); --r:18px;}
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+    #wrap{position:fixed;inset:0;display:grid;grid-template-columns:420px 1fr;gap:10px;padding:12px;box-sizing:border-box}
+    @media(max-width:980px){#wrap{grid-template-columns:1fr;grid-template-rows:auto 1fr;position:static}}
+    .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 12px 32px rgba(0,0,0,.35);padding:14px;overflow:auto}
+    h1{font-size:16px;margin:0 0 10px;font-weight:800}
+    h2{font-size:12px;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+    label{display:block;font-size:12px;margin:8px 0 4px;color:var(--muted)}
+    input,select,button,textarea{width:100%;box-sizing:border-box;font-size:13px;padding:9px 10px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text)}
+    textarea{min-height:160px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .tiny{font-size:11px;line-height:1.35;color:var(--muted)}
+    .stage{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:rgba(0,0,0,.22);position:relative}
+    canvas{width:100%;height:100%;display:block}
+    .hud{position:absolute;left:10px;top:10px;font-size:11px;color:var(--muted);background:rgba(0,0,0,.35);padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+    pre{margin:0;white-space:pre-wrap;word-break:break-word;font-size:12px;color:rgba(232,233,238,.86)}
+    .hr{height:1px;background:var(--line);margin:10px 0}
+  </style>
+</head>
+<body>
+<div id="wrap">
+  <div class="panel">
+    <h1>Hypergraph → SDE/ODE (Lagrangien / Langevin)</h1>
+    <div class="tiny">
+      Hypergraphe = potentiel V(x). L = K − V. ODE = Euler–Lagrange amorti. SDE = diffusion Langevin.
+      Goldilocks = régulation (effort) qui ajuste σ.
+    </div>
+
+    <h2>Hypergraphe (JSON)</h2>
+    <label>Définition</label>
+    <textarea id="hg"></textarea>
+
+    <h2>Paramètres</h2>
+    <div class="row">
+      <div><label>Mode</label>
+        <select id="mode">
+          <option value="sde" selected>SDE (diffusion)</option>
+          <option value="ode">ODE (déterministe)</option>
+        </select>
+      </div>
+      <div><label>Steps</label><input id="steps" type="number" min="50" max="12000" value="2000"/></div>
+    </div>
+    <div class="row">
+      <div><label>dt</label><input id="dt" type="number" min="0.001" max="0.05" step="0.001" value="0.01"/></div>
+      <div><label>Damping γ</label><input id="gamma" type="number" min="0" max="3" step="0.01" value="0.25"/></div>
+    </div>
+    <div class="row">
+      <div><label>Sigma σ</label><input id="sigma" type="number" min="0" max="1" step="0.01" value="0.15"/></div>
+      <div><label>Soft anchor</label><input id="anchor" type="number" min="0" max="0.2" step="0.001" value="0.01"/></div>
+    </div>
+    <div class="row">
+      <div><label>Goldilocks</label>
+        <select id="gold">
+          <option value="off" selected>off</option>
+          <option value="on">on (auto σ)</option>
+        </select>
+      </div>
+      <div><label>Target energy</label><input id="targetE" type="number" min="0.1" max="20" step="0.1" value="1.5"/></div>
+    </div>
+    <div class="row">
+      <button id="run">Simuler</button>
+      <button id="copy">Copier la requête</button>
+    </div>
+
+    <div class="hr"></div>
+    <div class="tiny">API: <code>/api/simulate</code> • Health: <code>/api/health</code></div>
+
+    <h2>Résultat</h2>
+    <pre id="out">—</pre>
+  </div>
+
+  <div class="stage">
+    <canvas id="c"></canvas>
+    <div class="hud" id="hud">—</div>
+  </div>
+</div>
+
+<script>
+const hgEl = document.getElementById('hg');
+const outEl = document.getElementById('out');
+const hudEl = document.getElementById('hud');
+const c = document.getElementById('c');
+const g = c.getContext('2d');
+
+function fit() {
+  const dpr = Math.min(2, window.devicePixelRatio||1);
+  const r = c.getBoundingClientRect();
+  c.width = Math.max(2, Math.floor(r.width*dpr));
+  c.height = Math.max(2, Math.floor(r.height*dpr));
+  g.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener('resize', fit);
+fit();
+
+const DEFAULT = {
+  n: 18,
+  hyperedges: [
+    {nodes:[0,1,2,3], w:1.0},
+    {nodes:[3,4,5,6], w:0.9},
+    {nodes:[6,7,8,9], w:1.1},
+    {nodes:[9,10,11,12], w:0.95},
+    {nodes:[12,13,14,15], w:1.05},
+    {nodes:[15,16,17,0], w:1.0},
+    {nodes:[2,7,12,17], w:0.7},
+  ]
+};
+hgEl.value = JSON.stringify(DEFAULT, null, 2);
+
+document.getElementById('copy').onclick = async () => {
+  const req = buildReq();
+  await navigator.clipboard.writeText(JSON.stringify(req, null, 2));
+  hudEl.textContent = "Requête copiée ✓";
+  setTimeout(()=>hudEl.textContent="—", 800);
+};
+
+function buildReq() {
+  let hg;
+  try { hg = JSON.parse(hgEl.value); } catch(e) { hg = DEFAULT; }
+  const mode = document.getElementById('mode').value;
+  const steps = Number(document.getElementById('steps').value||2000);
+  const dt = Number(document.getElementById('dt').value||0.01);
+  const gamma = Number(document.getElementById('gamma').value||0.25);
+  const sigma = Number(document.getElementById('sigma').value||0.15);
+  const anchor = Number(document.getElementById('anchor').value||0.01);
+  const gold = document.getElementById('gold').value === 'on';
+  const targetE = Number(document.getElementById('targetE').value||1.5);
+
+  return {
+    n: hg.n,
+    dim: 2,
+    hyperedges: hg.hyperedges,
+    init: { seed: 7 },
+    params: {
+      steps, dt, mode,
+      mass: 1.0,
+      damping: gamma,
+      sigma,
+      soft_anchor: anchor,
+      goldilocks: {
+        enabled: gold,
+        target_energy: targetE,
+        k_sigma: 0.08,
+        sigma_min: 0.02,
+        sigma_max: 0.40
+      }
+    },
+    output: { stride: 2, max_nodes: 150 }
+  };
+}
+
+let anim = null;
+function clear(alpha=0.10){
+  const r = c.getBoundingClientRect();
+  g.fillStyle = `rgba(7,8,11,${alpha})`;
+  g.fillRect(0,0,r.width,r.height);
+}
+
+function drawFrame(points, metaLine) {
+  const r = c.getBoundingClientRect();
+  const w = r.width, h = r.height;
+  clear(0.12);
+
+  let minx=1e9,maxx=-1e9,miny=1e9,maxy=-1e9;
+  for (const p of points){ minx=Math.min(minx,p[0]); maxx=Math.max(maxx,p[0]); miny=Math.min(miny,p[1]); maxy=Math.max(maxy,p[1]); }
+  const cx = 0.5*(minx+maxx), cy=0.5*(miny+maxy);
+  const span = Math.max(1e-6, Math.max(maxx-minx, maxy-miny));
+  const s = 0.42*Math.min(w,h)/span;
+
+  g.fillStyle = "rgba(232,233,238,0.80)";
+  for (let i=0;i<points.length;i++){
+    const x = w/2 + (points[i][0]-cx)*s;
+    const y = h/2 - (points[i][1]-cy)*s;
+    g.beginPath(); g.arc(x,y,3.0,0,Math.PI*2); g.fill();
+  }
+
+  g.strokeStyle = "rgba(139,232,197,0.18)";
+  g.lineWidth = 1.0;
+  g.beginPath();
+  for (let i=0;i<points.length;i++){
+    const x = w/2 + (points[i][0]-cx)*s;
+    const y = h/2 - (points[i][1]-cy)*s;
+    if(i===0) g.moveTo(x,y); else g.lineTo(x,y);
+  }
+  g.stroke();
+
+  hudEl.textContent = metaLine;
+}
+
+document.getElementById('run').onclick = async () => {
+  if(anim) { cancelAnimationFrame(anim); anim=null; }
+  outEl.textContent = "…";
+  const req = buildReq();
+
+  const t0 = performance.now();
+  const res = await fetch('/api/simulate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(req) });
+  const data = await res.json();
+  const t1 = performance.now();
+
+  outEl.textContent = JSON.stringify({
+    msd: data.msd,
+    frames: data.frames.length,
+    meta_samples: data.meta.length,
+    note: data.interpretation.note
+  }, null, 2);
+
+  let k = 0;
+  const frames = data.frames;
+  const meta = data.meta;
+  function step(){
+    const pts = frames[k];
+    const m = meta[Math.min(meta.length-1, Math.floor(k*0.2))] || {};
+    const line = `frame ${k+1}/${frames.length} • msd=${data.msd.toFixed(3)} • E=${(m.E||0).toFixed(3)} • σ=${(m.sigma||0).toFixed(3)} • ${(t1-t0).toFixed(0)}ms`;
+    drawFrame(pts, line);
+    k = (k+1) % frames.length;
+    anim = requestAnimationFrame(step);
+  }
+  step();
+};
+</script>
+</body>
+</html>

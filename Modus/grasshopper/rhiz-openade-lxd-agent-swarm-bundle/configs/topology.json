@@ -1,0 +1,39 @@
+{
+  "nodes": [
+    {
+      "name": "llama-gpu",
+      "ip": "192.168.0.125",
+      "role": "AMD/Vulkan local inference",
+      "endpoints": {
+        "openai": "http://192.168.0.125:8089/v1",
+        "proxy": "http://192.168.0.125:11435"
+      }
+    },
+    {
+      "name": "gpu-compute",
+      "ip": "192.168.0.52",
+      "role": "NVIDIA/CUDA inference pool",
+      "endpoints": {
+        "openai": "http://192.168.0.52:8080/v1"
+      }
+    },
+    {
+      "name": "rhiz-fach",
+      "ip": "192.168.0.49",
+      "role": "LXD host / VM app host"
+    },
+    {
+      "name": "exosys-rhiz",
+      "ip": "192.168.0.50",
+      "role": "LXD cluster member"
+    }
+  ],
+  "storage": {
+    "default": "rhiz-storage",
+    "driver": "ceph"
+  },
+  "policy": {
+    "local_first": true,
+    "mutation_gated": true
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "uniphi.epistemic.index.v1",
+  "title": "Zeroth Quadrivium Epistemological Index",
+  "type": "object",
+  "properties": {
+    "arithmetic": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "geometry": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "music": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "astronomy": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "zeroth": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "balanceEntropy": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "arithmetic",
+    "geometry",
+    "music",
+    "astronomy",
+    "zeroth",
+    "balanceEntropy",
+    "notes"
+  ]
+}

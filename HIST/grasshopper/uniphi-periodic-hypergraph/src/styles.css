@@ -1,0 +1,41 @@
+/* generated */
+:root{--bg:#070A12;--panel:rgba(10,14,24,.72);--panel2:rgba(10,14,24,.52);--stroke:rgba(255,255,255,.12);--text:rgba(255,255,255,.92);--muted:rgba(255,255,255,.66);--accent:#79f2ff;--warn:#ffcf6a;--danger:#ff6a8a;--ok:#7dffb2;--shadow:rgba(0,0,0,.55);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);overflow:hidden}
+#app{position:relative;width:100%;height:100%}
+#gl,#css3d{position:absolute;inset:0}
+#css3d{pointer-events:none}
+#hud{position:absolute;inset:0;pointer-events:none}
+#topbar{position:absolute;left:12px;right:12px;top:12px;display:flex;gap:10px;align-items:center;justify-content:space-between;pointer-events:none}
+.pill{pointer-events:auto;display:inline-flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--stroke);background:var(--panel);box-shadow:0 10px 30px var(--shadow);border-radius:16px;backdrop-filter:blur(8px)}
+.pill .btn{cursor:pointer;user-select:none;padding:8px 10px;border:1px solid var(--stroke);background:rgba(255,255,255,.04);border-radius:12px;color:var(--text);font-weight:650;letter-spacing:.02em}
+.pill .btn:hover{border-color:rgba(255,255,255,.28)}
+.pill .btn.active{border-color:rgba(121,242,255,.6);box-shadow:0 0 0 2px rgba(121,242,255,.2) inset}
+.small{font-size:12px;color:var(--muted)}
+#right{pointer-events:auto;position:absolute;top:68px;right:12px;bottom:12px;width:360px;max-width:calc(100vw - 24px);border-radius:18px;border:1px solid var(--stroke);background:var(--panel);box-shadow:0 12px 40px var(--shadow);backdrop-filter:blur(10px);display:flex;flex-direction:column}
+#right header{padding:14px 14px 10px;border-bottom:1px solid var(--stroke);display:flex;gap:12px;align-items:center;justify-content:space-between}
+#right header .title{font-weight:800;letter-spacing:.02em}
+#right header .chip{font-size:12px;padding:6px 10px;border:1px solid var(--stroke);border-radius:999px;background:rgba(255,255,255,.04)}
+#right main{padding:14px;overflow:auto}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.kv{flex:1 1 48%;border:1px solid var(--stroke);background:var(--panel2);border-radius:14px;padding:10px}
+.kv .k{font-size:12px;color:var(--muted);margin-bottom:6px}
+.kv .v{font-size:14px;font-weight:700}
+#right .section{margin-top:12px;border-top:1px solid var(--stroke);padding-top:12px}
+.badge{display:inline-flex;gap:8px;align-items:center;font-size:12px;padding:6px 10px;border:1px solid var(--stroke);border-radius:999px;background:rgba(255,255,255,.04);margin:4px 6px 0 0}
+.badge b{font-weight:800}
+hr.sep{border:none;border-top:1px solid var(--stroke);margin:10px 0}
+#footer{pointer-events:auto;position:absolute;left:12px;bottom:12px;border-radius:16px;padding:10px 12px;border:1px solid var(--stroke);background:var(--panel);box-shadow:0 10px 30px var(--shadow);backdrop-filter:blur(8px);max-width:620px}
+#footer .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+label.slider{display:flex;gap:10px;align-items:center;font-size:12px;color:var(--muted)}
+input[type=range]{width:180px}
+a.link{color:var(--accent);text-decoration:none}
+a.link:hover{text-decoration:underline}
+.element{width:120px;height:160px;box-sizing:border-box;border:1px solid rgba(255,255,255,.16);border-radius:14px;background:rgba(0,0,0,.35);box-shadow:0 6px 22px rgba(0,0,0,.45);text-align:center;cursor:pointer;user-select:none;pointer-events:auto;backdrop-filter:blur(6px);transition:transform 120ms,border-color 120ms,box-shadow 120ms,filter 120ms}
+.element:hover{transform:translateZ(0) scale(1.04);border-color:rgba(121,242,255,.6);box-shadow:0 10px 28px rgba(0,0,0,.62)}
+.element.highlight{border-color:rgba(125,255,178,.78);box-shadow:0 0 0 2px rgba(125,255,178,.22) inset,0 10px 28px rgba(0,0,0,.62);filter:saturate(1.15)}
+.element.dim{opacity:.22;filter:grayscale(.4)}
+.element .number{position:absolute;top:10px;left:12px;font-size:12px;color:rgba(255,255,255,.7)}
+.element .symbol{position:absolute;top:44px;left:0;right:0;font-size:44px;font-weight:900;color:rgba(255,255,255,.92);letter-spacing:.02em}
+.element .name{position:absolute;bottom:44px;left:0;right:0;font-size:12px;color:rgba(255,255,255,.76)}
+.element .meta{position:absolute;bottom:16px;left:0;right:0;font-size:11px;color:rgba(255,255,255,.62)}
+

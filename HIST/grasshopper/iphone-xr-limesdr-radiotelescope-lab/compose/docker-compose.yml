@@ -1,0 +1,26 @@
+services:
+  observatory-api:
+    build:
+      context: ..
+      dockerfile: server/Dockerfile
+    container_name: iphone-limesdr-observatory-api
+    env_file:
+      - ../.env
+    ports:
+      - "${APP_PORT:-8098}:8098"
+    volumes:
+      - ../data:/data
+      - ../config:/config:ro
+    devices:
+      # Uncomment if LimeSDR is attached and accessible through USB on host/VM.
+      # - /dev/bus/usb:/dev/bus/usb
+      []
+    privileged: false
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: iphone-limesdr-redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6389:6379"

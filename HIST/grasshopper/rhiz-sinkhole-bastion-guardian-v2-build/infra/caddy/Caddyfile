@@ -1,0 +1,7 @@
+{$DOMAIN:sinkhole.outpost.aheap.afrho.net} {
+  encode gzip
+  reverse_proxy /api/* guardian-api:8450
+  reverse_proxy /v1/* guardian-api:8450
+  reverse_proxy /ws/* guardian-api:8450
+  reverse_proxy web:3000
+}

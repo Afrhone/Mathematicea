@@ -1,0 +1,25 @@
+{
+  "schema": "rhiz.gpu-ai-model-cluster.v1",
+  "roles": {
+    "sigmo-rhiz": "legacy_gpu_host_check",
+    "llama-gpu": "primary_model_server",
+    "gpu-compute": "mcp_compute_peer",
+    "niurk-19": "application_client",
+    "niurk-72": "hypergraph_client",
+    "niurk-42": "integrity_agent"
+  },
+  "gates": [
+    "nvidia_smi_or_legacy_detected",
+    "docker_available",
+    "model_disk_plan",
+    "api_token_present",
+    "allowed_cidr_only",
+    "unsafe_models_explicit_flag"
+  ],
+  "fallbacks": {
+    "k5000_cuda_modern_fail": "cpu_gguf_llama_cpp",
+    "vllm_gpu_fail": "disable_vllm",
+    "diffusers_gpu_fail": "cpu_or_disabled",
+    "docker_model_runner_unavailable": "llama_cpp_server"
+  }
+}

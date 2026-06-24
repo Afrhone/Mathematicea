@@ -1,0 +1,8 @@
+name: webgl-attractor-functor
+services:
+  web:
+    build:
+      context: ../app
+    restart: unless-stopped
+    ports:
+      - "8096:80"

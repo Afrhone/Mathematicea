@@ -1,0 +1,20 @@
+{
+  "tools": [
+    {
+      "name": "list_arduino_devices",
+      "endpoint": "http://iot-api:8060/api/devices"
+    },
+    {
+      "name": "read_latest_sensors",
+      "endpoint": "http://iot-api:8060/api/sensors/latest"
+    },
+    {
+      "name": "create_board_scaffold",
+      "endpoint": "http://mcp-kicad:8070/mcp/create_board_scaffold"
+    },
+    {
+      "name": "validate_signal_flow",
+      "endpoint": "http://iot-api:8060/api/flow/validate"
+    }
+  ]
+}

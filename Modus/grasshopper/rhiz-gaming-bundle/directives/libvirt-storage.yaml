@@ -1,0 +1,23 @@
+pools:
+  - name: ceph-vms
+    type: rbd
+    ceph_pool: vms
+    auth_user: libvirt
+    secret_uuid: 11111111-2222-3333-4444-555555555555
+    host: 10.42.0.38
+    port: 6789
+    autostart: true
+
+  - name: ceph-images
+    type: rbd
+    ceph_pool: images
+    auth_user: libvirt
+    secret_uuid: 11111111-2222-3333-4444-555555555555
+    host: 10.42.0.38
+    port: 6789
+    autostart: true
+
+  - name: local-iso
+    type: dir
+    path: /var/lib/libvirt/boot
+    autostart: true

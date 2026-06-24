@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  api:
+    image: afrho-vr-ar-api:local
+    ports: ["8078:8078"]
+    deploy:
+      replicas: 1
+  web:
+    image: afrho-vr-ar-web:local
+    ports: ["8077:3000"]
+    deploy:
+      replicas: 1
+  agent:
+    image: afrho-vr-ar-agent:local
+    ports: ["8080:8080"]
+    deploy:
+      replicas: 1

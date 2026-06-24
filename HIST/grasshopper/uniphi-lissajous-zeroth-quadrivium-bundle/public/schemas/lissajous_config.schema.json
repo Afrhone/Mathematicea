@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "uniphi.lissajous.config.v1",
+  "title": "Uniphi Lissajous Config",
+  "type": "object",
+  "properties": {
+    "amplitude": {
+      "type": "number",
+      "minimum": 0.05,
+      "maximum": 2.0,
+      "default": 1.0
+    },
+    "fx": {
+      "type": "number",
+      "minimum": 0.1,
+      "maximum": 40.0,
+      "default": 3.0,
+      "description": "x angular frequency multiplier (relative)"
+    },
+    "fy": {
+      "type": "number",
+      "minimum": 0.1,
+      "maximum": 40.0,
+      "default": 2.0,
+      "description": "y angular frequency multiplier (relative)"
+    },
+    "phase": {
+      "type": "number",
+      "minimum": -6.283185307179586,
+      "maximum": 6.283185307179586,
+      "default": 0.0
+    },
+    "dt": {
+      "type": "number",
+      "minimum": 0.0005,
+      "maximum": 0.05,
+      "default": 0.008
+    },
+    "trail": {
+      "type": "integer",
+      "minimum": 128,
+      "maximum": 8192,
+      "default": 2048
+    },
+    "geoSequence": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "baseHz": {
+          "type": "number",
+          "minimum": 10,
+          "maximum": 2000,
+          "default": 110
+        },
+        "ratio": {
+          "type": "number",
+          "minimum": 1.01,
+          "maximum": 3.0,
+          "default": 1.5
+        },
+        "nx": {
+          "type": "integer",
+          "minimum": -12,
+          "maximum": 24,
+          "default": 1
+        },
+        "ny": {
+          "type": "integer",
+          "minimum": -12,
+          "maximum": 24,
+          "default": 0
+        }
+      },
+      "required": [
+        "enabled",
+        "baseHz",
+        "ratio",
+        "nx",
+        "ny"
+      ]
+    },
+    "indexWeights": {
+      "type": "object",
+      "properties": {
+        "arithmetic": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.25
+        },
+        "geometry": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.25
+        },
+        "music": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.25
+        },
+        "astronomy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.25
+        }
+      },
+      "required": [
+        "arithmetic",
+        "geometry",
+        "music",
+        "astronomy"
+      ]
+    }
+  },
+  "required": [
+    "amplitude",
+    "fx",
+    "fy",
+    "phase",
+    "dt",
+    "trail",
+    "geoSequence",
+    "indexWeights"
+  ]
+}

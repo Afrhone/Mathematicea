@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<configuration>
+	
+	<configSections>
+		<sectionGroup
+			name="wix.bootstrapper"
+			type="Microsoft.Tools.WindowsInstallerXml.Bootstrapper.BootstrapperSectionGroup, BootstrapperCore">
+			<section
+				name="host"
+				type="Microsoft.Tools.WindowsInstallerXml.Bootstrapper.HostSection, BootstrapperCore" />
+		</sectionGroup>
+	</configSections>
+	
+	<startup useLegacyV2RuntimeActivationPolicy="true">
+		
+		<!-- IMPORTANT NOTE: If you change the sequence of the below elements, debugging will not work correctly. -->
+		
+		<supportedRuntime version="v4.5" />
+		<supportedRuntime version="v4.0" />
+		<!-- Note: The .NET Framework version 3.0 and 3.5 use version 2.0.50727 of the CLR.  -->
+		<supportedRuntime version="v2.0.50727" />
+		
+	</startup>
+	
+	
+	<wix.bootstrapper>
+		<host assemblyName="Chipset.Bootstrapper">
+			<supportedFramework version="v4.5" />
+			<supportedFramework version="v4\Client" />
+			<supportedFramework version="v4\Full" />
+			<supportedFramework version="v3.5" />
+		</host>
+	</wix.bootstrapper>
+	
+</configuration>

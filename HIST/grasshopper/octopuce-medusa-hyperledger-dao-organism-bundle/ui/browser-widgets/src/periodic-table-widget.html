@@ -1,0 +1,21 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Mendeleev Matter Widget</title>
+<style>
+body{margin:0;background:#050510;color:#eafcff;font-family:system-ui}
+.grid{display:grid;grid-template-columns:repeat(18,1fr);gap:6px;padding:16px}
+.el{border:1px solid #1ddcff;padding:8px;border-radius:8px;background:#071b2a;min-height:60px}
+.panel{padding:16px}
+</style></head><body>
+<div class="panel">
+<h1>Mendeleev Blueprint Playground</h1>
+<p>c(p)=2·[Int((p+2)/2)]² — conceptual arithmetic visualizer, not validated chemistry.</p>
+<input id="p" type="number" value="1" min="1" max="9"><button onclick="calc()">Compute</button>
+<pre id="out"></pre>
+</div>
+<div class="grid" id="grid"></div>
+<script>
+const elements=['H','He','Li','Be','B','C','N','O','F','Ne','Na','Mg','Al','Si','P','S','Cl','Ar'];
+const grid=document.getElementById('grid');
+elements.forEach((e,i)=>{const d=document.createElement('div');d.className='el';d.textContent=(i+1)+' '+e;grid.appendChild(d);});
+function calc(){const p=Number(document.getElementById('p').value); const c=2*Math.trunc((p+2)/2)**2; out.textContent=JSON.stringify({p,c,formula:'2*Int((p+2)/2)^2'},null,2)}
+calc()
+</script></body></html>

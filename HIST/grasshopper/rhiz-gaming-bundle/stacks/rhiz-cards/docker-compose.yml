@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  graph-ui:
+    image: ghcr.io/example/graph-ui:latest
+    deploy:
+      placement:
+        constraints:
+          - node.labels.rhiz_profile == hypergraph
+  card-engine:
+    image: ghcr.io/example/card-engine:latest
+  heuristics-worker:
+    image: ghcr.io/example/heuristics-worker:latest

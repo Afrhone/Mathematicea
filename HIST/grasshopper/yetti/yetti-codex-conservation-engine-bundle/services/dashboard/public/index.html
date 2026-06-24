@@ -1,0 +1,22 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>YETTI Codex Conservation</title>
+<style>
+body{margin:0;background:#061018;color:#e9fbff;font-family:system-ui}
+main{padding:24px;max-width:980px;margin:auto}
+.card{border:1px solid #9ef;border-radius:14px;padding:16px;margin:12px 0;background:#091d2a}
+button{padding:10px;border-radius:8px;margin:4px}
+pre{white-space:pre-wrap;background:#02070a;padding:12px;border-radius:8px;max-height:420px;overflow:auto}
+</style></head>
+<body><main>
+<h1>YETTI Codex Conservation Engine</h1>
+<p>No Codex before local compression. No cloud burn before YETTI burn.</p>
+<div class="card"><button onclick="ledger()">Ledger</button><button onclick="packet()">Latest Codex Packet</button><button onclick="credit()">Mint Local Credit</button></div>
+<pre id="out"></pre>
+</main>
+<script>
+const API='http://127.0.0.1:7225';
+async function ledger(){out.textContent=JSON.stringify(await fetch(API+'/ledger').then(r=>r.json()),null,2)}
+async function packet(){out.textContent=await fetch(API+'/packets/latest').then(r=>r.text())}
+async function credit(){out.textContent=JSON.stringify(await fetch(API+'/credit',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({kind:'dashboard-credit',amount:1})}).then(r=>r.json()),null,2)}
+ledger();
+</script></body></html>

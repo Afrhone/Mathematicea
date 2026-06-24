@@ -1,0 +1,20 @@
+[
+  {
+    "id": "GATE-LXD-001",
+    "name": "LXD socket gate",
+    "command": "lxc list",
+    "invariant": "current user can query LXD"
+  },
+  {
+    "id": "GATE-CEPH-001",
+    "name": "Ceph client gate",
+    "command": "rbd --id $CEPH_CLIENT --cluster $CEPH_CLUSTER --pool $CEPH_POOL ls",
+    "invariant": "Ceph client can read RBD pool"
+  },
+  {
+    "id": "GATE-DOJO-001",
+    "name": "Dojo health gate",
+    "command": "curl -fsS http://127.0.0.1:$DOJO_PORT/health",
+    "invariant": "local dojo service responds"
+  }
+]

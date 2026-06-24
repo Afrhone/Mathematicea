@@ -1,0 +1,45 @@
+cluster: rhiz-gpu-ai
+nodes:
+  sigmo-rhiz:
+    role: orchestrator
+    ip: 192.168.0.34
+    os: fedora-43
+    gpu: nvidia-quadro-k5000-legacy
+    lanes: [docker-model-runner, llama-cpp-cpu, mcp, ui, gateway, telemetry]
+  llama-gpu:
+    role: model-worker
+    ip: 192.168.0.125
+    gpu: unknown-local-gpu
+    lanes: [llama-cpp, gguf, openai-compatible]
+  gpu-compute:
+    role: model-worker
+    ip: 192.168.0.52
+    host: rhiz-fach
+    gpu: nvidia-rtx-4070-ti-phoenix
+    lanes: [vllm, diffusers, llama-cpp-cuda, openai-compatible]
+  niurk-19:
+    role: app-client
+    ip: 192.168.0.49
+    allowed_to_call: [gateway, mcp, ui]
+  niurk-72:
+    role: hypergraph-client
+    ip: 192.168.0.72
+    allowed_to_call: [gateway, mcp]
+  metrology-lab:
+    role: integrity-agent
+    ip: 192.168.0.42
+    allowed_to_call: [gateway, mcp]
+allowed_clients:
+  - 192.168.0.49
+  - 192.168.0.52
+  - 192.168.0.125
+  - 192.168.0.72
+  - 192.168.0.42
+ports:
+  gateway: 8099
+  ui: 3033
+  mcp: 8787
+  model_runner: 12434
+  llama_cpp: 8088
+  vllm: 8000
+  diffusers: 7860

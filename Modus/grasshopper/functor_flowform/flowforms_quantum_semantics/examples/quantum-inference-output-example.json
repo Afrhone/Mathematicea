@@ -1,0 +1,58 @@
+{
+  "runId": "qphi-demo-001",
+  "glyph": "φ",
+  "family": "bridge",
+  "corpus": "sketch+alphabet+symbolic-roots",
+  "modus": "expressive-inference",
+  "metrics": {
+    "coherence": 0.736,
+    "entropy": 1.912,
+    "semanticTension": 0.428,
+    "corpusAffinity": 0.81,
+    "modusConfidence": 0.77,
+    "shapeEnergy": 0.34
+  },
+  "dominantState": "|001⟩ Bridge relation",
+  "action": "compose-ligature",
+  "decisionTrace": [
+    "semantic tension acceptable",
+    "bridge probability dominant",
+    "loop density high",
+    "compose with neighboring graphème",
+    "export SVG candidate"
+  ],
+  "states": [
+    {
+      "state": "|000⟩ Root anchor",
+      "probability": 0.1116
+    },
+    {
+      "state": "|001⟩ Bridge relation",
+      "probability": 0.1911
+    },
+    {
+      "state": "|010⟩ Form vessel",
+      "probability": 0.1282
+    },
+    {
+      "state": "|011⟩ Rhythm pulse",
+      "probability": 0.1077
+    },
+    {
+      "state": "|100⟩ Nature branch",
+      "probability": 0.1032
+    },
+    {
+      "state": "|101⟩ Momentum vector",
+      "probability": 0.1603
+    },
+    {
+      "state": "|110⟩ Axiom center",
+      "probability": 0.0897
+    },
+    {
+      "state": "|111⟩ Latent intuition",
+      "probability": 0.1082
+    }
+  ]
+}

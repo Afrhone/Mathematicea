@@ -1,0 +1,10 @@
+service_type: osd
+service_id: default_drive_group
+placement:
+  hosts:
+    - rhiz-ueth
+    - rhiz-loes
+    - factau-rhiz
+spec:
+  data_devices:
+    all: false

@@ -1,0 +1,29 @@
+architecture:
+  name: rhiz-cascade
+  public_endpoint: rhiz-arch.afrho.net
+  layers:
+    - name: fedora-host
+      description: Ceph, libvirt, WireGuard, bastion, GPU/CPU pool hypervisors.
+    - name: ubuntu-vm
+      description: Ubuntu guests built on Ceph-backed libvirt storage.
+    - name: lxd-lxc
+      description: Clustered LXD/LXC workloads running inside Ubuntu VMs or Pi Ubuntu hosts.
+    - name: docker-swarm
+      description: Service deployment plane for management UI, gateway, and cardized apps.
+  services:
+    hypergraph:
+      main_host: rhiz-woute
+      vm: niurk-43
+    operator_bastion:
+      host: rhiz-ueth
+      vm: niurk-21
+    cascade_vm:
+      host: sigmo-rhiz
+      vm: niurk-24
+    rhiz_pod_orchestrator:
+      host: factau-rhiz
+      path: /home/kobalt/infrasys
+    dns_edge:
+      host: exosystem
+      public_endpoint: rhiz-arch.afrho.net
+      tld: .phi

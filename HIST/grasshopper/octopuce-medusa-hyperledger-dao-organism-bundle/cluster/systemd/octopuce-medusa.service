@@ -1,0 +1,16 @@
+[Unit]
+Description=Octopuce Medusa Hyperledger DAO Organism
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/octopuce-medusa-hyperledger-dao
+EnvironmentFile=-/opt/octopuce-medusa-hyperledger-dao/.env
+ExecStart=/usr/bin/docker compose up --build
+ExecStop=/usr/bin/docker compose down
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

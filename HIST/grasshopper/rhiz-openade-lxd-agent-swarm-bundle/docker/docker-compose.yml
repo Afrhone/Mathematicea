@@ -1,0 +1,64 @@
+name: rhiz-openade-lab
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports: ["127.0.0.1:27018:27017"]
+    volumes: [mongo_data:/data/db]
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports: ["127.0.0.1:6381:6379"]
+    volumes: [redis_data:/data]
+  agent-gateway:
+    build: {context: ../services/gateway}
+    restart: unless-stopped
+    ports: ["8091:8091"]
+    environment:
+      - PORT=8091
+      - MONGO_URL=mongodb://mongo:27017/rhiz_openade
+      - REDIS_URL=redis://redis:6379/0
+      - LLAMA_GPU_OPENAI_BASE_URL=${LLAMA_GPU_OPENAI_BASE_URL:-http://192.168.0.125:8089/v1}
+      - LLAMA_GPU_OLLAMA_PROXY=${LLAMA_GPU_OLLAMA_PROXY:-http://192.168.0.125:11435}
+      - GPU_COMPUTE_OPENAI_BASE_URL=${GPU_COMPUTE_OPENAI_BASE_URL:-http://192.168.0.52:8080/v1}
+    volumes: [../configs:/config:ro]
+    depends_on: [mongo, redis]
+  mcp-server:
+    build: {context: ../services/mcp}
+    restart: unless-stopped
+    ports: ["8092:8092"]
+    environment:
+      - PORT=8092
+      - ALLOW_DOCKER_MUTATION=${ALLOW_DOCKER_MUTATION:-1}
+      - ALLOW_LXD_MUTATION=${ALLOW_LXD_MUTATION:-0}
+      - ALLOW_SNAPSHOT_MUTATION=${ALLOW_SNAPSHOT_MUTATION:-1}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../configs:/config:ro
+      - ../state:/state
+    depends_on: [redis]
+  lab-api:
+    build: {context: ../services/lab-api}
+    restart: unless-stopped
+    ports: ["8093:8093"]
+    environment:
+      - PORT=8093
+      - MONGO_URL=mongodb://mongo:27017/rhiz_openade
+      - REDIS_URL=redis://redis:6379/0
+    depends_on: [mongo, redis]
+  rag-worker:
+    build: {context: ../services/rag-worker}
+    restart: unless-stopped
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/rhiz_openade
+      - REDIS_URL=redis://redis:6379/0
+      - WATCH_ROOT=/workspace
+    volumes: [/workspace:/workspace]
+  ui:
+    build: {context: ../services/ui}
+    restart: unless-stopped
+    ports: ["8094:80"]
+    depends_on: [agent-gateway, mcp-server, lab-api]
+volumes:
+  mongo_data:
+  redis_data:

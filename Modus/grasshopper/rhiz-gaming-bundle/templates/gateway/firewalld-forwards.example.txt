@@ -1,0 +1,4 @@
+# Example firewalld forward-port expressions used by gateway-apply
+port=8443:proto=tcp:toaddr=10.42.0.38:toport=8443
+port=16509:proto=tcp:toaddr=10.42.0.38:toport=16509
+port=2202:proto=tcp:toaddr=10.42.0.2:toport=22

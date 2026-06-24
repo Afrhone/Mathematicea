@@ -1,0 +1,24 @@
+# WireGuard Ceph fabric configuration — FACTAU-RHIZ (Fedora 43)
+#
+# Intended to be applied on host: factau-rhiz
+# Interface name: ceph-operator
+#
+# IMPORTANT:
+# - Put the private key into /etc/wireguard/ceph-operator.key (chmod 600)
+# - Ensure the address matches THIS host on the Ceph/WG fabric
+#
+# Recommended Ceph/WG CIDR: 10.42.0.0/24
+
+interface:
+  name: operatau-sozv
+  listen_port: 54715
+  mtu: 1420
+  address: 10.111.9.1/24
+  never_default: true
+
+peers:
+  - name: pxy53i
+    public_key: aVItRdqFdk4RCs1m11RVoH85oSwoo0m5dyeEhFk0mVY=
+    endpoint: 192.168.0.46:54725
+    allowed_ips: 10.111.9.2/32
+    persistent_keepalive: 25

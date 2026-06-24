@@ -1,0 +1,12 @@
+interface:
+  name: rhiz-control
+  listen_port: 51821
+  mtu: 1420
+  address: 10.44.60.53/24
+  never_default: true
+peers:
+  - name: exosystem
+    public_key:
+    endpoint: rhiz-arch.afrho.net:51820
+    allowed_ips: 10.44.60.1/32,10.42.0.0/24
+    persistent_keepalive: 25

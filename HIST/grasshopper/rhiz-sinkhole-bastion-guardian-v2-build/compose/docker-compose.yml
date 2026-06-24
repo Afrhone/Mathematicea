@@ -1,0 +1,118 @@
+name: ${STACK_NAME:-rhiz_sinkhole_guardian}
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "${MONGO_PORT:-27027}:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-rhiz}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-change-me-mongo}
+    volumes:
+      - mongo-data:/data/db
+    networks: [guardian]
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${REDIS_PORT:-6387}:6379"
+    volumes:
+      - redis-data:/data
+    networks: [guardian]
+
+  guardian-api:
+    build:
+      context: ../services/guardian-api
+    restart: unless-stopped
+    env_file: ../.env
+    ports:
+      - "${GUARDIAN_API_PORT:-8450}:8450"
+    depends_on: [mongo, redis]
+    volumes:
+      - ../configs:/app/configs:ro
+      - ../runtime:/app/runtime
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/snap/lxd/common/lxd/unix.socket:/var/snap/lxd/common/lxd/unix.socket:ro
+    networks: [guardian]
+
+  collector:
+    build:
+      context: ../services/collector
+    restart: unless-stopped
+    privileged: false
+    env_file: ../.env
+    depends_on: [guardian-api]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/snap/lxd/common/lxd/unix.socket:/var/snap/lxd/common/lxd/unix.socket:ro
+      - /var/log:/host/var/log:ro
+      - /run/systemd/journal:/run/systemd/journal:ro
+    networks: [guardian]
+
+  sinkhole-dns:
+    image: coredns/coredns:1.11.1
+    restart: unless-stopped
+    command: ["-conf", "/etc/coredns/Corefile"]
+    ports:
+      - "${DNS_BIND_PORT:-5353}:53/udp"
+      - "${DNS_BIND_PORT:-5353}:53/tcp"
+    volumes:
+      - ../services/sinkhole-dns/Corefile:/etc/coredns/Corefile:ro
+      - ../services/sinkhole-dns/blocklist.hosts:/etc/coredns/blocklist.hosts:ro
+    networks: [guardian]
+
+  web:
+    build:
+      context: ../apps/web
+      args:
+        NEXT_PUBLIC_GUARDIAN_API_URL: ${NEXT_PUBLIC_GUARDIAN_API_URL:-http://localhost:8450}
+    restart: unless-stopped
+    env_file: ../.env
+    ports:
+      - "${WEB_PORT:-3100}:3000"
+    depends_on: [guardian-api]
+    networks: [guardian]
+
+  # Optional local model providers. Enable by profile.
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["ollama"]
+    restart: unless-stopped
+    volumes:
+      - ollama-data:/root/.ollama
+    networks: [guardian]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  llamacpp:
+    image: ghcr.io/ggerganov/llama.cpp:server-cuda
+    profiles: ["llamacpp"]
+    restart: unless-stopped
+    command: ["--host", "0.0.0.0", "--port", "8080", "--model", "/models/model.gguf", "--ctx-size", "8192"]
+    volumes:
+      - ./models:/models:ro
+    networks: [guardian]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+networks:
+  guardian:
+    driver: bridge
+
+volumes:
+  mongo-data:
+  redis-data:
+  ollama-data:

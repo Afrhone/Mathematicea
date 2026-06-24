@@ -1,0 +1,54 @@
+{
+  "version": "0.1.0",
+  "planes": [
+    "control-plane",
+    "directive-plane",
+    "analysis-plane",
+    "awareness-plane",
+    "host-plane",
+    "compute-plane",
+    "storage-plane"
+  ],
+  "nodes": {
+    "llama-gpu": {
+      "role": "AMD Vulkan inference",
+      "address": "192.168.0.125",
+      "routes": {
+        "openai": "http://192.168.0.125:8089/v1",
+        "ollama_proxy": "http://192.168.0.125:11435"
+      }
+    },
+    "gpu-compute": {
+      "role": "NVIDIA CUDA inference",
+      "address": "192.168.0.52",
+      "routes": {
+        "openai": "http://192.168.0.52:8080/v1"
+      }
+    },
+    "niurk-19": {
+      "role": "application VM / OpenWebUI / app host",
+      "address": "192.168.0.49"
+    },
+    "rhiz-fach": {
+      "role": "LXD cluster member / GPU host",
+      "address": "192.168.0.49"
+    },
+    "ark-rhiz": {
+      "role": "Ceph/LXD/compute",
+      "address": "192.168.0.40"
+    },
+    "exosys-rhiz": {
+      "role": "LXD member / sinkhole net",
+      "address": "192.168.0.50"
+    }
+  },
+  "routing_policy": {
+    "priority": [
+      "local model endpoints",
+      "gpu-compute",
+      "google_adk"
+    ],
+    "bounded_autonomy": true,
+    "requires_operator_gate_for_promotion": true
+  }
+}

@@ -1,0 +1,61 @@
+
+services:
+  dashboard:
+    build:
+      context: ../../apps/dashboard
+      dockerfile: Dockerfile
+    image: xbox-cosmic-dashboard:local
+    restart: unless-stopped
+    ports: ["${DASHBOARD_PORT:-8096}:80"]
+    depends_on: [gateway]
+
+  gateway:
+    build:
+      context: ../../apps/gateway
+      dockerfile: Dockerfile
+    image: xbox-cosmic-gateway:local
+    restart: unless-stopped
+    env_file: [../../.env]
+    ports: ["${GATEWAY_PORT:-8097}:8097"]
+    volumes: ["../../config:/config:ro"]
+    depends_on: [mongo, redis]
+
+  mcp:
+    build:
+      context: ../../apps/mcp
+      dockerfile: Dockerfile
+    image: xbox-cosmic-mcp:local
+    restart: unless-stopped
+    env_file: [../../.env]
+    ports: ["${MCP_PORT:-8098}:8098"]
+    volumes: ["/var/run/docker.sock:/var/run/docker.sock:ro"]
+    depends_on: [gateway]
+
+  collector:
+    build:
+      context: ../../apps/collector
+      dockerfile: Dockerfile
+    image: xbox-cosmic-collector:local
+    restart: unless-stopped
+    env_file: [../../.env]
+    volumes:
+      - /dev/input:/dev/input:ro
+      - /dev:/host-dev:ro
+    depends_on: [gateway]
+    profiles: ["hardware"]
+
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports: ["${MONGO_PORT:-27018}:27017"]
+    volumes: ["mongo_data:/data/db"]
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports: ["${REDIS_PORT:-6381}:6379"]
+    volumes: ["redis_data:/data"]
+
+volumes:
+  mongo_data: {}
+  redis_data: {}

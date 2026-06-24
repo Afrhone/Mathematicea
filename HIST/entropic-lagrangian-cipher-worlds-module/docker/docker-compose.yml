@@ -1,0 +1,8 @@
+name: entropic-lagrangian-cipher-worlds
+services:
+  web:
+    build:
+      context: ../app
+    restart: unless-stopped
+    ports:
+      - "8097:80"

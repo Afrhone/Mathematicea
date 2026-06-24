@@ -1,0 +1,2 @@
+This bundle generates the Xcode project with scripts/create-xcode-project.sh if XcodeGen is available.
+It also includes raw Swift sources for manual Xcode project creation.

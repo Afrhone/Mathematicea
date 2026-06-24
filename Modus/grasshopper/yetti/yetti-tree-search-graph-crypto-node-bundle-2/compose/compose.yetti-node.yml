@@ -1,0 +1,27 @@
+services:
+  yetti-node:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    env_file: ../.env
+    volumes:
+      - ../node:/app
+      - ${DATA_ROOT:-/var/lib/yetti-node}:${DATA_ROOT:-/var/lib/yetti-node}
+    ports: ["${NODE_PORT:-7215}:7215"]
+    restart: unless-stopped
+  yetti-mcp:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    env_file: ../.env
+    volumes: ["../mcp:/app"]
+    ports: ["${MCP_PORT:-7216}:7216"]
+    restart: unless-stopped
+  yetti-dashboard:
+    image: node:20-bookworm
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    env_file: ../.env
+    volumes: ["../dashboard:/app"]
+    ports: ["${DASHBOARD_PORT:-7217}:7217"]
+    restart: unless-stopped

@@ -1,0 +1,28 @@
+lxd:
+  project: rhiz
+  bootstrap_member: niurk-24
+  members:
+    - niurk-24
+    - niurk-43
+    - pi-rhiz
+  cluster_groups:
+    cpu:
+      members: [niurk-24, niurk-43]
+    gpu:
+      members: [niurk-24]
+    edge:
+      members: [pi-rhiz]
+  placement_groups:
+    cpu-spread:
+      policy: spread
+      members: [cpu]
+    gpu-compact:
+      policy: compact
+      members: [gpu]
+  storage_pools:
+    ceph-rbd:
+      driver: ceph
+      source: vms
+    cephfs-shared:
+      driver: cephfs
+      source: cephfs_shared

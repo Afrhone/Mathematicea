@@ -1,0 +1,1 @@
+{"name":"gateway","version":"0.1.0","type":"module","private":true,"scripts":{"dev":"node --watch src/server.js","start":"node src/server.js","build":"node -c src/server.js"},"dependencies":{"express":"4.19.2","mongodb":"6.12.0","cors":"2.8.5","nanoid":"5.0.9"},"devDependencies":{}}

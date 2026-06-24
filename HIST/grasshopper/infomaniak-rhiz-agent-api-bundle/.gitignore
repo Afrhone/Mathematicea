@@ -1,0 +1,7 @@
+.env
+node_modules
+.next
+__pycache__
+generated
+data
+compose/models/*.gguf

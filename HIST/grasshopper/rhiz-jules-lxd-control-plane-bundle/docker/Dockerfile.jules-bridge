@@ -1,0 +1,4 @@
+FROM fedora:43
+RUN dnf install -y git curl jq nodejs npm python3 openssh-clients make findutils tar gzip     && npm install -g @google/jules     && dnf clean all
+WORKDIR /workspace
+CMD ["bash"]

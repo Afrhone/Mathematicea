@@ -1,0 +1,165 @@
+hosts:
+  - name: rhiz-loes
+    profile: admin-cpu
+    os: fedora-43
+    ceph_addr: 10.42.0.38
+    wg_directive: directives/wg-ceph-operator.rhiz-loes.yaml
+    roles: [_admin, mon, mgr, osd, libvirt, compute, pool-cpu, pool-vm, control]
+    ssh:
+      user: kobalt
+      host: 192.168.0.38
+      port: 22
+      public_host: ''
+      public_port: 22
+    libvirt:
+      uri: qemu:///system
+      bridge: br0
+      vm_pool: cpu
+    gateway:
+      role: false
+      jump_only: false
+
+  - name: rhiz-ueth
+    profile: bastion-operator
+    os: fedora-43
+    ceph_addr: 10.42.0.1
+    wg_directive: directives/wg-ceph-operator.rhiz-ueth.yaml
+    roles: [_admin, mon, mgr, osd, libvirt, bastion, operator, compute, pool-cpu, pool-vm]
+    ssh:
+      user: kobalt
+      host: 192.168.0.2
+      port: 22
+      public_host: ''
+      public_port: 22
+    libvirt:
+      uri: qemu:///system
+      bridge: br0
+      vm_pool: cpu
+    gateway:
+      role: false
+      jump_only: false
+
+  - name: rhiz-woute
+    profile: hypergraph-main
+    os: fedora-43
+    ceph_addr: 10.42.0.33
+    wg_directive: directives/wg-ceph-operator.rhiz-woute.yaml
+    roles: [mon, mgr, osd, operator, libvirt, compute, pool-cpu, pool-vm, hypergraph-main]
+    ssh:
+      user: kobalt
+      host: 192.168.0.33
+      port: 22
+      public_host: ''
+      public_port: 22
+    libvirt:
+      uri: qemu:///system
+      bridge: br0
+      vm_pool: cpu
+    gateway:
+      role: false
+      jump_only: false
+
+  - name: factau-rhiz
+    profile: rhiz-pod-manager
+    os: fedora-43
+    ceph_addr: 10.42.0.4
+    wg_directive: directives/wg-ceph-operator.factau-rhiz.yaml
+    roles: [mon, osd, libvirt, compute, pool-cpu, rhiz-pod, swarm-manager]
+    ssh:
+      user: kobalt
+      host: 192.168.0.4
+      port: 22
+      public_host: ''
+      public_port: 22
+    paths:
+      orchestrator_root: /home/kobalt/infrasys
+    libvirt:
+      uri: qemu:///system
+      bridge: br0
+      vm_pool: cpu
+    gateway:
+      role: false
+      jump_only: false
+
+  - name: sigmo-rhiz
+    profile: gpu-kvm
+    os: fedora-43
+    ceph_addr: 10.42.0.24
+    wg_directive: directives/wg-ceph-operator.sigmo-rhiz.yaml
+    roles: [osd, libvirt, compute, gpu, pool-gpu, pool-vm, niurk-host]
+    ssh:
+      user: kobalt
+      host: CHANGE_ME_SIGMO_LAN_IP
+      port: 22
+      public_host: ''
+      public_port: 22
+    libvirt:
+      uri: qemu:///system
+      bridge: br0
+      vm_pool: gpu
+    gateway:
+      role: false
+      jump_only: false
+
+  - name: exosystem
+    profile: public-gateway-gpu
+    os: fedora-43
+    ceph_addr: 10.42.0.21
+    wg_directive: directives/wg-ceph-operator.exosystem.yaml
+    roles: [_admin, mon, osd, libvirt, operator, gateway, compute, gpu, pool-gpu, pool-vm, dns-edge]
+    ssh:
+      user: kobaltafrhophiloes
+      host: 192.168.0.46
+      port: 22
+      public_host: rhiz-arch.afrho.net
+      public_port: 22
+    libvirt:
+      uri: qemu:///system
+      bridge: br0
+      vm_pool: gpu
+    gateway:
+      role: true
+      jump_only: true
+      public_iface: eno8403
+
+  - name: eliosys-rhiz
+    profile: ceph-cpu
+    os: fedora-43
+    ceph_addr: 10.42.0.22
+    wg_directive: directives/wg-ceph-operator.eliosys-rhiz.yaml
+    roles: [osd, libvirt, compute, pool-cpu]
+    ssh:
+      user: kobalt
+      host: 192.168.0.7
+      port: 22
+      public_host: ''
+      public_port: 22
+    libvirt:
+      uri: qemu:///system
+      bridge: br0
+      vm_pool: cpu
+    gateway:
+      role: false
+      jump_only: false
+
+  - name: pi-rhiz
+    profile: ubuntu-pi-swarm-lxd
+    os: ubuntu-24.04-arm64
+    ceph_addr: 10.42.0.53
+    roles: [ubuntu, lxd, lxc, swarm-manager, arm64, edge]
+    ssh:
+      user: ubuntu
+      host: CHANGE_ME_PI_LAN_IP
+      port: 22
+      public_host: ''
+      public_port: 22
+    paths:
+      lxd_root: /var/snap/lxd/common/lxd
+    gateway:
+      role: false
+      jump_only: false
+
+switch:
+  name: eoli-io-sys
+  model: TL-SG108E
+  mgmt_ipv4: 192.168.0.1

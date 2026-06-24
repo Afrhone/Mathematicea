@@ -1,0 +1,202 @@
+{
+  "version": "1.0.0",
+  "name": "numeral-functor-operand-invariants-ecosystem",
+  "updated_at": "2026-02-20",
+  "workflow": {
+    "name": "systemic-ecosystem-loop",
+    "steps": [
+      "periodic-hypergraph",
+      "kv-force-graph",
+      "lissajous-audio-uv",
+      "phoneme-cipher",
+      "hypergraph-sdg",
+      "polyfractal-gateway",
+      "shockwave-risk-engine"
+    ]
+  },
+  "artifacts": {
+    "cipher_schema": {
+      "source_path": "/home/kobalts71-n--1/hypergraph_meta_cluster_bundle/numeral/grapheme numeral/phoneme/numeral.encoder.cipher.json",
+      "fallback_path": "./config/numeral.encoder.cipher.json",
+      "kind": "schema",
+      "domain": "phoneme-numeral-encoder"
+    }
+  },
+  "modules": [
+    {
+      "id": "polyfractal-gateway",
+      "name": "Hypergraph Polyfractal Gateway",
+      "domain": "architecture",
+      "internal_url": "http://hypergraph-polyfractal:8787",
+      "external_url": "http://localhost:8787",
+      "public_url": "https://hyperscale.hubble.afrho.net",
+      "web_ui": "http://localhost:8787/",
+      "health_path": "/api/health",
+      "depends_on": [
+        "periodic-hypergraph",
+        "kv-force-graph",
+        "lissajous-audio-uv",
+        "phoneme-cipher",
+        "hypergraph-sdg"
+      ],
+      "capabilities": [
+        "workflow-orchestration",
+        "business-intelligence",
+        "webui",
+        "gated-monitoring",
+        "admin-management"
+      ],
+      "bi_signals": [
+        "entropy",
+        "drift",
+        "graph-topology"
+      ],
+      "gated_monitoring": true,
+      "admin_managed": true
+    },
+    {
+      "id": "periodic-hypergraph",
+      "name": "Uniphi Periodic Hypergraph Lab",
+      "domain": "webui",
+      "internal_url": "http://periodic-hypergraph-web:80",
+      "external_url": "http://localhost:8088",
+      "public_url": "https://periodic.hubble.afrho.net/",
+      "web_ui": "http://localhost:8088/",
+      "health_path": "/",
+      "depends_on": [],
+      "capabilities": [
+        "webui",
+        "hypergraph-visualization"
+      ],
+      "bi_signals": [
+        "periodic-lens-interaction"
+      ],
+      "gated_monitoring": false,
+      "admin_managed": true
+    },
+    {
+      "id": "kv-force-graph",
+      "name": "Uniphi KV Force Graph",
+      "domain": "business-intelligence",
+      "internal_url": "http://kv-force-graph-web:80",
+      "external_url": "http://localhost:8084",
+      "public_url": "https://kv.hubble.afrho.net/",
+      "web_ui": "http://localhost:8084/",
+      "health_path": "/",
+      "depends_on": [
+        "periodic-hypergraph"
+      ],
+      "capabilities": [
+        "webui",
+        "bi-dataset-ingest"
+      ],
+      "bi_signals": [
+        "kv-topology",
+        "head-layer-snapshots"
+      ],
+      "gated_monitoring": false,
+      "admin_managed": true
+    },
+    {
+      "id": "lissajous-audio-uv",
+      "name": "Uniphi Lissajous Audio UV",
+      "domain": "systemic-workflow",
+      "internal_url": "http://lissajous-audio-uv:8877",
+      "external_url": "http://localhost:8877",
+      "public_url": "https://lissajous.hubble.afrho.net/",
+      "web_ui": "http://localhost:8877/",
+      "health_path": "/",
+      "depends_on": [
+        "kv-force-graph"
+      ],
+      "capabilities": [
+        "state-space-audio",
+        "invariants"
+      ],
+      "bi_signals": [
+        "closure-score",
+        "ratio-complexity",
+        "coherence-index"
+      ],
+      "gated_monitoring": false,
+      "admin_managed": true
+    },
+    {
+      "id": "phoneme-cipher",
+      "name": "Uniphi Phoneme Cipher Zeroth",
+      "domain": "workflow",
+      "internal_url": "http://phoneme-cipher:8909",
+      "external_url": "http://localhost:8909",
+      "public_url": "https://cipher.hubble.afrho.net/",
+      "web_ui": "http://localhost:8909/",
+      "health_path": "/api/health",
+      "depends_on": [
+        "lissajous-audio-uv"
+      ],
+      "capabilities": [
+        "semantic-cipher",
+        "invariants",
+        "metrics"
+      ],
+      "bi_signals": [
+        "transition-entropy",
+        "manifold-covariance"
+      ],
+      "gated_monitoring": true,
+      "admin_managed": true
+    },
+    {
+      "id": "hypergraph-sdg",
+      "name": "Uniphi Hypergraph SDG Lagrangian",
+      "domain": "simulation",
+      "internal_url": "http://hypergraph-sdg:8899",
+      "external_url": "http://localhost:8899",
+      "public_url": "https://sdg.hubble.afrho.net/",
+      "web_ui": "http://localhost:8899/",
+      "health_path": "/api/health",
+      "depends_on": [
+        "phoneme-cipher"
+      ],
+      "capabilities": [
+        "simulation",
+        "diffusion",
+        "ode-sde"
+      ],
+      "bi_signals": [
+        "energy-drift",
+        "trajectory-stability"
+      ],
+      "gated_monitoring": true,
+      "admin_managed": true
+    },
+    {
+      "id": "shockwave-risk-engine",
+      "name": "Shockwave Predictive Risk Engine",
+      "domain": "risk-intelligence",
+      "internal_url": "http://hypergraph-polyfractal:8787",
+      "external_url": "http://localhost:8787",
+      "public_url": "https://shockwave.afthermath.afrho.net",
+      "web_ui": "https://shockwave.afthermath.afrho.net/",
+      "health_path": "/api/health",
+      "depends_on": [
+        "polyfractal-gateway",
+        "hypergraph-sdg",
+        "phoneme-cipher"
+      ],
+      "capabilities": [
+        "predictive-risk-assessment",
+        "systemic-hyperbolic-fallback",
+        "linear-functor-projection",
+        "quantum-state-save-query",
+        "universe-diffusion-hash"
+      ],
+      "bi_signals": [
+        "risk-score",
+        "fallback-activation-rate",
+        "diffusion-hash-drift"
+      ],
+      "gated_monitoring": true,
+      "admin_managed": true
+    }
+  ]
+}

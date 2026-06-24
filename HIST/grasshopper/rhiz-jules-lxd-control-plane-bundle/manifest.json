@@ -1,0 +1,239 @@
+{
+  "name": "rhiz-jules-lxd-control-plane-bundle",
+  "version": "2026.05.01-rhiz-jules-lxd",
+  "created_utc": "2026-05-01T16:40:58.253167+00:00",
+  "source_uploads": [
+    {
+      "path": "upstream/directives_gateway_main_cluster.md",
+      "bytes": 24215,
+      "sha256": "36b09869f51257008bd381b14fd843a3fe635e3c1c2d2334dcc264b695e94c94"
+    },
+    {
+      "path": "upstream/infrasys-webgl.zip",
+      "bytes": 30543,
+      "sha256": "c7b6b10599e409da882b06f0243b1543003719c3ea3631ed565de293d4eda6e0"
+    },
+    {
+      "path": "upstream/niurk-smart-workflow-bundle.zip",
+      "bytes": 151759,
+      "sha256": "a7cc3927e6b8040c43247f950da333617a4b825acc3721b5b51e6f418e514eb2"
+    },
+    {
+      "path": "upstream/patch-lxd.zip",
+      "bytes": 9808,
+      "sha256": "0bc6c6c8e9a1636602b206cb289f15181b09bdad9e6d1d92156d35a6e5964e69"
+    }
+  ],
+  "files": [
+    {
+      "path": "QUICKSTART.md",
+      "bytes": 1745,
+      "sha256": "259c79772729f845f53ce02e76d13bce541263026a343bb0c552388254050561"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2862,
+      "sha256": "4f389fc1fcc32eddcb97633f437899a64c3aa9acffc67c32c95344107877cbd3"
+    },
+    {
+      "path": "bin/__pycache__/agent-graph-orchestrator.cpython-313.pyc",
+      "bytes": 4490,
+      "sha256": "e169786e4f232b134d67937e39ffef1ccfeac0282ea1eb24b8abdc40f6fefd15"
+    },
+    {
+      "path": "bin/agent-graph-orchestrator.py",
+      "bytes": 2174,
+      "sha256": "a51448c2e4786fb84d4a2cb9deb58aefb8c58f7b31285ba7d00fc2329251c033"
+    },
+    {
+      "path": "bin/create-jules-bridge-lxc.sh",
+      "bytes": 1485,
+      "sha256": "fca253460f1bd8803918904db6101c649a21ef64857dbda1afc51726bd0f3417"
+    },
+    {
+      "path": "bin/gitlab-fetch-jules-pr.sh",
+      "bytes": 586,
+      "sha256": "9ec5c5c6f89c47fe53042cb54bdf67fdef915e0c56fd6eb56aa26623a2dd9305"
+    },
+    {
+      "path": "bin/gitlab-github-mirror-check.sh",
+      "bytes": 611,
+      "sha256": "a6437b3359ce4a89c626ebb0cbfd3305df5493386aa6c3257eaaeb8096310dec"
+    },
+    {
+      "path": "bin/issue-one-time-token.sh",
+      "bytes": 834,
+      "sha256": "c2ffc8e397674eef1d4d5c545c1e7324e70e7ff0c016fd0f4b2ecc004b4a50af"
+    },
+    {
+      "path": "bin/jules-api.sh",
+      "bytes": 548,
+      "sha256": "5549cbc846fb89f351c951f5d6d2f289d4a4f964469f8496f47155c0d9bb0be3"
+    },
+    {
+      "path": "bin/jules-task.sh",
+      "bytes": 1231,
+      "sha256": "9136a56a6e6ec25670a7948f7db35127d6e6a585851086691beb5923081a52d8"
+    },
+    {
+      "path": "bin/lib.sh",
+      "bytes": 901,
+      "sha256": "66a2981c69391de76f0d37a398070186bbe44f3dfc3fb10395dcf96d9dd7cec5"
+    },
+    {
+      "path": "bin/lxd-dev-env.sh",
+      "bytes": 754,
+      "sha256": "2f6bc4b7bd4bcface8c94ea69758274e5f4cadda17b590a749b61473d18bfbed"
+    },
+    {
+      "path": "bin/rhiz-control.sh",
+      "bytes": 1867,
+      "sha256": "c1988d51b58d8ac44b526154f38887ea497db6b0d1d727a2a3ccfcfc59f8a3a1"
+    },
+    {
+      "path": "bin/verify-gateway.sh",
+      "bytes": 617,
+      "sha256": "3e74afba0783ce38722c6bbec41e557eddf4c083df20c255b50db98a50abed89"
+    },
+    {
+      "path": "bin/verify-stack.sh",
+      "bytes": 722,
+      "sha256": "71d810a5b7d9ede2bca1320eb28ce557af1c7c24fdd6a5d0be7574f1f5bea354"
+    },
+    {
+      "path": "checksums.txt",
+      "bytes": 3827,
+      "sha256": "66d287f5bc82c07821bb274c18efc5a9cef258d246884f10ca5da3a014385c26"
+    },
+    {
+      "path": "config/agent-graph.rules.yml",
+      "bytes": 1451,
+      "sha256": "dc33e6f00d19e1aafbbf836844b623396677af656e07d9a67ea24487a260f31b"
+    },
+    {
+      "path": "config/state-machine.yml",
+      "bytes": 2188,
+      "sha256": "8db97733c9f5309a0a425212decf12d3ec89de832486d2f984b218e304738b64"
+    },
+    {
+      "path": "directives/deployment-envelope.example.json",
+      "bytes": 598,
+      "sha256": "aaa77f6c19d27e460cf43e675d9cc01db79e1fd065eb6ff7c6c0416fa5b1f645"
+    },
+    {
+      "path": "directives/gateway.rules.yml",
+      "bytes": 764,
+      "sha256": "c1fd389dfbe66387e8d023061b29d43817659deded12771cfca8386e3009a0b1"
+    },
+    {
+      "path": "directives/jules-gitlab-lxd.yml",
+      "bytes": 975,
+      "sha256": "6cdac842ca324b3afbefddfc814a18e0600064c8aa263eb5ab660346042b6a9c"
+    },
+    {
+      "path": "docker/Dockerfile.jules-bridge",
+      "bytes": 194,
+      "sha256": "9eb4acf261bccbc9203afb0253c1d6d87f7f08427bfef006905260fa62fb59a4"
+    },
+    {
+      "path": "docs/FILE_ANALYSIS.md",
+      "bytes": 2834,
+      "sha256": "ad0dcbfa1053ccdce60decd6b4c8b37bd49cac56cc53e2b97b6624c1f308b7c4"
+    },
+    {
+      "path": "docs/FORMALISM.md",
+      "bytes": 3838,
+      "sha256": "a2540b23bbb8db62f97ab4d354a68d1c76378b147286342f23b9dec152b1bce5"
+    },
+    {
+      "path": "docs/ROLLBACK.md",
+      "bytes": 461,
+      "sha256": "4c19c6cda19331a2188fe936659e12144f276fa8cf19306b1ae3fe16a841f3f4"
+    },
+    {
+      "path": "docs/RUNBOOK.md",
+      "bytes": 496,
+      "sha256": "50fa2bee0c9036ed8616b5f8ca55ca08dc7b06309f1e9f467434222c09157231"
+    },
+    {
+      "path": "docs/SECURITY.md",
+      "bytes": 530,
+      "sha256": "b72eeabc023fb40a2e93008be641c02e89502ca3cde0684af740a9f603334494"
+    },
+    {
+      "path": "env/rhiz-jules.env.example",
+      "bytes": 1522,
+      "sha256": "1597679463f3b244c371937c9c076f7deeae01384ad15464bcea1f99eaf21a11"
+    },
+    {
+      "path": "gitlab/jules.gitlab-ci.yml",
+      "bytes": 1144,
+      "sha256": "c7b0428b2a994f7d503f8939461ff954cfd34a1934850aa45918bed841d3fa43"
+    },
+    {
+      "path": "lxd/profiles.yml",
+      "bytes": 528,
+      "sha256": "d9d5f3bdab8437306705c779a4bb7ed3c4840dea0540ab834ab7d18dd0f55fb8"
+    },
+    {
+      "path": "mockups/hyperbolic-elliptic-flow/index.html",
+      "bytes": 3466,
+      "sha256": "1df2cdd8c3c31620faac4b22169b5adc3d28cc633570a91c69b4caa1f1614b3c"
+    },
+    {
+      "path": "schemas/deployment-envelope.schema.json",
+      "bytes": 706,
+      "sha256": "19fd76882e9ca6a91391bb3e81bd3ba48f5054c86a958a5529528d3c69b5d49b"
+    },
+    {
+      "path": "services/bootstrap-api/package.json",
+      "bytes": 101,
+      "sha256": "1c10d37fb123e7eed1eb4343d90b44855e6d73f5bf3586da96b59a3a2ec610f0"
+    },
+    {
+      "path": "services/bootstrap-api/server.js",
+      "bytes": 4558,
+      "sha256": "f2d5f971cd19ef36dc31a024588a409d1d2e4b5360f892e5bcc2d6c554ab33f1"
+    },
+    {
+      "path": "stacks/gateway-stack.yml",
+      "bytes": 1437,
+      "sha256": "b276a6fe10cebacd6e6d1f4f160c0330914a98303d7695b978f4427578bef48b"
+    },
+    {
+      "path": "syntax-checks.json",
+      "bytes": 955,
+      "sha256": "713954813bae4ef21ddaee486a8f294d3938ede38f0cae899bf25d5cb3d2559f"
+    },
+    {
+      "path": "systemd/rhiz-jules-bridge-health.service",
+      "bytes": 195,
+      "sha256": "52bb11379ba571a695e0866ae0329a6bec3d11cb0f6b1395a56dda662f33d133"
+    },
+    {
+      "path": "systemd/rhiz-jules-bridge-health.timer",
+      "bytes": 145,
+      "sha256": "22b2f5861a4e8c34c29b1fad4a5fdb54ad94dc81bd6abf3cb5a89cb5de40107c"
+    },
+    {
+      "path": "upstream/directives_gateway_main_cluster.md",
+      "bytes": 24215,
+      "sha256": "36b09869f51257008bd381b14fd843a3fe635e3c1c2d2334dcc264b695e94c94"
+    },
+    {
+      "path": "upstream/infrasys-webgl.zip",
+      "bytes": 30543,
+      "sha256": "c7b6b10599e409da882b06f0243b1543003719c3ea3631ed565de293d4eda6e0"
+    },
+    {
+      "path": "upstream/niurk-smart-workflow-bundle.zip",
+      "bytes": 151759,
+      "sha256": "a7cc3927e6b8040c43247f950da333617a4b825acc3721b5b51e6f418e514eb2"
+    },
+    {
+      "path": "upstream/patch-lxd.zip",
+      "bytes": 9808,
+      "sha256": "0bc6c6c8e9a1636602b206cb289f15181b09bdad9e6d1d92156d35a6e5964e69"
+    }
+  ]
+}

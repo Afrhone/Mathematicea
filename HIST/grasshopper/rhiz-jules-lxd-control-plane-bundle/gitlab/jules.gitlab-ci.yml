@@ -1,0 +1,32 @@
+stages:
+  - jules
+
+jules_task:
+  stage: jules
+  image: fedora:43
+  rules:
+    - if: '$JULES_TASK == "1"'
+    - when: manual
+  before_script:
+    - dnf install -y curl jq git
+  script:
+    - |
+      : "${JULES_API_KEY:?missing JULES_API_KEY}"
+      : "${JULES_SOURCE:?missing JULES_SOURCE}"
+      PROMPT="${JULES_PROMPT:-Review branch ${CI_COMMIT_BRANCH}. Fix obvious issues, add tests, keep diff minimal.}"
+      jq -n \
+        --arg prompt "$PROMPT" \
+        --arg source "$JULES_SOURCE" \
+        --arg branch "$CI_COMMIT_BRANCH" \
+        --arg title "GitLab ${CI_PROJECT_PATH}@${CI_COMMIT_BRANCH}" \
+        '{prompt:$prompt,title:$title,automationMode:"AUTO_CREATE_PR",sourceContext:{source:$source,githubRepoContext:{startingBranch:$branch}}}' \
+        > jules-session-request.json
+      curl -fsS -X POST "https://jules.googleapis.com/v1alpha/sessions" \
+        -H "Content-Type: application/json" \
+        -H "X-Goog-Api-Key: ${JULES_API_KEY}" \
+        -d @jules-session-request.json | tee jules-session-response.json
+  artifacts:
+    when: always
+    paths:
+      - jules-session-request.json
+      - jules-session-response.json

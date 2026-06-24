@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+pyserial
+pydantic
+pymongo
+redis
+numpy
+python-multipart
+websockets
+networkx

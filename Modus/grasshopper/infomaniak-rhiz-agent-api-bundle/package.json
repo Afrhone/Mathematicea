@@ -1,0 +1,1 @@
+{"scripts":{"compose":"docker compose -f compose/docker-compose.yml --env-file .env up --build","doctor":"bash scripts/doctor.sh"},"private":true}

@@ -1,0 +1,23 @@
+{
+  "schema": "yetti.codex-conservation.v1",
+  "goal": "reduce expensive Codex/cloud calls by local compression first",
+  "gates": [
+    "repo_map_created",
+    "failure_packet_created",
+    "tests_attempted",
+    "local_credit_minted",
+    "codex_call_flag_explicit"
+  ],
+  "law": [
+    "No Codex before local compression",
+    "No expensive oracle before cheap scout",
+    "No paid patch before repo map",
+    "No cloud burn before YETTI burn"
+  ],
+  "outputs": [
+    "repo-map.md",
+    "failure-packet.md",
+    "codex-task.md",
+    "ledger ndjson"
+  ]
+}

@@ -1,0 +1,21 @@
+name: rhiz-host-management-integrity
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  shellcheck-lite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bash syntax
+        run: bash -n scripts/*.sh
+      - name: Directive JSON
+        run: python3 -m json.tool directives/host-management.directive.json >/dev/null
+      - name: Archive bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: rhiz-host-management-ceph-lxd-automation
+          path: .

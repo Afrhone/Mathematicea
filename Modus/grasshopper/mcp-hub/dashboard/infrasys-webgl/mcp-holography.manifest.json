@@ -1,0 +1,16 @@
+{
+  "version": "0.1",
+  "hub": "niurk-mcp-hub",
+  "topology": "../../config/cluster-topology.yaml",
+  "layers": [
+    {"id":"cluster_nodes","type":"graph","source":"cluster-topology"},
+    {"id":"lxd_heartbeat","type":"pulse","metric":"lxd_state"},
+    {"id":"ceph_surface","type":"surface-grid","metric":"ceph_health"},
+    {"id":"agent_attention","type":"alpha-band","metric":"priority"},
+    {"id":"bitcoin_mempool","type":"particle-stream","metric":"fee_density"}
+  ],
+  "sources": {
+    "mcp": "stdio:node mcp-hub/src/hub.mjs",
+    "dashboard": "standalone no-server WebGL"
+  }
+}

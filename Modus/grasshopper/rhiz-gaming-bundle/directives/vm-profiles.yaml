@@ -1,0 +1,55 @@
+profiles:
+  cpu-default:
+    vcpus: 4
+    ram_mb: 8192
+    disk_size: 60G
+    target_pool: cpu
+    os_variant: ubuntu24.04
+  gpu-default:
+    vcpus: 8
+    ram_mb: 16384
+    disk_size: 120G
+    target_pool: gpu
+    os_variant: ubuntu24.04
+    gpu_attach: pci
+  cpu-fedora:
+    vcpus: 6
+    ram_mb: 12288
+    disk_size: 80G
+    target_pool: cpu
+    os_variant: ubuntu24.04
+    enable_lxd: true
+  gpu-fedora:
+    vcpus: 10
+    ram_mb: 24576
+    disk_size: 160G
+    target_pool: gpu
+    os_variant: ubuntu24.04
+    enable_lxd: true
+    gpu_attach: pci
+  bastion-ubuntu:
+    vcpus: 2
+    ram_mb: 4096
+    disk_size: 40G
+    target_pool: cpu
+    os_variant: ubuntu24.04
+  win11-gaming:
+    vcpus: 12
+    ram_mb: 32768
+    disk_size: 220G
+    target_pool: gpu
+    os_variant: win11
+    gpu_attach: pci
+    secure_boot: true
+    tpm: true
+    cpu_mode: host-passthrough
+  win11-gaming-hdr:
+    vcpus: 14
+    ram_mb: 49152
+    disk_size: 320G
+    target_pool: gpu
+    os_variant: win11
+    gpu_attach: pci
+    secure_boot: true
+    tpm: true
+    cpu_mode: host-passthrough

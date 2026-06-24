@@ -1,0 +1,11 @@
+stages: [integrity]
+integrity:
+  stage: integrity
+  image: docker:27
+  services: [docker:27-dind]
+  script:
+    - apk add --no-cache bash python3 docker-cli-compose
+    - bash -n scripts/*.sh scripts/scout/*.sh scripts/codex/*.sh scripts/ledger/*.sh
+    - python3 -m json.tool directives/yetti-codex.directive.json >/dev/null
+    - cp config/yetti-codex.env.example .env
+    - docker compose -f compose/compose.yetti-codex.yml config >/dev/null

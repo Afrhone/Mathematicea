@@ -1,0 +1,17 @@
+{
+  "chain": "YETTI Snow Credits",
+  "symbol": "YETTI",
+  "mode": "private-dev-first",
+  "operator": "phiiiiv3i4 / Afrhone / Kobalt",
+  "co_design_assistant": "YETI-715 / Frost-Gate Operator",
+  "first_mined_hash": "d72d99d7333a82e07921d2a7274dd51d04e1940cc27750d77f579bfa539fdd6d",
+  "summon_hash": "64f92914b7aa9987e75e090b46d8d1fb6ca2c582f9d5cf415310697f6e3c65cb",
+  "genesis_law": [
+    "No retry without a gate.",
+    "No mint without review.",
+    "No public release without legal/security check.",
+    "No automation world without a state sink.",
+    "No oracle call before local compression."
+  ],
+  "created_at_unix": 1778950918
+}

@@ -1,0 +1,7 @@
+<!doctype html><meta charset="utf-8"><title>Flowforms Functorial Preset Preview</title>
+<link rel="stylesheet" href="../css/flowforms.css"><script src="../js/flowforms-glyphs.js"></script><script src="../js/flowforms-presets.js"></script>
+<body style="overflow:auto;height:auto"><main style="padding:40px;max-width:1200px;margin:auto"><h1 style="font-family:Georgia,serif">Φ Functorial Alphabet Preset</h1><p>Graphème → phonème → gesture → Bézier → ODE.</p><div id="grid" style="display:grid;grid-template-columns:repeat(13,1fr);gap:14px"></div><pre id="formal"></pre></main><script>
+const glyphs=FlowformsPresets.applyPreset('functorial-alphabet', FlowformsGlyphs.glyphs).filter(g=>/[A-Za-z]/.test(g.char));
+grid.innerHTML=glyphs.map(g=>`<div style="border:1px solid #ded8cc;border-radius:12px;padding:10px;background:white;text-align:center"><div style="font-family:Flowforms,Georgia,serif;font-size:42px">${g.char}</div><small>${g.char} /${g.functor.phoneme}/<br>${g.functor.morphism}</small></div>`).join('');
+formal.textContent=FlowformsPresets.formalText();
+</script></body>

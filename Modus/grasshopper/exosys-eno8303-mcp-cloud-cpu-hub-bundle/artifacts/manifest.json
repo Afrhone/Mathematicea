@@ -1,0 +1,17 @@
+[
+  {
+    "name": "niurk-exosys-fedora43-bundle-2.zip",
+    "size": 174224,
+    "sha256": "a95ba94db0dfe374faccedb359f7471e6bde414f745256260b93c7d475525622"
+  },
+  {
+    "name": "niurk-mcp-hub-bundle-regenerated.zip",
+    "size": 496534,
+    "sha256": "7a61c5dce6f067dcf0e19d3e118e3bd7de5c8b9b073958ac988363ad02cdad31"
+  },
+  {
+    "name": "lxd-info-system-webgl-bundle-1.zip",
+    "size": 31887,
+    "sha256": "5156519364040c7f19e65bcc36fb15c06955f9c78f5fc265d1e8d08bbfd7467d"
+  }
+]

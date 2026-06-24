@@ -1,0 +1,29 @@
+metabolic_engine:
+  metaphor: "composting / fermenting / transmutation beautifier"
+  purpose: "turn trash-data into structured, auditable, human-readable knowledge assets"
+  stages:
+    raw:
+      path: data/raw
+      meaning: "dump raw notes, links, markdown, logs, repo summaries, camera annotations"
+    compost:
+      path: data/compost
+      meaning: "chunk, hash, deduplicate, classify sensory/logic/ops/philo fragments"
+    ferment:
+      path: data/ferment
+      meaning: "summarize, backlink, extract concepts, build graph candidates"
+    distill:
+      path: data/wiki
+      meaning: "write Markdown wiki pages with explicit provenance"
+    canon:
+      path: data/canon
+      meaning: "promoted only after lint + integrity score + reversible source links"
+  graph_awareness:
+    node_types: [source, chunk, concept, invariant, functor, agent_task, promotion_candidate]
+    edge_types: [contains, cites, contradicts, refines, maps_to, escalates_to, blocked_by]
+  sparse_sampling:
+    enabled: true
+    strategy: "sample subgraphs by high entropy, weak evidence, high reward, or panic origin"
+  llama_gpu:
+    enabled_env: LLAMA_GPU_ENABLED
+    endpoint_env: LLAMA_GPU_ENDPOINT
+    policy: "escalate only when local edge model fails or integrity score is ambiguous"

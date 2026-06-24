@@ -1,0 +1,49 @@
+{
+  "epics": [
+    {
+      "name": "Ops Doctor",
+      "items": [
+        "endpoint checker",
+        "docker status collector",
+        "dns invariant checker",
+        "report generator"
+      ]
+    },
+    {
+      "name": "Revenue Layer",
+      "items": [
+        "pricing page",
+        "invoice template",
+        "payment link integration",
+        "client CRM"
+      ]
+    },
+    {
+      "name": "Cookbook",
+      "items": [
+        "case study editor",
+        "tags",
+        "paid access",
+        "search"
+      ]
+    },
+    {
+      "name": "Trading Research",
+      "items": [
+        "journal",
+        "risk gates",
+        "paper trade tracker",
+        "drawdown metrics"
+      ]
+    },
+    {
+      "name": "WebGL Lab",
+      "items": [
+        "functor visualizer",
+        "metrology demo",
+        "gallery embed",
+        "paid visual pack export"
+      ]
+    }
+  ]
+}

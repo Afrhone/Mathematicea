@@ -1,0 +1,111 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports: ["${MONGO_PORT:-27019}:27017"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-rhiz}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-change-me-mongo}
+    volumes: [mongo-data:/data/db]
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports: ["${REDIS_PORT:-6381}:6379"]
+
+  gateway:
+    build: ../apps/gateway
+    restart: unless-stopped
+    ports: ["${GATEWAY_PORT:-8099}:8099"]
+    env_file: ../.env
+    environment:
+      CONFIG_DIR: /config
+      MONGO_URL: mongodb://${MONGO_INITDB_ROOT_USERNAME:-rhiz}:${MONGO_INITDB_ROOT_PASSWORD:-change-me-mongo}@mongo:27017
+    volumes:
+      - ../config:/config:ro
+    extra_hosts:
+      - "model-runner.docker.internal:host-gateway"
+    depends_on: [mongo]
+
+  mcp-server:
+    build: ../apps/mcp-server
+    restart: unless-stopped
+    ports: ["${MCP_PORT:-8787}:8787"]
+    env_file: ../.env
+    environment:
+      GATEWAY_URL: http://gateway:8099
+    depends_on: [gateway]
+
+  ui:
+    build:
+      context: ../apps/ui
+    restart: unless-stopped
+    ports: ["${UI_PORT:-3033}:3033"]
+    environment:
+      NEXT_PUBLIC_GATEWAY_URL: ${NEXT_PUBLIC_GATEWAY_URL:-http://192.168.0.34:8099}
+      NEXT_PUBLIC_MCP_URL: ${NEXT_PUBLIC_MCP_URL:-http://192.168.0.34:8787}
+    depends_on: [gateway]
+
+  collector:
+    build: ../apps/collector
+    restart: unless-stopped
+    env_file: ../.env
+    environment:
+      MONGO_URL: mongodb://${MONGO_INITDB_ROOT_USERNAME:-rhiz}:${MONGO_INITDB_ROOT_PASSWORD:-change-me-mongo}@mongo:27017
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on: [mongo]
+
+  llama-cpp:
+    image: ghcr.io/ggerganov/llama.cpp:server
+    profiles: ["llama-cpp"]
+    restart: unless-stopped
+    ports: ["${LLAMA_CPP_PORT:-8088}:8088"]
+    command: ["-m", "/models/default.gguf", "--host", "0.0.0.0", "--port", "8088", "-c", "4096"]
+    volumes:
+      - ${GGUF_DIR:-/srv/rhiz/models/gguf}:/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["ollama"]
+    restart: unless-stopped
+    ports: ["${OLLAMA_PORT:-11434}:11434"]
+    volumes:
+      - ollama-data:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  vllm:
+    image: vllm/vllm-openai:latest
+    profiles: ["vllm-local"]
+    restart: unless-stopped
+    ports: ["${VLLM_PORT:-8000}:8000"]
+    ipc: host
+    environment:
+      HUGGING_FACE_HUB_TOKEN: ${HUGGING_FACE_HUB_TOKEN:-}
+    command: ["--model", "${VLLM_MODEL:-google/gemma-4-31B-it}", "--host", "0.0.0.0", "--port", "8000"]
+    volumes:
+      - ${SAFETENSORS_DIR:-/srv/rhiz/models/safetensors}:/models
+      - ${CACHE_DIR:-/srv/rhiz/cache}:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+volumes:
+  mongo-data:
+  ollama-data:

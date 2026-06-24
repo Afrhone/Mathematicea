@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+  <title>Manifold Environment Simulator v2 — interference • chaos • helix • statistics</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="c"></canvas>
+
+  <div id="ui" class="panel">
+    <div class="row">
+      <div class="title">
+        <div class="brand">Manifold Environment Simulator <span class="badge">v2</span></div>
+        <div class="subtitle">Thermo × Fluids × Probability × QMD × Electrodynamics — heuristic manifold map</div>
+      </div>
+      <button id="toggle" class="btn">Collapse</button>
+    </div>
+
+    <div class="grid">
+      <div class="control">
+        <label>Entropy / decay <span id="v_decay" class="val"></span></label>
+        <input id="decay" type="range" min="0" max="0.08" step="0.0005" value="0.014">
+      </div>
+
+      <div class="control">
+        <label>Interference frequency <span id="v_ifreq" class="val"></span></label>
+        <input id="ifreq" type="range" min="1" max="120" step="1" value="34">
+      </div>
+
+      <div class="control">
+        <label>Interference speed <span id="v_ispeed" class="val"></span></label>
+        <input id="ispeed" type="range" min="0" max="10" step="0.01" value="1.6">
+      </div>
+
+      <div class="control">
+        <label>Noise scale <span id="v_nscale" class="val"></span></label>
+        <input id="nscale" type="range" min="0.5" max="22" step="0.01" value="7.2">
+      </div>
+
+      <div class="control">
+        <label>Noise strength <span id="v_nstr" class="val"></span></label>
+        <input id="nstr" type="range" min="0" max="3.5" step="0.01" value="1.25">
+      </div>
+
+      <div class="control">
+        <label>Normality (Gaussian blend) <span id="v_gauss" class="val"></span></label>
+        <input id="gauss" type="range" min="0" max="1" step="0.001" value="0.55">
+      </div>
+
+      <div class="control">
+        <label>Helix turns <span id="v_hturn" class="val"></span></label>
+        <input id="hturn" type="range" min="1" max="52" step="1" value="16">
+      </div>
+
+      <div class="control">
+        <label>Helix strength <span id="v_hstr" class="val"></span></label>
+        <input id="hstr" type="range" min="0" max="2.8" step="0.01" value="1.15">
+      </div>
+
+      <div class="control">
+        <label>Helix speed <span id="v_hspeed" class="val"></span></label>
+        <input id="hspeed" type="range" min="0" max="8" step="0.01" value="1.9">
+      </div>
+
+      <div class="control">
+        <label>Electrodynamic coupling <span id="v_edyn" class="val"></span></label>
+        <input id="edyn" type="range" min="0" max="2" step="0.001" value="0.65">
+      </div>
+
+      <div class="control">
+        <label>Δt (advection step) <span id="v_dt" class="val"></span></label>
+        <input id="dt" type="range" min="0.001" max="0.06" step="0.0005" value="0.013">
+      </div>
+
+      <div class="control">
+        <label>Injection (source) <span id="v_inj" class="val"></span></label>
+        <input id="inj" type="range" min="0" max="1.8" step="0.001" value="0.62">
+      </div>
+
+      <div class="control">
+        <label>Double-slit separation <span id="v_slit" class="val"></span></label>
+        <input id="slit" type="range" min="0.02" max="0.95" step="0.001" value="0.24">
+      </div>
+
+      <div class="control">
+        <label>“Baryogenesis → Proteins” palette blend <span id="v_bio" class="val"></span></label>
+        <input id="bio" type="range" min="0" max="1" step="0.001" value="0.38">
+      </div>
+    </div>
+
+    <div class="row footer">
+      <div class="hint">
+        Drag = stir. Space = pause. R = reset. S = screenshot.
+        Docs: <code>docs/PAPER.md</code> • <code>docs/KNOWLEDGE_SCHEMA.md</code> • <code>docs/WORKFLOW_QC_ELECTRODYNAMICS.md</code>.
+        SVG map: <code>assets/map.svg</code>.
+      </div>
+      <div class="buttons">
+        <button id="reset" class="btn">Reset</button>
+        <button id="shot" class="btn">Screenshot</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

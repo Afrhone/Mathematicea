@@ -1,0 +1,88 @@
+{
+  "prefixes": {
+    "trans": {
+      "archetype": "passage/bridge",
+      "intent": "crossing, transformation"
+    },
+    "con": {
+      "archetype": "binding/with",
+      "intent": "togetherness, co-agency"
+    },
+    "sub": {
+      "archetype": "under-layer",
+      "intent": "substrate, hidden support"
+    },
+    "re": {
+      "archetype": "return/loop",
+      "intent": "iteration, recursion"
+    },
+    "in": {
+      "archetype": "inward",
+      "intent": "incorporation, enclosure"
+    },
+    "ex": {
+      "archetype": "outward",
+      "intent": "emergence, expression"
+    },
+    "de": {
+      "archetype": "unbinding",
+      "intent": "release, dismantle"
+    },
+    "pro": {
+      "archetype": "forward",
+      "intent": "projection, offering"
+    },
+    "anti": {
+      "archetype": "counter",
+      "intent": "opposition, mirror"
+    }
+  },
+  "suffixes": {
+    "tion": {
+      "archetype": "process",
+      "intent": "becoming, operation"
+    },
+    "ment": {
+      "archetype": "instrument/state",
+      "intent": "means, manner"
+    },
+    "isme": {
+      "archetype": "system",
+      "intent": "doctrine, framework"
+    },
+    "it\u00e9": {
+      "archetype": "quality",
+      "intent": "property, invariant"
+    }
+  },
+  "phoneme_consonance": {
+    "\u0281": {
+      "intent": "rotation/authority",
+      "archetype": "axis"
+    },
+    "\u0283": {
+      "intent": "veil/soft cut",
+      "archetype": "shadow blade"
+    },
+    "z": {
+      "intent": "buzz/continuity",
+      "archetype": "field"
+    },
+    "t": {
+      "intent": "cut/decision",
+      "archetype": "gate"
+    },
+    "m": {
+      "intent": "merge/contain",
+      "archetype": "vessel"
+    },
+    "n": {
+      "intent": "index/trace",
+      "archetype": "pointer"
+    },
+    "j": {
+      "intent": "link/flow",
+      "archetype": "bridge filament"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "rhiz-openade-lxd-agent-swarm-bundle",
+  "created": "2026-05-27T13:24:51Z",
+  "features": [
+    "LXD VM bootstrap",
+    "OpenADE primary/contrib clones",
+    "Electron/EVM toolchain",
+    "OpenAI-compatible gateway",
+    "MCP server",
+    "KV/RAG",
+    "GPU pool routing",
+    "VM snapshot/failover",
+    "Docker Compose",
+    "Swarm scaffold",
+    "UI dashboard"
+  ],
+  "imported_bundles": [
+    "rhiz-compute(3).zip",
+    "rhiz-gaming-bundle.zip",
+    "colab-gpu-rhiz-bundle.zip",
+    "rhiz-jules-lxd-control-plane-bundle.zip",
+    "rhiz-sinkhole-bastion-guardian-v2-build.zip",
+    "kobalt-sigma-llama-gpu-bundle(2).zip",
+    "rhiz-google-adk-cloud-lxd-lab-bundle.zip"
+  ]
+}

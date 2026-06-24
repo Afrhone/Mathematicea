@@ -1,0 +1,21 @@
+risk_model:
+  thresholds:
+    warn: 0.55
+    critical: 0.82
+  features:
+    severity_base: true
+    rolling_zscore: true
+    entropy_domain_score: true
+    cyclic_baseline_hour_of_day: true
+    burst_detection: true
+    ceph_health_weight: 0.18
+    lxd_stopped_vm_weight: 0.12
+    auth_failure_weight: 0.2
+    dns_sinkhole_hit_weight: 0.16
+  predictive_patterns:
+    - name: disk_pressure_to_lxd_failure
+      sequence: [disk_root_percent_high, lxd_operation_stuck, rbd_map_failure]
+    - name: ceph_auth_cascade
+      sequence: [keyring_missing, auth_bad_method, rbd_map_denied]
+    - name: network_mesh_drift
+      sequence: [wg_peer_down, lxd_node_unreachable, ceph_slow_ops]

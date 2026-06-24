@@ -1,0 +1,29 @@
+name: yeti715-agent
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python syntax
+        run: python3 -m compileall agent_api
+      - name: Shell syntax
+        run: |
+          bash -n scripts/*.sh
+          bash -n summon/*.sh
+          bash -n lxd/*.sh
+      - name: Compose config
+        run: docker compose config
+      - name: Tests
+        run: |
+          pip install pytest
+          pytest agent_api/tests
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phiiiiv3i4-yeti715-agent-bundle
+          path: .

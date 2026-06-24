@@ -1,0 +1,10 @@
+name: yetti-integrity
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash -n automation/gates/*.sh
+      - run: python3 -m json.tool genesis/genesis.yetti.json >/dev/null
+      - run: cp .env.example .env && docker compose -f compose/compose.yetti-node.yml config >/dev/null

@@ -1,0 +1,20 @@
+profiles:
+  default:
+    tags: [base, auth, proxy]
+    services: [portainer, app-gateway]
+  hypergraph:
+    tags: [graph, heuristics, cards]
+    services: [hypergraph-api, card-engine, graph-ui]
+  operator:
+    tags: [ops, vpn, remote-config]
+    services: [operator-api, token-broker, ssh-proxy]
+  gpu-lab:
+    tags: [gpu, render, model]
+    services: [ollama-gpu, tensorboard, job-runner]
+cards:
+  ontology:
+    services: [card-engine, graph-ui]
+  psychometrics:
+    services: [graph-ui, heuristics-worker]
+  heuristics:
+    services: [heuristics-worker, event-bus]

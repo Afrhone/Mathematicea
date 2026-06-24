@@ -1,0 +1,77 @@
+{
+  "aliases": {
+    "auto:fast": {
+      "default": "mistralai/Ministral-3-14B-Instruct-2512",
+      "lane": "chat_small",
+      "local_preferred": true
+    },
+    "auto:architect": {
+      "default": "Qwen/Qwen3.5-122B-A10B-FP8",
+      "lane": "chat_large",
+      "local_preferred": false
+    },
+    "auto:sovereign": {
+      "default": "Apertus-70B-Instruct-2509",
+      "lane": "chat_medium",
+      "local_preferred": false
+    },
+    "auto:code": {
+      "default": "moonshotai/Kimi-K2.6",
+      "lane": "code",
+      "local_preferred": false
+    },
+    "auto:nano": {
+      "default": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8",
+      "lane": "chat_medium",
+      "local_preferred": true
+    },
+    "auto:mistral-large": {
+      "default": "mistralai/Mistral-Small-4-119B-2603",
+      "lane": "chat_large",
+      "local_preferred": false
+    },
+    "auto:rerank": {
+      "default": "BAAI/bge-reranker-v2-m3",
+      "lane": "rerank"
+    },
+    "auto:rerank-fast": {
+      "default": "Qwen/Qwen3-Reranker-0.6B",
+      "lane": "rerank"
+    },
+    "auto:embed-small": {
+      "default": "All MiniLM L12 v2",
+      "lane": "embedding"
+    },
+    "auto:embed-large": {
+      "default": "Qwen/Qwen3-Embedding-8B",
+      "lane": "embedding"
+    },
+    "auto:image": {
+      "default": "Flux schnell",
+      "lane": "image"
+    },
+    "auto:photomaker": {
+      "default": "Photomaker V2",
+      "lane": "image"
+    }
+  },
+  "routing": {
+    "local_first": true,
+    "cloud_burst_when": [
+      "context_tokens_gt_threshold",
+      "multimodal",
+      "rerank",
+      "outsourced_review",
+      "no_local_capacity",
+      "operator_override"
+    ],
+    "review_lanes": [
+      "infra",
+      "security",
+      "code",
+      "rag",
+      "cost",
+      "runtime"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "hostname": "413763b231fb",
+  "kernel": "4.4.0",
+  "arch": "x86_64",
+  "os": "debian-13",
+  "primary_ip": "",
+  "primary_iface": "eth0",
+  "bridges": [],
+  "virsh": "no",
+  "docker": "no",
+  "lxd": "no",
+  "ceph": "no"
+}

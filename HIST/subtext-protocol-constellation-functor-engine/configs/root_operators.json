@@ -1,0 +1,54 @@
+{
+  "operators": {
+    "hypergraph": [
+      "awareness",
+      "relations",
+      "graph"
+    ],
+    "phi": [
+      "interface",
+      "protocol",
+      "identity"
+    ],
+    "cloud": [
+      "projection",
+      "compute",
+      "dashboard"
+    ],
+    "compiler": [
+      "transform",
+      "structure",
+      "wiki"
+    ],
+    "lint": [
+      "validate",
+      "heal",
+      "audit"
+    ],
+    "interwin": [
+      "bridge",
+      "intertwine",
+      "relate"
+    ],
+    "search": [
+      "tree",
+      "retrieve",
+      "rank"
+    ],
+    "signal": [
+      "flow",
+      "extract",
+      "compose"
+    ],
+    "agent": [
+      "orchestrate",
+      "brief",
+      "act"
+    ],
+    "constellation": [
+      "visualize",
+      "orbit",
+      "cluster"
+    ]
+  }
+}

@@ -1,0 +1,5 @@
+sso:
+  provider: authelia
+  oidc_issuer: https://auth.rhiz-arch.afrho.net
+  bootstrap_admin_email: admin@afrho.net
+  bootstrap_admin_user: admin

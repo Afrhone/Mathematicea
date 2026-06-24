@@ -1,0 +1,84 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes: [mongo_data:/data/db]
+    ports: ["27017:27017"]
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+  gateway:
+    build: ../services/gateway
+    env_file: ../.env
+    volumes:
+      - ../config:/app/config:ro
+    ports: ["8066:8066"]
+    depends_on: [mongo, redis]
+  web:
+    build: ../apps/web
+    env_file: ../.env
+    ports: ["3066:3000"]
+    depends_on: [gateway]
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["local-gpu"]
+    restart: unless-stopped
+    ports: ["11434:11434"]
+    volumes: [ollama:/root/.ollama]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+  llama-cpp:
+    image: ghcr.io/ggerganov/llama.cpp:server-cuda
+    profiles: ["llama-cpp"]
+    command: ["-m", "/models/model.gguf", "--host", "0.0.0.0", "--port", "8080", "-ngl", "999"]
+    volumes: ["./models:/models:ro"]
+    ports: ["8080:8080"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    restart: unless-stopped
+    environment:
+      OPENAI_API_BASE_URL: http://gateway:8066/v1
+      OPENAI_API_KEY: ${GATEWAY_API_KEY}
+    volumes: [open_webui:/app/backend/data]
+    ports: ["3080:8080"]
+    depends_on: [gateway]
+  open-terminal:
+    image: ghcr.io/open-webui/open-terminal:main
+    profiles: ["agents"]
+    environment:
+      OPEN_TERMINAL_API_KEY: ${OPEN_TERMINAL_API_KEY}
+    volumes: [agent_workspace:/workspace]
+    ports: ["3333:3333"]
+  agent-shell:
+    build: ../services/agent-shell
+    profiles: ["agents"]
+    env_file: ../.env
+    volumes: [agent_workspace:/workspace]
+    tty: true
+  collector:
+    build: ../services/collector
+    profiles: ["host-observe"]
+    privileged: true
+    env_file: ../.env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/snap/lxd/common/lxd/unix.socket:/var/snap/lxd/common/lxd/unix.socket:ro
+      - /etc/ceph:/etc/ceph:ro
+    depends_on: [mongo]
+volumes:
+  mongo_data: {}
+  ollama: {}
+  open_webui: {}
+  agent_workspace: {}

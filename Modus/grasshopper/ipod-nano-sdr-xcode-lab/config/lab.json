@@ -1,0 +1,14 @@
+{
+  "name": "Nano Spectro Lab",
+  "sdr": {
+    "mode": "synthetic",
+    "centerFreqHz": 100000000,
+    "sampleRate": 2048000,
+    "fftSize": 1024
+  },
+  "exports": {
+    "nanoVideoWidth": 320,
+    "gifWidth": 240,
+    "xcodeTarget": "NanoSpectroLab"
+  }
+}

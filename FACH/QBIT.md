@@ -1,0 +1,3 @@
+QBIT
+
+Quand un qbit subit la décoherence, tous ces états probables enfait des états espaces en phases, donc une dynamique d’un module discret à l’autre sont réduit. Donc t’aurais la table de vérité avec des entrées a la fois 0 et 1 qui deviennent spécifiques. La physique moderne entant principe, dit que les lois de la physique (Ré) sont crées par ce principe (im) donc on a juste des déformations complexes du plan. Si t’arrives á avoir plus d’états avec haute énergie que d’états avec bas energies, les règles de commutations entre les etats espaces de phases sont altérés.

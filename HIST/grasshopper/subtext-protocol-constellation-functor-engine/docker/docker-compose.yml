@@ -1,0 +1,51 @@
+name: subtext-constellation
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes: [mongo_data:/data/db]
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+  compiler:
+    build: ../services/compiler
+    restart: unless-stopped
+    ports: ["8101:8101"]
+    environment:
+      - PORT=8101
+      - MONGO_URL=mongodb://mongo:27017/subtext_constellation
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ../configs:/configs:ro
+      - ../raw:/raw
+      - ../compiled:/compiled
+    depends_on: [mongo, redis]
+  api:
+    build: ../services/api
+    restart: unless-stopped
+    ports: ["8100:8100"]
+    environment:
+      - PORT=8100
+      - MONGO_URL=mongodb://mongo:27017/subtext_constellation
+      - REDIS_URL=redis://redis:6379/0
+      - COMPILER_URL=http://compiler:8101
+    volumes:
+      - ../configs:/configs:ro
+      - ../raw:/raw
+      - ../compiled:/compiled
+    depends_on: [mongo, redis, compiler]
+  mcp:
+    build: ../services/mcp
+    restart: unless-stopped
+    ports: ["8102:8102"]
+    environment:
+      - PORT=8102
+      - API_URL=http://api:8100
+    depends_on: [api]
+  ui:
+    build: ../app
+    restart: unless-stopped
+    ports: ["8099:80"]
+    depends_on: [api, mcp]
+volumes:
+  mongo_data:

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RealityLabMetricState",
+  "type": "object",
+  "required": [
+    "time",
+    "source",
+    "state"
+  ],
+  "properties": {
+    "time": {
+      "type": "number"
+    },
+    "source": {
+      "type": "string"
+    },
+    "state": {
+      "type": "object"
+    },
+    "tau": {
+      "type": "number"
+    },
+    "entropy": {
+      "type": "number"
+    }
+  }
+}

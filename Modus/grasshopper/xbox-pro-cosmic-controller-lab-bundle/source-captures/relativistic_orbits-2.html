@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Relativistic Chaotic Solar Playground — orbits unleashed</title>
+  <style>
+    html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:sans-serif;color:#fff}
+    canvas{display:block;position:fixed;inset:0;width:100%;height:100%}
+    #hud{position:fixed;top:0;left:0;padding:8px 12px;background:rgba(0,0,0,0.45);border-bottom-right-radius:8px;pointer-events:none}
+    #ui{position:fixed;top:0;right:0;width:clamp(220px,24vw,360px);max-height:100vh;overflow-y:auto;padding:12px;background:rgba(0,0,0,0.55);border-bottom-left-radius:12px;color:#e4e4e4;font-size:14px}
+    #ui label{display:flex;align-items:center;margin-bottom:6px;gap:6px}
+    #ui label span{margin-left:auto;width:48px;text-align:right}
+    #ui input[type=range]{flex:1}
+    #ui input[type=checkbox],#ui select{accent-color:#ffa400;font-size:14px}
+    #resetBtn{display:block;width:100%;padding:6px 0;margin:8px 0 10px;border:none;border-radius:8px;background:#ffa400;color:#000;font-weight:600;cursor:pointer}
+    #resetBtn:hover{filter:brightness(1.1)}
+  </style>
+</head>
+<body>
+  <canvas id="gl"></canvas>
+  <div id="hud">WASD / arrows / touch to fly – scroll to zoom</div>
+  <div id="ui">
+    <h2 style="margin:0 0 8px 0">Parameters</h2>
+    <button id="resetBtn">Reset ⟳</button>
+    <label>Orbit Init <select id="orbitSel"><option value="circular">Circular</option><option value="elliptical" selected>Elliptical</option></select></label>
+    <label>Relativity <input id="relSlider" type="range" min="0" max="2" step="0.01" value="1"><span id="relVal">1.00</span></label>
+    <label>Chaos <input id="chaosSlider" type="range" min="0" max="5" step="0.1" value="1"><span id="chaosVal">1.0</span></label>
+    <label>QFT Noise <input id="noiseSlider" type="range" min="0" max="1" step="0.01" value="0.05"><span id="noiseVal">0.05</span></label>
+    <label>Asteroids <input id="astSlider" type="range" min="0" max="200" step="1" value="50"><span id="astVal">50</span></label>
+    <label>Trail Length <input id="trailSlider" type="range" min="0" max="1000" step="10" value="300"><span id="trailVal">300</span></label>
+    <label><input type="checkbox" id="trajChk" checked> Trajectories</label>
+    <label><input type="checkbox" id="planeChk" checked> Orbit Planes</label>
+  </div>
+  <script>
+// === Constants ===
+const C = 299792.458;      // km/s (scaled units)
+const G = 1;               // gravitational constant (scaled)
+const DT = 0.015;          // simulation time‑step (arbitrary units)
+const rand = (a=1,b=0)=>Math.random()*(a-b)+b;
+
+// === Body ===
+class Body {
+  constructor({mass=1,pos=[0,0,0],vel=[0,0,0],radius=0.4,color=[1,1,1],moving=true}){
+    this.m = mass;
+    this.p = [...pos];
+    this.v = [...vel];
+    this.r = radius;
+    this.c = color;
+    this.moving = moving;
+    this.path = [];
+  }
+}
+
+// === Simulation World ===
+class World {
+  constructor(){
+    this.bodies = [];
+    this.relFactor = 1;
+    this.chaosFactor = 1;
+    this.noiseAmp = 0.05;
+    this.trailLen = 300;
+    this.showPlanes = true;
+    this.showTraj = true;
+    this.orbitType = 'elliptical';
+  }
+  add(b){this.bodies.push(b);}
+  step(dt){
+    const n=this.bodies.length;
+    const accs=Array.from({length:n},()=>[0,0,0]);
+    for(let i=0;i<n;i++){
+      const bi=this.bodies[i];
+      for(let j=i+1;j<n;j++){
+        const bj=this.bodies[j];
+        const dx=bj.p[0]-bi.p[0];
+        const dy=bj.p[1]-bi.p[1];
+        const dz=bj.p[2]-bi.p[2];
+        const r2=dx*dx+dy*dy+dz*dz+1e-9;
+        const r=Math.sqrt(r2);
+        const invR3=1/Math.pow(r,3);
+        const f=G*bi.m*bj.m*invR3;
+        const ax=f*dx/bi.m;
+        const ay=f*dy/bi.m;
+        const az=f*dz/bi.m;
+        accs[i][0]+=ax;accs[i][1]+=ay;accs[i][2]+=az;
+        accs[j][0]-=ax;accs[j][1]-=ay;accs[j][2]-=az;
+      }
+    }
+    const star=this.bodies[0];
+    for(let i=0;i<n;i++){
+      const b=this.bodies[i];
+      if(!b.moving) continue;
+      if(b!==star){
+        const rx=b.p[0]-star.p[0];
+        const ry=b.p[1]-star.p[1];
+        const rz=b.p[2]-star.p[2];
+        const r=Math.hypot(rx,ry,rz)+1e-9;
+        const v2=b.v[0]**2+b.v[1]**2+b.v[2]**2;
+        const l2=r*r*v2;
+        const relAcc=(3*G*star.m*l2)/(r*r*r*r*C*C);
+        accs[i][0]+=-relAcc*rx/r*this.relFactor;
+        accs[i][1]+=-relAcc*ry/r*this.relFactor;
+        accs[i][2]+=-relAcc*rz/r*this.relFactor;
+      }
+      accs[i][0]+=rand(this.noiseAmp,-this.noiseAmp);
+      accs[i][1]+=rand(this.noiseAmp,-this.noiseAmp);
+      accs[i][2]+=rand(this.noiseAmp,-this.noiseAmp);
+    }
+    for(let i=0;i<n;i++){
+      const b=this.bodies[i];
+      if(!b.moving) continue;
+      b.v[0]+=accs[i][0]*dt;
+      b.v[1]+=accs[i][1]*dt;
+      b.v[2]+=accs[i][2]*dt;
+      b.p[0]+=b.v[0]*dt;
+      b.p[1]+=b.v[1]*dt;
+      b.p[2]+=b.v[2]*dt;
+    }
+    // history
+    for(let b of this.bodies){
+      if(b===star) continue;
+      if(this.showTraj){
+        b.path.push([...b.p]);
+        if(b.path.length>this.trailLen) b.path.shift();
+      } else {b.path.length=0;}
+    }
+  }
+}
+
+// === WebGL setup ===
+const canvas=document.getElementById('gl');
+const gl=canvas.getContext('webgl2');
+const dpr=window.devicePixelRatio||1;
+function resize(){canvas.width=innerWidth*dpr;canvas.height=innerHeight*dpr;gl.viewport(0,0,canvas.width,canvas.height);}window.addEventListener('resize',resize);resize();
+
+const vert=`#version 300 es
+in vec3 aP;in vec3 aC;uniform mat4 uVP;flat out vec3 vC;void main(){gl_Position=uVP*vec4(aP,1.0);gl_PointSize=6.0;vC=aC;}`;
+const frag=`#version 300 es
+precision highp float;flat in vec3 vC;uniform bool uIsPoint;out vec4 o;void main(){if(uIsPoint){float d=length(gl_PointCoord-0.5);if(d>0.5)discard;}o=vec4(vC,1.0);} `;
+function compile(src,type){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(s));return s;}
+const prog=gl.createProgram();gl.attachShader(prog,compile(vert,gl.VERTEX_SHADER));gl.attachShader(prog,compile(frag,gl.FRAGMENT_SHADER));gl.linkProgram(prog);gl.useProgram(prog);
+const posB=gl.createBuffer(),colB=gl.createBuffer(),pathPosB=gl.createBuffer(),pathColB=gl.createBuffer(),planePosB=gl.createBuffer(),planeColB=gl.createBuffer();
+const aP=gl.getAttribLocation(prog,'aP');const aC=gl.getAttribLocation(prog,'aC');gl.enableVertexAttribArray(aP);gl.enableVertexAttribArray(aC);
+const uVP=gl.getUniformLocation(prog,'uVP');const uIsPoint=gl.getUniformLocation(prog,'uIsPoint');
+
+// === Camera ===
+let yaw=0,pitch=0,dist=40;let dragging=false,lx=0,ly=0;
+canvas.addEventListener('mousedown',e=>{dragging=true;lx=e.clientX;ly=e.clientY});window.addEventListener('mouseup',()=>dragging=false);
+window.addEventListener('mousemove',e=>{if(dragging){yaw+=(e.clientX-lx)*0.003;pitch+=(e.clientY-ly)*0.003;pitch=Math.max(-1.5,Math.min(1.5,pitch));lx=e.clientX;ly=e.clientY;}});
+window.addEventListener('wheel',e=>{dist+=e.deltaY*0.01;dist=Math.max(5,Math.min(120,dist));});
+let keys={};window.addEventListener('keydown',e=>keys[e.key]=true);window.addEventListener('keyup',e=>keys[e.key]=false);
+
+// === World & system builder ===
+const world=new World();
+function addAsteroids(count){
+  for(let i=0;i<count;i++){
+    const r=rand(12,55),theta=rand(Math.PI*2),phi=rand(Math.PI)-Math.PI/2;
+    const x=r*Math.cos(phi)*Math.cos(theta),y=r*Math.sin(phi),z=r*Math.cos(phi)*Math.sin(theta);
+    const vMag=Math.sqrt(G*world.bodies[0].m/r);
+    const vx=-vMag*Math.sin(theta),vy=rand(0.02,-0.02),vz=vMag*Math.cos(theta);
+    world.add(new Body({mass:rand(0.001,0.0005),pos:[x,y,z],vel:[vx,vy,vz],radius:0.15,color:[0.6,0.6,0.6]}));
+  }
+}
+function buildSystem(){
+  world.bodies.length=0;
+  world.add(new Body({mass:100,pos:[0,0,0],radius:1.8,color:[1,0.8,0.2],moving:false}));
+  for(let i=0;i<5;i++){
+    const dist0=6+i*2.5;
+    const vCirc=Math.sqrt(G*world.bodies[0].m/dist0);
+    let vel=[0,vCirc,0];
+    if(world.orbitType==='elliptical'){
+      vel=[0,vCirc*(1+rand(0.15,-0.15)),0];
+    }
+    world.add(new Body({mass:0.5+rand(0.5),color:[rand(),rand(),rand()],pos:[dist0,0,0],vel:vel,radius:0.45+0.1*i}));
+  }
+  addAsteroids(parseInt(astS.value));
+}
+
+// === UI elements ===
+const resetBtn=document.getElementById('resetBtn');
+const orbitSel=document.getElementById('orbitSel');
+const relS=document.getElementById('relSlider');const relV=document.getElementById('relVal');
+const chaosS=document.getElementById('chaosSlider');const chaosV=document.getElementById('chaosVal');
+const noiseS=document.getElementById('noiseSlider');const noiseV=document.getElementById('noiseVal');
+const astS=document.getElementById('astSlider');const astV=document.getElementById('astVal');
+const trailS=document.getElementById('trailSlider');const trailV=document.getElementById('trailVal');
+const planeC=document.getElementById('planeChk');
+const trajC=document.getElementById('trajChk');
+
+function syncUI(){relV.textContent=parseFloat(relS.value).toFixed(2);chaosV.textContent=chaosS.value;noiseV.textContent=noiseS.value;astV.textContent=astS.value;trailV.textContent=trailS.value;}
+
+function resetSimulation(){world.orbitType=orbitSel.value;buildSystem();}
+
+resetBtn.onclick=resetSimulation;
+orbitSel.onchange=resetSimulation;
+
+relS.oninput=chaosS.oninput=noiseS.oninput=()=>{world.relFactor=parseFloat(relS.value);world.chaosFactor=parseFloat(chaosS.value);world.noiseAmp=parseFloat(noiseS.value);syncUI();};
+trailS.oninput=()=>{world.trailLen=parseInt(trailS.value);syncUI();};
+astS.onchange=()=>{resetSimulation();};
+planeC.onchange=()=>{world.showPlanes=planeC.checked;};
+trajC.onchange=()=>{world.showTraj=trajC.checked;};
+
+syncUI();
+buildSystem();
+
+// === Buffer helpers ===
+function updateBodyBuffers(){
+  const n=world.bodies.length;
+  const pos=new Float32Array(n*3),col=new Float32Array(n*3);
+  world.bodies.forEach((b,i)=>{pos.set(b.p,i*3);col.set(b.c,i*3);});
+  gl.bindBuffer(gl.ARRAY_BUFFER,posB);gl.bufferData(gl.ARRAY_BUFFER,pos,gl.DYNAMIC_DRAW);gl.vertexAttribPointer(aP,3,gl.FLOAT,false,0,0);
+  gl.bindBuffer(gl.ARRAY_BUFFER,colB);gl.bufferData(gl.ARRAY_BUFFER,col,gl.DYNAMIC_DRAW);gl.vertexAttribPointer(aC,3,gl.FLOAT,false,0,0);
+}
+function updatePathBuffers(){
+  if(!world.showTraj) return 0;
+  let verts=[],cols=[];
+  for(let b of world.bodies){
+    if(b.path.length<2) continue;
+    const c=b.c.map(v=>v*0.6);
+    for(let i=1;i<b.path.length;i++){
+      verts.push(...b.path[i-1],...b.path[i]); cols.push(...c,...c);
+    }
+  }
+  const pos=new Float32Array(verts),col=new Float32Array(cols);
+  gl.bindBuffer(gl.ARRAY_BUFFER,pathPosB);gl.bufferData(gl.ARRAY_BUFFER,pos,gl.DYNAMIC_DRAW);gl.vertexAttribPointer(aP,3,gl.FLOAT,false,0,0);
+  gl.bindBuffer(gl.ARRAY_BUFFER,pathColB);gl.bufferData(gl.ARRAY_BUFFER,col,gl.DYNAMIC_DRAW);gl.vertexAttribPointer(aC,3,gl.FLOAT,false,0,0);
+  return pos.length/3;
+}
+function updatePlaneBuffers(){
+  if(!world.showPlanes) return 0;
+  const SEG=64,e=0.2; let verts=[],cols=[];
+  for(let b of world.bodies){
+    if(b===world.bodies[0]) continue;
+    const v=b.v,r=b.p,n=[r[1]*v[2]-r[2]*v[1],r[2]*v[0]-r[0]*v[2],r[0]*v[1]-r[1]*v[0]];
+    let nLen=Math.hypot(...n);if(nLen<1e-6) continue;nLen=1/nLen;const N=[n[0]*nLen,n[1]*nLen,n[2]*nLen];
+    const uLen=Math.hypot(...r),U=[r[0]/uLen,r[1]/uLen,r[2]/uLen];
+    const W=[N[1]*U[2]-N[2]*U[1],N[2]*U[0]-N[0]*U[2],N[0]*U[1]-N[1]*U[0]];
+    const a=uLen,bAxis=a*Math.sqrt(1-e*e);
+    for(let k=0;k<SEG;k++){
+      const t=k/SEG*2*Math.PI,ct=Math.cos(t),st=Math.sin(t);
+      const px=b.p[0]+U[0]*a*ct+W[0]*bAxis*st;
+      const py=b.p[1]+U[1]*a*ct+W[1]*bAxis*st;
+      const pz=b.p[2]+U[2]*a*ct+W[2]*bAxis*st;
+      verts.push(px,py,pz); cols.push(b.c[0]*0.3,b.c[1]*0.3,b.c[2]*0.3);
+    }
+  }
+  const pos=new Float32Array(verts),col=new Float32Array(cols);
+  gl.bindBuffer(gl.ARRAY_BUFFER,planePosB);gl.bufferData(gl.ARRAY_BUFFER,pos,gl.DYNAMIC_DRAW);gl.vertexAttribPointer(aP,3,gl.FLOAT,false,0,0);
+  gl.bindBuffer(gl.ARRAY_BUFFER,planeColB);gl.bufferData(gl.ARRAY_BUFFER,col,gl.DYNAMIC_DRAW);gl.vertexAttribPointer(aC,3,gl.FLOAT,false,0,0);
+  return pos.length/3;
+}
+
+// === Main loop ===
+let last=performance.now();
+function loop(now){
+  const dt=(now-last)/1000; last=now;
+  if(keys['w']||keys['ArrowUp']) pitch-=0.015;
+  if(keys['s']||keys['ArrowDown']) pitch+=0.015;
+  if(keys['a']||keys['ArrowLeft']) yaw-=0.02;
+  if(keys['d']||keys['ArrowRight']) yaw+=0.02;
+  world.step(DT*world.chaosFactor);
+
+  updateBodyBuffers();
+  const pathVerts=updatePathBuffers();
+  const planeVerts=updatePlaneBuffers();
+
+  // view‑projection matrix
+  const cx=Math.sin(yaw)*Math.cos(pitch)*dist,cy=Math.sin(pitch)*dist,cz=Math.cos(yaw)*Math.cos(pitch)*dist;
+  const eye=[cx,cy,cz],center=[0,0,0],up=[0,1,0];
+  const normalize=v=>{const l=Math.hypot(...v); return l? v.map(x=>x/l):[0,0,0];};
+  const z=normalize([eye[0]-center[0],eye[1]-center[1],eye[2]-center[2]]),x=normalize([up[1]*z[2]-up[2]*z[1],up[2]*z[0]-up[0]*z[2],up[0]*z[1]-up[1]*z[0]]),y=[z[1]*x[2]-z[2]*x[1],z[2]*x[0]-z[0]*x[2],z[0]*x[1]-z[1]*x[0]];
+  const view=[x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-x[0]*eye[0]-x[1]*eye[1]-x[2]*eye[2],-y[0]*eye[0]-y[1]*eye[1]-y[2]*eye[2],-z[0]*eye[0]-z[1]*eye[1]-z[2]*eye[2],1];
+  const f=1/Math.tan(60*Math.PI/360),aspect=canvas.width/canvas.height,near=0.1,far=1000;
+  const proj=[f/aspect,0,0,0,0,f,0,0,0,0,(far+near)/(near-far),-1,0,0,(2*far*near)/(near-far),0];
+  const vp=new Float32Array(16);
+  for(let i=0;i<4;i++) for(let j=0;j<4;j++) vp[j*4+i]=proj[i]*view[j*4]+proj[i+4]*view[j*4+1]+proj[i+8]*view[j*4+2]+proj[i+12]*view[j*4+3];
+
+  gl.clearColor(0,0,0,1); gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.uniformMatrix4fv(uVP,false,vp);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER,posB);gl.vertexAttribPointer(aP,3,gl.FLOAT,false,0,0);
+  gl.bindBuffer(gl.ARRAY_BUFFER,colB);gl.vertexAttribPointer(aC,3,gl.FLOAT,false,0,0);
+  gl.uniform1i(uIsPoint,1); gl.drawArrays(gl.POINTS,0,world.bodies.length);
+
+  if(pathVerts>0){
+    gl.bindBuffer(gl.ARRAY_BUFFER,pathPosB);gl.vertexAttribPointer(aP,3,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ARRAY_BUFFER,pathColB);gl.vertexAttribPointer(aC,3,gl.FLOAT,false,0,0);
+    gl.uniform1i(uIsPoint,0); gl.drawArrays(gl.LINES,0,pathVerts);
+  }
+  if(planeVerts>0){
+    gl.bindBuffer(gl.ARRAY_BUFFER,planePosB);gl.vertexAttribPointer(aP,3,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ARRAY_BUFFER,planeColB);gl.vertexAttribPointer(aC,3,gl.FLOAT,false,0,0);
+    gl.uniform1i(uIsPoint,0);
+    let offset=0,seg=64;
+    for(let b of world.bodies){ if(b===world.bodies[0]) continue; gl.drawArrays(gl.LINE_LOOP,offset,seg); offset+=seg; }
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+  </script>
+</body>
+</html>

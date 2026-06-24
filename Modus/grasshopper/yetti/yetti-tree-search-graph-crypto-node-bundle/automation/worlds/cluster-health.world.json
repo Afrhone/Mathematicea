@@ -1,0 +1,11 @@
+{
+  "id": "cluster-health",
+  "actions": [
+    "doctor",
+    "summarize",
+    "queue-repair",
+    "oracle-escalate"
+  ],
+  "gate": "local logs summarized before oracle",
+  "sink": "EVENT_SINK"
+}

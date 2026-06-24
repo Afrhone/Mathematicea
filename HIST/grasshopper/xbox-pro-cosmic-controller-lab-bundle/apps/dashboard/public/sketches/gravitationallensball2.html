@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gravitational Lens Ball – Multi-Scale WebGL Simulation</title>
+  <style>
+    body { margin:0; padding:0; overflow:hidden; background:#000; }
+    canvas { position:fixed; inset:0; display:block; width:100%; height:100%; }
+    /* Two overlapping canvases: one for WebGL (background), one for 2D overlay */
+  </style>
+</head>
+<body>
+  <!-- WebGL canvas (background cosmic scene with lensing) -->
+  <canvas id="quad"></canvas>
+  <!-- 2D canvas (overlay for micro-scale simulation) -->
+  <canvas id="view"></canvas>
+
+  <script>
+/*** Simulation Constants and Initial Parameters ***/
+const G = 1.0;                   // Gravitational constant (in simulation units, scaled)
+let lensMass = 2.8;              // Mass of the central lens object (controls gravity & lensing strength)
+const initialCameraRadius = 30.0; // Initial camera distance from origin (so we see orbits clearly)
+const fov = 60.0;                // Field of view for perspective (in degrees)
+const starCount = 320000;          // Number of background stars to generate
+const planetSpecs = [           // Initial orbital radii and velocities for planets (Copernican nodes)
+  { radius: 5.0, color: [0.8, 1.0, 0.3] },   // Planet 1: radius 2, greenish
+  { radius: 3.8, color: [1.0, 0.6, 0.4] },    // Planet 2: radius 3, orange
+    { radius: 4.5, color: [0.4, 0.6, 1.0] }   // Planet 3: radius 4.5, bluish
+    /*
+    { radius: 6.0, color: [1.0, 0.8, 0.2] },     // Planet 4: radius 6, yellowish
+    { radius: 7.5, color: [0.9, 0.4, 0.8] }    // Planet 5: radius 7.5, purplish
+     */
+
+];
+// Note: Planet orbital speed will be calculated from radius and central mass (circular orbit assumption).
+
+/*** Set up WebGL context and 2D context ***/
+const glCanvas = document.getElementById('quad');
+const overlayCanvas = document.getElementById('view');
+const gl = glCanvas.getContext('webgl');
+const ctx = overlayCanvas.getContext('2d');
+
+// Adjust canvas sizes for high-DPI displays
+function resizeCanvas() {
+  const w = window.innerWidth, h = window.innerHeight;
+  glCanvas.width = w * window.devicePixelRatio;
+  glCanvas.height = h * window.devicePixelRatio;
+  glCanvas.style.width = w + 'px';
+  glCanvas.style.height = h + 'px';
+  overlayCanvas.width = glCanvas.width;
+  overlayCanvas.height = glCanvas.height;
+  overlayCanvas.style.width = w + 'px';
+  overlayCanvas.style.height = h + 'px';
+  // Update WebGL viewport
+  gl.viewport(0, 0, glCanvas.width, glCanvas.height);
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();  // initial sizing
+
+/*** WebGL Shader Source (Vertex and Fragment) ***/
+/* Vertex shader for stars/planets (background pass).
+   Transforms 3D positions to clip-space and computes point size for perspective. */
+const starVertexSrc = `
+precision mediump float;
+uniform mat4 uMVPMatrix;
+attribute vec3 aPosition;
+attribute float aSize;
+attribute float aBrightness;
+varying float vBrightness;
+varying float vIsPlanet;
+void main() {
+  // Apply combined ModelViewProjection matrix to vertex
+  // (Matrix is set as a constant in shader via transpiled code, see below)
+  gl_Position = uMVPMatrix * vec4(aPosition, 1.0);
+  // Determine point size with perspective scaling: 
+  // We make point size inversely proportional to depth (gl_Position.w approx -z_eye).
+  float pointSize = aSize;
+  if(gl_Position.w != 0.0) {
+    pointSize *= (40.0 / -gl_Position.w); // scale factor (40) chosen so that at a certain distance, size ~ aSize
+  }
+  pointSize = max(pointSize, 1.0);  // enforce a minimum size of 1 pixel
+  gl_PointSize = pointSize;
+  // Pass brightness to fragment shader and flag if this is a planet (brightness > 1 means planet)
+  vBrightness = aBrightness;
+  vIsPlanet = aBrightness > 1.5 ? 1.0 : 0.0;
+}`; // Note: uMVPMatrix will be injected as a uniform below (we'll set it from JS).
+
+/* Fragment shader for stars/planets (background pass).
+   Renders points as colored pixels: stars with color based on brightness (spectral variation),
+   planets with a distinct preset color. */
+const starFragmentSrc = `
+precision mediump float;
+varying float vBrightness;
+varying float vIsPlanet;
+uniform vec3 uPlanetColor1;
+uniform vec3 uPlanetColor2;
+void main() {
+  if(vIsPlanet > 0.5) {
+    // This point is a planet: choose color based on which planet index (we encoded planet index via brightness slightly)
+    // Here we simply alternate between two preset colors for demonstration (could extend if more planets).
+    vec3 color = (mod(vBrightness, 2.0) < 0.5) ? uPlanetColor1 : uPlanetColor2;
+    gl_FragColor = vec4(color, 1.0);
+  } else {
+    // Star: interpolate color from reddish (cool/dimmer) to bluish (hot/brighter) based on brightness
+    vec3 coldColor = vec3(1.0, 0.7, 0.5); // soft orange-red
+    vec3 hotColor = vec3(0.7, 0.8, 1.0);  // pale blue-white
+    vec3 starColor = mix(coldColor, hotColor, vBrightness);
+    // Apply brightness as intensity
+    gl_FragColor = vec4(starColor * vBrightness, 1.0);
+  }
+}`;
+
+/* Vertex shader for lens post-processing pass.
+   It simply passes through a full-screen quad position and texture UV coordinates. */
+const lensVertexSrc = `
+attribute vec2 aQuadPos;
+attribute vec2 aUV;
+varying vec2 vUV;
+void main() {
+  gl_Position = vec4(aQuadPos, 0.0, 1.0);
+  vUV = aUV;
+}`;
+
+/* Fragment shader for lens post-processing.
+   Samples the background texture and applies gravitational lens distortion. */
+const lensFragmentSrc = `
+precision mediump float;
+varying vec2 vUV;
+uniform sampler2D uBackgroundTex;
+uniform vec2 uLensCenter;    // Lens center in UV coordinates (typically center [0.5, 0.5])
+uniform float uLensRadius;   // Radius of lens effect (Einstein radius in texture UV space)
+uniform float uInnerRadius;  // Inner radius (event horizon or opaque mass radius)
+uniform float uDistortion;   // Distortion strength factor (related to lens mass)
+uniform vec3  uLensColor;    // Tint for the lens (e.g., to add gravitational redshift or accretion glow)
+void main() {
+  // Compute vector from lens center to this fragment's UV
+  vec2 d = vUV - uLensCenter;
+  float r = length(d);
+  // If outside lens radius, no distortion – just sample background as is
+  if(r >= uLensRadius) {
+    gl_FragColor = texture2D(uBackgroundTex, vUV);
+  } else {
+    // Inside lens region: apply gravitational lensing distortion
+    // We use an approximate formula derived from Einstein’s lens equation:
+    // beta = theta - (theta_E^2 / theta), where theta is this pixel angle and theta_E = uLensRadius.
+    // Solve for the source angle "beta" (background sample offset).
+    float theta = r;
+    float thetaE = uLensRadius;
+    // Avoid division by zero at center
+    float beta;
+    if(theta < 1e-6) {
+      beta = 0.0;
+    } else {
+      beta = theta - (thetaE * thetaE) / theta;
+    }
+    // beta gives the effective radial distance in background that this ray comes from.
+    // Compute the distorted UV coordinate for sampling the background texture.
+    // We preserve the direction of d but set its magnitude to beta.
+    vec2 distortUV = uLensCenter + (beta / max(r, 1e-6)) * d;
+    // If the distorted coordinate is outside the texture (meaning light bent from beyond our star field),
+    // clamp it to edge to avoid sampling outside.
+    distortUV = clamp(distortUV, vec2(0.0), vec2(1.0));
+    // Sample the background texture at the distorted coordinates
+    vec4 backgroundColor = texture2D(uBackgroundTex, distortUV);
+    // Create an Einstein ring effect at the lens radius:
+    // We add a glow at r ~ thetaE to simulate concentrated light (amplification).
+    float ringWidth = 0.002; // width of ring in UV units (~0.2% of texture)
+    float ringGlow = exp(-pow((r - thetaE) / ringWidth, 2.0));
+    vec4 ringColor = vec4(uLensColor, 1.0) * ringGlow;
+    // If within inner opaque radius (like a black hole's event horizon), dim the background (or make it black)
+    if(r < uInnerRadius) {
+      backgroundColor *= 0.0; // absorb all light (black center)
+    }
+    // Combine distorted background and ring glow. The ring glow adds on top (brighten).
+    gl_FragColor = backgroundColor + ringColor;
+  }
+}`;
+
+/*** Compile WebGL shaders and link programs ***/
+// Helper to compile a shader
+function compileShader(src, type) {
+  const shader = gl.createShader(type);
+  gl.shaderSource(shader, src);
+  gl.compileShader(shader);
+  if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    console.error("Shader compile error:", gl.getShaderInfoLog(shader));
+  }
+  return shader;
+}
+// Compile star/planet shader program
+const starVS = compileShader(starVertexSrc, gl.VERTEX_SHADER);
+// (Insert uniform declaration into vertex shader source; we do string replace for simplicity to include the uniform)
+const starFS = compileShader(starFragmentSrc, gl.FRAGMENT_SHADER);
+const starProgram = gl.createProgram();
+gl.attachShader(starProgram, starVS);
+gl.attachShader(starProgram, starFS);
+gl.linkProgram(starProgram);
+if(!gl.getProgramParameter(starProgram, gl.LINK_STATUS)) {
+  console.error("Star program link error:", gl.getProgramInfoLog(starProgram));
+}
+// Get attribute/uniform locations for starProgram
+const starAttrPos = gl.getAttribLocation(starProgram, 'aPosition');
+const starAttrSize = gl.getAttribLocation(starProgram, 'aSize');
+const starAttrBright = gl.getAttribLocation(starProgram, 'aBrightness');
+const uMVPMatrixLoc = gl.getUniformLocation(starProgram, 'uMVPMatrix');
+const uPlanetColor1Loc = gl.getUniformLocation(starProgram, 'uPlanetColor1');
+const uPlanetColor2Loc = gl.getUniformLocation(starProgram, 'uPlanetColor2');
+
+// Compile lens shader program
+const lensVS = compileShader(lensVertexSrc, gl.VERTEX_SHADER);
+const lensFS = compileShader(lensFragmentSrc, gl.FRAGMENT_SHADER);
+const lensProgram = gl.createProgram();
+gl.attachShader(lensProgram, lensVS);
+gl.attachShader(lensProgram, lensFS);
+gl.linkProgram(lensProgram);
+if(!gl.getProgramParameter(lensProgram, gl.LINK_STATUS)) {
+  console.error("Lens program link error:", gl.getProgramInfoLog(lensProgram));
+}
+// Get attribute/uniform locations for lensProgram
+const lensAttrPos = gl.getAttribLocation(lensProgram, 'aQuadPos');
+const lensAttrUV  = gl.getAttribLocation(lensProgram, 'aUV');
+const uBackgroundTexLoc = gl.getUniformLocation(lensProgram, 'uBackgroundTex');
+const uLensCenterLoc = gl.getUniformLocation(lensProgram, 'uLensCenter');
+const uLensRadiusLoc = gl.getUniformLocation(lensProgram, 'uLensRadius');
+const uInnerRadiusLoc = gl.getUniformLocation(lensProgram, 'uInnerRadius');
+const uDistortionLoc = gl.getUniformLocation(lensProgram, 'uDistortion');
+const uLensColorLoc = gl.getUniformLocation(lensProgram, 'uLensColor');
+
+/*** Create buffers for star/planet data ***/
+// We will create one combined buffer for stars + planets points
+const totalPoints = starCount + planetSpecs.length;
+const vertices = new Float32Array(totalPoints * 5);
+// Each vertex has 5 components: (x, y, z, size, brightness).
+// Populate star data
+for(let i=0; i < starCount; i++) {
+  // Random position on a sphere (radius ~50 for far-away stars)
+  // Use spherical coordinates for even distribution:
+  const theta = Math.acos(2*Math.random() - 1) - Math.PI/2; // polar angle
+  const phi = 2 * Math.PI * Math.random();                  // azimuthal angle
+  const starRadius = 50.0;
+  const x = starRadius * Math.cos(theta) * Math.cos(phi);
+  const y = starRadius * Math.sin(theta); 
+  const z = starRadius * Math.cos(theta) * Math.sin(phi);
+  const brightness = 0.5 + 0.5 * Math.random();  // brightness between 0.5 and 1.0
+  const size = 2.0;  // base size of star (in pixels at reference distance)
+  const idx = i * 5;
+  vertices[idx]   = x;
+  vertices[idx+1] = y;
+  vertices[idx+2] = z;
+  vertices[idx+3] = size;
+  vertices[idx+4] = brightness;
+}
+// Populate planet data (after star data in array)
+for(let p = 0; p < planetSpecs.length; p++) {
+  const spec = planetSpecs[p];
+  // Start each planet at some random phase angle on the orbital plane
+  const angle = Math.random() * 2 * Math.PI;
+  const px = spec.radius * Math.cos(angle);
+  const py = 0.0; // keep planets in x-z plane (y=0 for simplicity)
+  const pz = spec.radius * Math.sin(angle);
+  const size = 8.0;        // give planet a larger base size
+  const brightnessFlag = 2.0 + p; // brightness >1 flags as planet, encode index p subtly by adding p
+  const idx = (starCount + p) * 5;
+  vertices[idx]   = px;
+  vertices[idx+1] = py;
+  vertices[idx+2] = pz;
+  vertices[idx+3] = size;
+  vertices[idx+4] = brightnessFlag;
+}
+// Create and fill WebGL buffer
+const starBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, starBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.DYNAMIC_DRAW); // mark dynamic since planets will move
+
+/*** Set up buffer for full-screen quad (for lens pass) ***/
+const quadVerts = new Float32Array([
+  //  (aQuadPos.x, aQuadPos.y, aUV.x, aUV.y)
+  -1.0, -1.0,   0.0, 0.0,
+   1.0, -1.0,   1.0, 0.0,
+  -1.0,  1.0,   0.0, 1.0,
+   1.0,  1.0,   1.0, 1.0
+]);
+const quadBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, quadVerts, gl.STATIC_DRAW);
+
+/*** Framebuffer for rendering background to texture ***/
+const fbTexture = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, fbTexture);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, glCanvas.width, glCanvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+const framebuffer = gl.createFramebuffer();
+gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, fbTexture, 0);
+gl.bindFramebuffer(gl.FRAMEBUFFER, null); // unbind until use
+
+function mapRange(value, start1, stop1, start2, stop2) {
+            return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+        }
+
+/*** Initialize simulation state for planets (for orbital physics) ***/
+class PlanetState {
+  constructor(radius, phase, color) {
+    this.r = radius;
+    this.angle = phase;
+    this.color = color;
+    // Compute circular orbit speed: v = sqrt(G * M / r)
+    this.angularSpeed = Math.sqrt(G * lensMass / (radius * radius * radius)) * radius;
+    // We will update angle over time, and position is derived from angle
+  }
+}
+const planets = [];
+for(let p = 0; p < planetSpecs.length; p++) {
+  const spec = planetSpecs[p];
+  planets.push(new PlanetState(spec.radius, Math.random()*2*Math.PI, spec.color));
+}
+
+/*** Camera setup ***/
+let camRadius = initialCameraRadius;
+let camYaw = 0.0;
+let camPitch = 0.3;  // slight tilt to see orbits from above
+// Precompute perspective projection matrix
+function deg2rad(deg) { return deg * Math.PI / 180.0; }
+let projMatrix = (function() {
+  const aspect = glCanvas.width / glCanvas.height;
+  const f = 1.0 / Math.tan(deg2rad(fov) / 2.0);
+  const near = 0.1, far = 100.0;
+  const nf = 1 / (near - far);
+  // Column-major order 4x4 projection matrix
+  return new Float32Array([
+    f/ aspect, 0, 0, 0,
+    0, f, 0, 0,
+    0, 0, (far+near)*nf, -1,
+    0, 0, (2*far*near)*nf, 0
+  ]);
+})();
+// Utility to multiply 4x4 matrices
+function multiplyMat4(a, b) {
+  const out = new Float32Array(16);
+  for(let i=0; i<4; ++i) {
+    for(let j=0; j<4; ++j) {
+      out[j*4 + i] = a[i]*b[j*4] + a[i+4]*b[j*4+1] + a[i+8]*b[j*4+2] + a[i+12]*b[j*4+3];
+    }
+  }
+  return out;
+}
+// Compute camera view matrix from camYaw, camPitch, camRadius
+function getViewMatrix() {
+  const cosY = Math.cos(camYaw), sinY = Math.sin(camYaw);
+  const cosP = Math.cos(camPitch), sinP = Math.sin(camPitch);
+  // Camera position in world (spherical coords)
+  const camX = camRadius * cosP * sinY;
+  const camY = camRadius * sinP;
+  const camZ = camRadius * cosP * cosY;
+  // Look-at origin. Construct view matrix via basis vectors:
+  const eye = [camX, camY, camZ];
+  const center = [0, 0, 0];
+  const up = [0, 1, 0];
+  // forward = normalize(eye->center) = -eye/|eye|
+  const fx = -eye[0], fy = -eye[1], fz = -eye[2];
+  const fLen = Math.sqrt(fx*fx + fy*fy + fz*fz);
+  const fxn = fx/fLen, fyn = fy/fLen, fzn = fz/fLen;
+  // right = normalize(cross(up, forward))
+  let rx = up[1]*fzn - up[2]*fyn;
+  let ry = up[2]*fxn - up[0]*fzn;
+  let rz = up[0]*fyn - up[1]*fxn;
+  const rLen = Math.sqrt(rx*rx + ry*ry + rz*rz);
+  rx /= rLen; ry /= rLen; rz /= rLen;
+  // true up = cross(forward, right)
+  const ux = fyn*rz - fzn*ry;
+  const uy = fzn*rx - fxn*rz;
+  const uz = fxn*ry - fyn*rx;
+  // View matrix (column-major) 
+  const view = new Float32Array([
+    rx, ux, -fxn, 0,
+    ry, uy, -fyn, 0,
+    rz, uz, -fzn, 0,
+    0,  0,   0,   1
+  ]);
+  // Translation to move origin to camera position (negative eye)
+  view[12] = -(rx*eye[0] + ry*eye[1] + rz*eye[2]);
+  view[13] = -(ux*eye[0] + uy*eye[1] + uz*eye[2]);
+  view[14] =  (fxn*eye[0] + fyn*eye[1] + fzn*eye[2]); // note sign: this is effectively -(forward dot eye) but forward = -eye_dir
+  return view;
+}
+
+/*** Input Controls (Keyboard and Gamepad) ***/
+const keyState = {};
+window.addEventListener('keydown', e => { keyState[e.code] = true; });
+window.addEventListener('keyup', e => { keyState[e.code] = false; });
+// Basic keyboard controls: arrow keys / WASD to orbit, +/- to zoom
+function handleKeyboardInput(dt) {
+  const rotSpeed = 1.5;   // radians per second for rotation
+  const zoomSpeed = 5.0;  // units per second for zoom
+  if(keyState['ArrowLeft'] || keyState['KeyA']) camYaw -= rotSpeed * dt;
+  if(keyState['ArrowRight']|| keyState['KeyD']) camYaw += rotSpeed * dt;
+  if(keyState['ArrowUp']   || keyState['KeyW']) camPitch += rotSpeed * dt;
+  if(keyState['ArrowDown'] || keyState['KeyS']) camPitch -= rotSpeed * dt;
+  if(keyState['Equal'] || keyState['NumpadAdd']) camRadius -= zoomSpeed * dt;    // '+' key
+  if(keyState['Minus'] || keyState['NumpadSubtract']) camRadius += zoomSpeed * dt; // '-' key
+  // Clamp pitch and radius
+  camPitch = Math.max(-1.4, Math.min(1.4, camPitch));  // limit ~ +/-80 degrees
+  camRadius = Math.max(2.0, Math.min(50.0, camRadius));
+}
+// Gamepad (Xbox controller) input: use left stick for rotation, right stick Y for zoom
+window.addEventListener('gamepadconnected', e => {
+  console.log(`Gamepad connected: ${e.gamepad.id} with ${e.gamepad.buttons.length} buttons and ${e.gamepad.axes.length} axes`);
+});
+function handleGamepadInput(dt) {
+  const gp = navigator.getGamepads()[0];
+  if(!gp) return;
+  // Axes: 0 = LS-X, 1 = LS-Y, 2 = RS-X, 3 = RS-Y for standard controllers:contentReference[oaicite:5]{index=5}
+  const lx = gp.axes[0], ly = gp.axes[1];
+  const rx = gp.axes[2], ry = gp.axes[3];
+  const deadZone = 0.1;
+  const turnSpeed = 2.0;   // sensitivity for rotation
+  const zoomSpeed = 5.0;
+  // Only respond if outside deadzone to avoid drift
+  if(Math.abs(lx) > deadZone) camYaw += turnSpeed * lx * dt;
+  if(Math.abs(ly) > deadZone) camPitch += turnSpeed * (-ly) * dt; // invert Y for natural up/down
+  if(Math.abs(ry) > deadZone) camRadius += zoomSpeed * ry * dt;
+  // Clamp as before
+  camPitch = Math.max(-1.4, Math.min(1.4, camPitch));
+  camRadius = Math.max(2.0, Math.min(50.0, camRadius));
+}
+
+/*** Micro-scale Simulation Classes (Particles, Atoms, Molecules) ***/
+// 2D Vector helper for convenience
+class Vec2 {
+  constructor(x=0,y=0){ this.x=x; this.y=y; }
+  add(v){ this.x+=v.x; this.y+=v.y; return this;}
+  mult(s){ this.x*=s; this.y*=s; return this;}
+}
+function randomVec2() {
+  // Return a random 2D vector within the overlay canvas extents
+  return new Vec2(Math.random()*overlayCanvas.width, Math.random()*overlayCanvas.height);
+}
+class Particle {
+  constructor() {
+    this.pos = randomVec2();
+  }
+  update(dt) {
+    // Brownian motion: random jitter step
+    const angle = Math.random()*2*Math.PI;
+    const speed = 50; // pixel per second scale
+    this.pos.x += Math.cos(angle)*speed*dt;
+    this.pos.y += Math.sin(angle)*speed*dt;
+    // Keep within bounds (wrap around edges)
+    if(this.pos.x < 0) this.pos.x += overlayCanvas.width;
+    if(this.pos.x > overlayCanvas.width) this.pos.x -= overlayCanvas.width;
+    if(this.pos.y < 0) this.pos.y += overlayCanvas.height;
+    if(this.pos.y > overlayCanvas.height) this.pos.y -= overlayCanvas.height;
+  }
+  draw(ctx) {
+    ctx.fillStyle = "rgba(255,255,255,0.575)"; // semi-transparent white
+    ctx.fillRect(this.pos.x, this.pos.y, 4, 4);
+    // Optionally: could draw trails or fading effect by storing previous positions
+    // ctx.fillStyle = "rgba(255,255,255,0.1)";
+    // ctx.fillRect(this.pos.x - 1, this.pos.y - 1, 5, 5); // draw a fading trail
+    // (This would require storing history of positions, e.g. in a circular buffer)
+    // For simplicity, we just draw a single point here.
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.fillRect(this.pos.x, this.pos.y, 4, 4);
+  }
+}
+class Atom {
+  constructor() {
+    this.pos = randomVec2();
+    const electronCount = (Math.random()*3|0) + 1; // 1-3 electrons
+    this.electrons = Array.from({length: electronCount}, () => new Particle());
+    this.orbitRadius = 10 + Math.random()*10;
+    this.orbitPhase = Math.random()*Math.PI*2;
+  }
+  update(dt) {
+    // Update orbit phase for electrons
+    this.orbitPhase += 1.0 * dt;  // angular speed for electron orbit
+    // Update each electron's relative position in a circular orbit around nucleus
+    this.electrons.forEach((e,i) => {
+      const angle = this.orbitPhase + (i * (2*Math.PI/this.electrons.length));
+      e.pos.x = this.pos.x + Math.cos(angle) * this.orbitRadius;
+      e.pos.y = this.pos.y + Math.sin(angle) * this.orbitRadius;
+    });
+  }
+  draw(ctx) {
+    // Nucleus
+    ctx.fillStyle = "#FFFFFF";
+    ctx.beginPath();
+    ctx.arc(this.pos.x, this.pos.y, 5, 0, 2*Math.PI);
+    ctx.fill();
+    // Electrons
+    this.electrons.forEach(e => {
+      ctx.fillStyle = "rgba(255,255,255,0.75)";
+      ctx.fillRect(e.pos.x, e.pos.y, 4.5, 4.5);
+    });
+    // (Optional: could draw orbit path circle or electron trails if desired)
+  }
+}
+class Molecule {
+  constructor() {
+    // Simple diatomic molecule of two atoms
+    this.atoms = [new Atom(), new Atom()];
+    // Place second atom near first initially
+    this.atoms[1].pos = new Vec2(this.atoms[0].pos.x + 20, this.atoms[0].pos.y);
+  }
+  update(dt) {
+    // Update constituent atoms and apply simple spring force between them (simulate bond vibration)
+    this.atoms.forEach(a => a.update(dt));
+    // Bond constraints: treat bond as a spring trying to maintain target length
+    const targetLength = 20; // desired bond length
+    const k = 0.3; // spring stiffness
+    const dx = this.atoms[1].pos.x - this.atoms[0].pos.x;
+    const dy = this.atoms[1].pos.y - this.atoms[0].pos.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const diff = dist - targetLength;
+    const force = k * diff;
+    if(dist > 1e-6) {
+      // normalize vector
+      const nx = dx/dist, ny = dy/dist;
+      // adjust positions (simple semi-implicit approach: move each atom slightly)
+      this.atoms[0].pos.x += nx * force * dt * 50;
+      this.atoms[0].pos.y += ny * force * dt * 50;
+      this.atoms[1].pos.x -= nx * force * dt * 50;
+      this.atoms[1].pos.y -= ny * force * dt * 50;
+    }
+  }
+  draw(ctx) {
+    // Draw bond line
+    ctx.strokeStyle = "rgba(200,200,255,0.725)";
+    ctx.beginPath();
+    ctx.moveTo(this.atoms[0].pos.x, this.atoms[0].pos.y);
+    ctx.lineTo(this.atoms[1].pos.x, this.atoms[1].pos.y);
+    ctx.stroke();
+    // Draw atoms
+    this.atoms.forEach(a => a.draw(ctx));
+  }
+}
+// Initialize micro-world entities
+const particles = Array.from({length: 120}, () => new Particle());
+const atoms = Array.from({length: 10}, () => new Atom());
+const molecules = Array.from({length: 3}, () => new Molecule());
+
+/*** Main Simulation Loop ***/
+let lastTime = performance.now();
+function frame(now) {
+  // Compute delta time in seconds (cap to ~33ms to avoid large jumps)
+  let dt = (now - lastTime) / 1000;
+  dt = dt > 0.033 ? 0.033 : dt;
+  lastTime = now;
+
+  // Update physics: Planet orbits and micro entities
+  // Update planet angles under gravity
+  planets.forEach((pl, index) => {
+    // Orbital angular velocity under current lensMass (if lensMass changes, could recalc)
+    pl.angularSpeed = Math.sqrt(G * lensMass / Math.pow(pl.r, 3)) * pl.r;
+    pl.angle += pl.angularSpeed * dt;
+    // Compute new position in 3D (orbit in XZ plane)
+    const px = pl.r * Math.cos(pl.angle);
+    const pz = pl.r * Math.sin(pl.angle);
+    const py = 0;
+    // Update vertex buffer data for this planet
+    const vertIndex = starCount + index;
+    vertices[vertIndex*5 + 0] = px;
+    vertices[vertIndex*5 + 1] = py;
+    vertices[vertIndex*5 + 2] = pz;
+    // brightness and size remain same in buffer
+  });
+
+  // Update micro entities (particles, atoms, molecules)
+  particles.forEach(p => p.update(dt));
+  atoms.forEach(a => a.update(dt));
+  molecules.forEach(m => m.update(dt));
+
+  // Handle user input
+  handleKeyboardInput(dt);
+  handleGamepadInput(dt);
+
+  // Calculate new view-projection matrix for camera
+  const viewMatrix = getViewMatrix();
+  const vpMatrix = multiplyMat4(projMatrix, viewMatrix);
+
+  // --- Render background scene to off-screen framebuffer ---
+  gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+  gl.viewport(0, 0, glCanvas.width, glCanvas.height);
+  // Clear to space background (black)
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  gl.useProgram(starProgram);
+  // Update planet positions in GPU buffer
+  gl.bindBuffer(gl.ARRAY_BUFFER, starBuffer);
+  gl.bufferSubData(gl.ARRAY_BUFFER, starCount * 5 * 4, vertices.subarray(starCount * 5)); // update only planet portion (each float 4 bytes)
+  // Enable attributes and point to buffer data
+  gl.enableVertexAttribArray(starAttrPos);
+  gl.enableVertexAttribArray(starAttrSize);
+  gl.enableVertexAttribArray(starAttrBright);
+  gl.vertexAttribPointer(starAttrPos, 3, gl.FLOAT, false, 5*4, 0);
+  gl.vertexAttribPointer(starAttrSize, 1, gl.FLOAT, false, 5*4, 3*4);
+  gl.vertexAttribPointer(starAttrBright, 1, gl.FLOAT, false, 5*4, 4*4);
+  // Set uniforms
+  gl.uniformMatrix4fv(uMVPMatrixLoc, false, vpMatrix);
+  // Set planet colors uniforms (for two possible planet colors)
+  if(planetSpecs[0]) gl.uniform3fv(uPlanetColor1Loc, planetSpecs[0].color);
+  if(planetSpecs[1]) gl.uniform3fv(uPlanetColor2Loc, planetSpecs[1].color);
+  // Draw all points (stars + planets)
+  gl.drawArrays(gl.POINTS, 0, totalPoints);
+  gl.disableVertexAttribArray(starAttrPos);
+  gl.disableVertexAttribArray(starAttrSize);
+  gl.disableVertexAttribArray(starAttrBright);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null); // done rendering scene
+
+  // --- Render lens effect by sampling the off-screen texture ---
+  gl.viewport(0, 0, glCanvas.width, glCanvas.height);
+  gl.useProgram(lensProgram);
+  // Bind the quad vertices
+  gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+  gl.enableVertexAttribArray(lensAttrPos);
+  gl.enableVertexAttribArray(lensAttrUV);
+  gl.vertexAttribPointer(lensAttrPos, 2, gl.FLOAT, false, 4*4, 0);
+  gl.vertexAttribPointer(lensAttrUV,  2, gl.FLOAT, false, 4*4, 2*4);
+  // Bind the background texture (from FBO) for sampling
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, fbTexture);
+  gl.uniform1i(uBackgroundTexLoc, 0);
+  // Set lens shader uniforms
+  gl.uniform2f(uLensCenterLoc, 0.5, 0.5);
+  
+  const _G = 6.67430e-11; // gravitational constant in m^3 kg^-1 s^-2
+  const c = 299792458;
+  const h = 6.62607015e-34; // Planck's constant (not used here but good to have)
+  const earthMass = 5.972e24; // mass of Earth in kg
+  const lensMassSolar = 1.1; // example lens mass in solar masses (can adjust)
+ 
+  const AU = 149597870700; // 1 AU in meters
+  
+  const lensMassKg = lensMassSolar * 1.9885e30; // convert solar masses to kg (1 solar mass = 1.9885e30 kg)
+  
+
+  
+  const thetaE = Math.sqrt(4 * _G * lensMassKg / (c * c)) / AU; // in radians
+ 
+
+    // Convert theta_E to UV space (0 to 1 range)
+    let einsteinRadius = thetaE / (Math.PI * 2) + 0.5; // map to [0, 1] range
+    
+    einsteinRadius = mapRange(einsteinRadius, 0.001, 2.0, 0.0, 1.0); // map to [0, 1] range for UV coordinates
+    
+  gl.uniform1f(uLensRadiusLoc, einsteinRadius);
+  // Inner radius (we use a fraction of lens radius as "event horizon")
+  gl.uniform1f(uInnerRadiusLoc, einsteinRadius * 0.5);
+  gl.uniform1f(uDistortionLoc, 1.0);  // distortion strength (could tweak but our formula already uses lensMass implicitly)
+  // Lens color for ring (slightly blue-white cyan indigo neon tint)
+    gl.uniform3f(uLensColorLoc, 0.4, 0.6, 1.0); // soft purple-blue tint for lens effect
+    // Set lens center (typically center of screen)
+    gl.uniform2f(uLensCenterLoc, 0.5, 0.5); // center of the screen in UV coordinates
+    // Draw the full-screen quad with lens effect
+    gl.bindTexture(gl.TEXTURE_2D, fbTexture); // bind the background texture
+    gl.uniform1i(uBackgroundTexLoc, 0); // set texture unit 0 for background texture    
+    // Enable attributes for lens shader
+    gl.enableVertexAttribArray(lensAttrPos);
+    gl.enableVertexAttribArray(lensAttrUV);
+    // Set the quad vertices (full-screen quad)
+    gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+    gl.vertexAttribPointer(lensAttrPos, 2, gl.FLOAT, false,
+        4 * 4, 0); // position attribute (2 floats)
+    gl.vertexAttribPointer(lensAttrUV, 2, gl.FLOAT, false,
+        4 * 4, 2 * 4); // UV attribute (2 floats
+    // Set the lens parameters
+    gl.uniform2f(uLensCenterLoc, 0.5, 0.5); // center of lens effect in UV space
+    gl.uniform1f(uLensRadiusLoc, einsteinRadius); // radius of lens effect in UV space
+    gl.uniform1f(uInnerRadiusLoc, einsteinRadius * 0.5); // inner radius (event horizon)
+    gl.uniform1f(uDistortionLoc, 1.0); // distortion strength factor
+    gl.uniform3f(uLensColorLoc, 0.2, 0.6, 1.0); // lens color (soft purple-blue tint)
+    // Note: We could also add a uniform for lens brightness or intensity if desired.
+    // Note: The lens effect will distort the background texture based on the lens parameters.
+    gl.uniform1i(uBackgroundTexLoc, 0); // bind the background texture to unit 0
+    // Note: The lens effect will distort the background texture based on the lens parameters.
+
+    gl.uniform1i(uBackgroundTexLoc, 0); // bind the background texture to unit 0
+    gl.uniform1f(uDistortionLoc, 1.0); // distortion strength factor
+    gl.uniform3f(uLensColorLoc, 0.2, 0.6, 1.0); // lens color (soft purple-blue tint)
+    // Note: The lens effect will distort the background texture based on the lens parameters.
+
+  // Draw full-screen quad (two triangles)
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  gl.disableVertexAttribArray(lensAttrPos);
+  gl.disableVertexAttribArray(lensAttrUV);
+
+  // --- Render micro-scale overlay on 2D canvas ---
+  ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+  // We draw a soft semi-transparent background on overlay to subtly fade old positions (trail effect)
+  // (Optional: currently we fully clear each frame for a sharper look)
+  // ctx.fillStyle = "rgba(0,0,0,0.1)";
+  // ctx.fillRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+  // Draw each micro entity
+  particles.forEach(p => p.draw(ctx));
+  atoms.forEach(a => a.draw(ctx));
+  molecules.forEach(m => m.draw(ctx));
+  // Note: This overlay represents chemical particles, atoms, and molecules (showing microscopic "nodes").
+
+  // Loop
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+  </script>
+
+</body>
+</html>

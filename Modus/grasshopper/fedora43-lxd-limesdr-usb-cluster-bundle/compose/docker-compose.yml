@@ -1,0 +1,4 @@
+services:
+  note:
+    image: alpine:3.20
+    command: ["sh", "-lc", "echo LimeSDR API runs inside the LXD container; sleep infinity"]

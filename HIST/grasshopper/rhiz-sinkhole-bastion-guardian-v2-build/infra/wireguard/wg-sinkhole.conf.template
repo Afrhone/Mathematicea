@@ -1,0 +1,11 @@
+[Interface]
+Address = ${WG_THIS_NODE_IP}/24
+ListenPort = ${WG_PORT}
+PrivateKey = <replace-with-private-key>
+
+# Add peers manually or from your RHIZ mesh inventory.
+# [Peer]
+# PublicKey = <peer-public-key>
+# AllowedIPs = 10.45.30.0/24,10.45.3.0/24
+# Endpoint = <peer-lan-ip>:${WG_PORT}
+# PersistentKeepalive = 25

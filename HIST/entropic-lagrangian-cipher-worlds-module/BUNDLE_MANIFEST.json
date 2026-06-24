@@ -1,0 +1,14 @@
+{
+  "name": "entropic-lagrangian-cipher-worlds-module",
+  "version": "0.1.0",
+  "port": 8097,
+  "features": [
+    "Lagrangian parameterized ODE world modulation",
+    "SDF stochastic/decoherence layer",
+    "u24 packed property encoder/decoder",
+    "zeroth-order hash lineage",
+    "entropic cipher encoder",
+    "Monte Carlo / Markov divergence control",
+    "WebGL multi-world particle renderer"
+  ]
+}

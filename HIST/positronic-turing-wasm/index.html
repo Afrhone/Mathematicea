@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Positronic Differentiable Turing Machine · WASM</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main>
+    <section class="panel hero">
+      <div>
+        <p class="kicker">WebAssembly differentiable automaton</p>
+        <h1>Positronic Turing Machine</h1>
+        <p class="lede">A soft-tape machine whose head, state, and writes are continuous fields. Bloom/Rings/Magneto/Beads sculpt the oracle pressure, attention motion, and tape learning.</p>
+      </div>
+      <button id="audio">Start audio</button>
+    </section>
+
+    <canvas id="scope" width="1280" height="720"></canvas>
+
+    <section class="panel controls">
+      <label>Bloom <input id="bloom" type="range" min="0" max="1" step="0.001" value="0.74"></label>
+      <label>Rings <input id="rings" type="range" min="0" max="1" step="0.001" value="0.56"></label>
+      <label>Magneto <input id="magneto" type="range" min="0" max="1" step="0.001" value="0.63"></label>
+      <label>Beads <input id="beads" type="range" min="0" max="1" step="0.001" value="0.47"></label>
+      <label>Learning <input id="learning" type="range" min="0" max="1" step="0.001" value="0.55"></label>
+      <label>Seed <input id="seed" type="number" value="715"></label>
+      <button id="reset">Reset</button>
+    </section>
+
+    <section class="panel readout">
+      <div><span>Error</span><b id="err">0.000</b></div>
+      <div><span>State vector</span><b id="state">—</b></div>
+      <div><span>Interpretation</span><b>Differentiable tape, soft head, trainable logits</b></div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "directive": "octopuce.medusa.hyperledger.dao.v1",
+  "safety": {
+    "mainnet": false,
+    "real_funds": false,
+    "requires_apply": true,
+    "requires_peer_review": true
+  },
+  "services": [
+    "gateway",
+    "agent",
+    "xrpl-private",
+    "fabric-chaincode",
+    "evm-contracts",
+    "factory-ui"
+  ],
+  "gates": [
+    "summon_hash",
+    "docker_compose",
+    "no_mainnet",
+    "data_sink"
+  ]
+}

@@ -1,0 +1,8 @@
+# name,ip,role,label
+exosys-rhiz,192.168.0.50,hub,eno8303-direct-link
+sigmo-rhiz,192.168.0.34,worker,cpu-peer
+rhiz-fach,192.168.0.0,app,replace-ip
+niurk-42,192.168.0.0,integrity-agent,replace-ip
+niurk-72,192.168.0.0,hypergraph,replace-ip
+llama-gpu,192.168.0.125,model-server,model
+gpu-compute,192.168.0.52,gpu-compute,mcp

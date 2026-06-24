@@ -1,0 +1,8 @@
+[Unit]
+Description=niurk MCP Hub self-test and safe health probe
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/niurk-mcp-hub
+EnvironmentFile=-/opt/niurk-mcp-hub/env/mcp-hub.env
+ExecStart=/opt/niurk-mcp-hub/bin/hub-selftest.sh

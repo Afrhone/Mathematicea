@@ -1,0 +1,20 @@
+{$PUBLIC_DOMAIN} {
+  encode zstd gzip
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
+  route /v1/* {
+    reverse_proxy {$UPSTREAM_GATEWAY}
+  }
+  route /api/* {
+    reverse_proxy {$UPSTREAM_GATEWAY}
+  }
+  route /webui/* {
+    uri strip_prefix /webui
+    reverse_proxy {$UPSTREAM_WEBUI}
+  }
+  reverse_proxy {$UPSTREAM_UI}
+}

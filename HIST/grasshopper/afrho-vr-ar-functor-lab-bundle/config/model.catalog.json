@@ -1,0 +1,28 @@
+{
+  "agents": [
+    {
+      "id": "kobalt-sigma-local",
+      "endpoint": "http://agent-gateway:8080/v1/chat/completions",
+      "role": "analysis"
+    },
+    {
+      "id": "llama-gpu",
+      "endpoint": "${LOCAL_LLM_BASE_URL}/chat/completions",
+      "role": "local-llm"
+    }
+  ],
+  "tools": [
+    {
+      "id": "sdr.spectrogram",
+      "url": "http://api:8078/api/spectrogram.png"
+    },
+    {
+      "id": "functor.mendeleev",
+      "url": "http://api:8078/api/functor/mendeleev"
+    },
+    {
+      "id": "realm.graph",
+      "url": "http://api:8078/api/realm"
+    }
+  ]
+}

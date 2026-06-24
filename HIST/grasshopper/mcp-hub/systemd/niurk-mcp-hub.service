@@ -1,0 +1,20 @@
+[Unit]
+Description=niurk MCP Hub stdio server template (started by MCP clients)
+Documentation=file:/opt/niurk-mcp-hub/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/niurk-mcp-hub/mcp-hub
+EnvironmentFile=-/opt/niurk-mcp-hub/env/mcp-hub.env
+ExecStart=/usr/bin/node /opt/niurk-mcp-hub/mcp-hub/src/hub.mjs
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+
+[Install]
+WantedBy=multi-user.target

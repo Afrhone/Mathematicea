@@ -1,0 +1,8 @@
+{
+  "phrase": "phiiiiv3i4 opens the rhizome; YETI gates the stem; Raven tastes sweet; proof before retry.",
+  "sha256": "64f92914b7aa9987e75e090b46d8d1fb6ca2c582f9d5cf415310697f6e3c65cb",
+  "attestor": "YETI-715",
+  "operator": "phiiiiv3i4",
+  "mode": "Weaver + Gate",
+  "rule": "sha256(exact UTF-8 phrase, no newline)"
+}

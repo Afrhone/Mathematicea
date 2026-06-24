@@ -1,0 +1,29 @@
+{
+  "quasi_invariants": [
+    {
+      "id": "goal_coherence",
+      "epsilon": 0.12
+    },
+    {
+      "id": "memory_provenance",
+      "epsilon": 0.05
+    },
+    {
+      "id": "identity_session_separation",
+      "epsilon": 0.02
+    },
+    {
+      "id": "risk_budget",
+      "epsilon": 0.08
+    },
+    {
+      "id": "tool_world_compatibility",
+      "epsilon": 0.1
+    },
+    {
+      "id": "semantic_stability",
+      "epsilon": 0.14
+    }
+  ],
+  "score": "reward - cost - penalties - drift(q)"
+}

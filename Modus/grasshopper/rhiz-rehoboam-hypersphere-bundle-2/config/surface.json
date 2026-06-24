@@ -1,0 +1,1 @@
+{"shader":{"fog":0.62,"water":0.72,"cracks":0.31,"blobBlend":0.84,"gradient":"cyan-violet-rose-gold"},"projection":{"sourceDim":8,"surface":"S7 projected to reflective S2 shell","pointLimit":96},"audio":{"enabledOnTouch":true,"fftSize":128}}

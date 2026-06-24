@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="950" viewBox="0 0 1500 950">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#05070c"/>
+      <stop offset="1" stop-color="#0a1020"/>
+    </linearGradient>
+
+    <!-- Chaotic environment noise -->
+    <filter id="chaos" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.010" numOctaves="4" seed="11" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="16" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+
+    <!-- Interference stripe mask (procedural) -->
+    <pattern id="fringes" patternUnits="userSpaceOnUse" width="36" height="36">
+      <rect width="36" height="36" fill="black"/>
+      <path d="M0,18 C9,6 27,30 36,18" stroke="white" stroke-width="2" fill="none" opacity="0.75"/>
+      <path d="M0,8  C9,-4 27,20 36,8"  stroke="white" stroke-width="1.2" fill="none" opacity="0.45"/>
+      <path d="M0,28 C9,16 27,40 36,28" stroke="white" stroke-width="1.2" fill="none" opacity="0.45"/>
+    </pattern>
+
+    <mask id="interferenceMask">
+      <rect width="100%" height="100%" fill="black"/>
+      <rect width="100%" height="100%" fill="url(#fringes)" opacity="0.88"/>
+      <radialGradient id="aperture" cx="50%" cy="52%" r="55%">
+        <stop offset="0" stop-color="white" stop-opacity="0.95"/>
+        <stop offset="1" stop-color="black" stop-opacity="0.0"/>
+      </radialGradient>
+      <rect width="100%" height="100%" fill="url(#aperture)" opacity="0.9"/>
+    </mask>
+
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="7" result="b"/>
+      <feColorMatrix in="b" type="matrix" values="
+        1 0 0 0 0
+        0 1 0 0 0
+        0 0 1 0 0
+        0 0 0 0.55 0" result="g"/>
+      <feMerge>
+        <feMergeNode in="g"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <style>
+      .title { font: 800 26px ui-sans-serif, system-ui; fill: #e8eef9; letter-spacing: .3px; }
+      .subtitle { font: 500 13px ui-sans-serif, system-ui; fill: rgba(232,238,249,.72); }
+      .node { filter:url(#glow); }
+      .nlabel { font: 750 14px ui-sans-serif, system-ui; fill:#e8eef9; }
+      .ndesc { font: 500 11px ui-sans-serif, system-ui; fill: rgba(232,238,249,.70); }
+      .edge { stroke: rgba(232,238,249,.24); stroke-width: 1.5; }
+      .etag { font: 650 10px ui-sans-serif, system-ui; fill: rgba(232,238,249,.55); }
+      .hub { fill: rgba(255,255,255,.06); stroke: rgba(255,255,255,.18); }
+    </style>
+  </defs>
+
+  <rect width="1500" height="950" fill="url(#bg)"/>
+  <g mask="url(#interferenceMask)" opacity="0.58">
+    <rect width="1500" height="950" fill="rgba(255,255,255,0.05)"/>
+  </g>
+
+  <g opacity="0.22">
+    <rect width="1500" height="950" fill="rgba(255,255,255,0.03)" filter="url(#chaos)"/>
+  </g>
+
+  <text x="34" y="52" class="title">Cross-Domain Map (v2)</text>
+  <text x="34" y="78" class="subtitle">Thermo • Fluids • Statistics • QMD • Electrodynamics • Geometry — with interference mask + chaos</text>
+
+  <!-- Hub -->
+  <g class="node">
+    <circle cx="750.0" cy="495.0" r="60" class="hub"/>
+    <text x="750.0" y="489.0" text-anchor="middle" class="nlabel">Manifold</text>
+    <text x="750.0" y="509.0" text-anchor="middle" class="ndesc">typed state-space</text>
+  </g>
+  <line class="edge" x1="750.0" y1="165.0" x2="915.0" y2="124.4"/>
+  <text class="etag" x="832.5" y="140.7" text-anchor="middle">macro↔micro</text>
+  <line class="edge" x1="915.0" y1="124.4" x2="958.9" y2="306.9"/>
+  <text class="etag" x="936.9" y="211.7" text-anchor="middle">ensembles</text>
+  <line class="edge" x1="958.9" y1="306.9" x2="1022.0" y2="406.6"/>
+  <text class="etag" x="990.4" y="352.8" text-anchor="middle">normal approx</text>
+  <line class="edge" x1="1022.0" y1="406.6" x2="1030.6" y2="657.0"/>
+  <text class="etag" x="1026.3" y="527.8" text-anchor="middle">stochastic models</text>
+  <line class="edge" x1="1155.2" y1="537.6" x2="1030.6" y2="657.0"/>
+  <text class="etag" x="1092.9" y="593.3" text-anchor="middle">turbulent forcing</text>
+  <line class="edge" x1="1155.2" y1="537.6" x2="351.2" y2="536.9"/>
+  <text class="etag" x="753.2" y="533.3" text-anchor="middle">flow on M</text>
+  <line class="edge" x1="673.3" y1="855.9" x2="453.8" y2="666.0"/>
+  <text class="etag" x="563.6" y="756.9" text-anchor="middle">superposition</text>
+  <line class="edge" x1="453.8" y1="666.0" x2="602.3" y2="698.3"/>
+  <text class="etag" x="528.1" y="678.1" text-anchor="middle">observable intensity</text>
+  <line class="edge" x1="602.3" y1="698.3" x2="829.7" y2="870.2"/>
+  <text class="etag" x="716.0" y="780.2" text-anchor="middle">forces/coupling</text>
+  <line class="edge" x1="829.7" y1="870.2" x2="900.7" y2="702.5"/>
+  <text class="etag" x="865.2" y="782.3" text-anchor="middle">reaction pathways</text>
+  <line class="edge" x1="900.7" y1="702.5" x2="673.3" y2="855.9"/>
+  <text class="etag" x="787.0" y="775.2" text-anchor="middle">electronic structure</text>
+  <line class="edge" x1="673.3" y1="855.9" x2="491.2" y2="410.9"/>
+  <text class="etag" x="582.2" y="629.4" text-anchor="middle">path sum</text>
+  <line class="edge" x1="750.0" y1="165.0" x2="491.2" y2="410.9"/>
+  <text class="etag" x="620.6" y="284.0" text-anchor="middle">free-energy weights</text>
+  <line class="edge" x1="529.7" y1="296.6" x2="750.0" y2="165.0"/>
+  <text class="etag" x="639.8" y="226.8" text-anchor="middle">entropy gradient</text>
+  <line class="edge" x1="583.4" y1="120.8" x2="529.7" y2="296.6"/>
+  <text class="etag" x="556.6" y="204.7" text-anchor="middle">aggregation</text>
+  <line class="edge" x1="583.4" y1="120.8" x2="673.3" y2="855.9"/>
+  <text class="etag" x="628.4" y="484.3" text-anchor="middle">phase cycles</text>
+  <line class="edge" x1="351.2" y1="536.9" x2="491.2" y2="410.9"/>
+  <text class="etag" x="421.2" y="469.9" text-anchor="middle">discretization</text>
+  <line class="edge" x1="750.0" y1="495.0" x2="750.0" y2="165.0" opacity="0.32"/>
+  <line class="edge" x1="750.0" y1="495.0" x2="915.0" y2="124.4" opacity="0.32"/>
+  <line class="edge" x1="750.0" y1="495.0" x2="958.9" y2="306.9" opacity="0.32"/>
+  <line class="edge" x1="750.0" y1="495.0" x2="1022.0" y2="406.6" opacity="0.32"/>
+  <line class="edge" x1="750.0" y1="495.0" x2="1155.2" y2="537.6" opacity="0.32"/>
+  <line class="edge" x1="750.0" y1="495.0" x2="1030.6" y2="657.0" opacity="0.32"/>
+  <line class="edge" x1="750.0" y1="495.0" x2="900.7" y2="702.5" opacity="0.32"/>
+  <line class="edge" x1="750.0" y1="495.0" x2="829.7" y2="870.2" opacity="0.32"/>
+  <line class="edge" x1="750.0" y1="495.0" x2="673.3" y2="855.9" opacity="0.32"/>
+  <line class="edge" x1="750.0" y1="495.0" x2="602.3" y2="698.3" opacity="0.32"/>
+  <line class="edge" x1="750.0" y1="495.0" x2="453.8" y2="666.0" opacity="0.32"/>
+  <line class="edge" x1="750.0" y1="495.0" x2="351.2" y2="536.9" opacity="0.32"/>
+  <line class="edge" x1="750.0" y1="495.0" x2="491.2" y2="410.9" opacity="0.32"/>
+  <line class="edge" x1="750.0" y1="495.0" x2="529.7" y2="296.6" opacity="0.32"/>
+  <line class="edge" x1="750.0" y1="495.0" x2="583.4" y2="120.8" opacity="0.32"/>
+  <g class="node">
+    <circle cx="750.0" cy="165.0" r="44" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="750.0" y="159.0" text-anchor="middle" class="nlabel">Thermodynamics</text>
+    <text x="750.0" y="179.0" text-anchor="middle" class="ndesc">Entropy, Free Energy</text>
+  </g>
+  <g class="node">
+    <circle cx="915.0" cy="124.4" r="52" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="915.0" y="118.4" text-anchor="middle" class="nlabel">Statistical Mechanics</text>
+    <text x="915.0" y="138.4" text-anchor="middle" class="ndesc">Ensembles, Fluctuations</text>
+  </g>
+  <g class="node">
+    <circle cx="958.9" cy="306.9" r="44" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="958.9" y="300.9" text-anchor="middle" class="nlabel">Probability</text>
+    <text x="958.9" y="320.9" text-anchor="middle" class="ndesc">Random Fields, Measures</text>
+  </g>
+  <g class="node">
+    <circle cx="1022.0" cy="406.6" r="44" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="1022.0" y="400.6" text-anchor="middle" class="nlabel">Statistics</text>
+    <text x="1022.0" y="420.6" text-anchor="middle" class="ndesc">Normality, Inference</text>
+  </g>
+  <g class="node">
+    <circle cx="1155.2" cy="537.6" r="44" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="1155.2" y="531.6" text-anchor="middle" class="nlabel">Fluid Dynamics</text>
+    <text x="1155.2" y="551.6" text-anchor="middle" class="ndesc">Advection, Vorticity</text>
+  </g>
+  <g class="node">
+    <circle cx="1030.6" cy="657.0" r="44" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="1030.6" y="651.0" text-anchor="middle" class="nlabel">Chaos/Noise</text>
+    <text x="1030.6" y="671.0" text-anchor="middle" class="ndesc">Turbulence, Forcing</text>
+  </g>
+  <g class="node">
+    <circle cx="900.7" cy="702.5" r="44" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="900.7" y="696.5" text-anchor="middle" class="nlabel">Chemistry</text>
+    <text x="900.7" y="716.5" text-anchor="middle" class="ndesc">Kinetics, Catalysis</text>
+  </g>
+  <g class="node">
+    <circle cx="829.7" cy="870.2" r="52" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="829.7" y="864.2" text-anchor="middle" class="nlabel">Molecular Mechanics</text>
+    <text x="829.7" y="884.2" text-anchor="middle" class="ndesc">Force Fields, PES</text>
+  </g>
+  <g class="node">
+    <circle cx="673.3" cy="855.9" r="44" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="673.3" y="849.9" text-anchor="middle" class="nlabel">Quantum MD</text>
+    <text x="673.3" y="869.9" text-anchor="middle" class="ndesc">Phase, Superposition</text>
+  </g>
+  <g class="node">
+    <circle cx="602.3" cy="698.3" r="44" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="602.3" y="692.3" text-anchor="middle" class="nlabel">Electrodynamics</text>
+    <text x="602.3" y="712.3" text-anchor="middle" class="ndesc">E-fields, Currents</text>
+  </g>
+  <g class="node">
+    <circle cx="453.8" cy="666.0" r="44" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="453.8" y="660.0" text-anchor="middle" class="nlabel">Interference</text>
+    <text x="453.8" y="680.0" text-anchor="middle" class="ndesc">Cross Terms, Slits</text>
+  </g>
+  <g class="node">
+    <circle cx="351.2" cy="536.9" r="52" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="351.2" y="530.9" text-anchor="middle" class="nlabel">Geometry/Manifolds</text>
+    <text x="351.2" y="550.9" text-anchor="middle" class="ndesc">Metric, Curvature</text>
+  </g>
+  <g class="node">
+    <circle cx="491.2" cy="410.9" r="44" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="491.2" y="404.9" text-anchor="middle" class="nlabel">Graph Maps</text>
+    <text x="491.2" y="424.9" text-anchor="middle" class="ndesc">States, Path Sums</text>
+  </g>
+  <g class="node">
+    <circle cx="529.7" cy="296.6" r="52" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="529.7" y="290.6" text-anchor="middle" class="nlabel">Baryogenesis → Proteins</text>
+    <text x="529.7" y="310.6" text-anchor="middle" class="ndesc">Complexity Emergence</text>
+  </g>
+  <g class="node">
+    <circle cx="583.4" cy="120.8" r="52" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.18)"/>
+    <text x="583.4" y="114.8" text-anchor="middle" class="nlabel">Helical Structures</text>
+    <text x="583.4" y="134.8" text-anchor="middle" class="ndesc">Chirality, Cycles</text>
+  </g>
+</svg>

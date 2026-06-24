@@ -1,0 +1,21 @@
+integration_map:
+  integrity:
+    incoming: [cluster_state, deploy_request, incident_log, model_registry]
+    processing: [multi_lens_reasoning, compression_delta, causal_graph, invariant_extraction]
+    outgoing: [deployment_invariants, risk_register, formalization_targets]
+  superforecasting:
+    incoming: [deployment_plan, preflight_result, historical_failure_modes]
+    processing: [outside_view, fermi_breakdown, bayes_update, premortem]
+    outgoing: [success_probability, failure_modes, mitigation_queue]
+  visio:
+    incoming: [image_path, frame_stream, dashboard_screenshot]
+    processing: [dtype_normalize, denoise, segment, measure, feature_export]
+    outgoing: [json_features, masks, overlays]
+  simulation_holography:
+    incoming: [cluster_topology, metrics, graph_events]
+    processing: [particle_tier, gpu_buffer_budget, force_layout, holographic_routes]
+    outgoing: [webgl_manifest, particle_recipe]
+  bitcoin:
+    incoming: [bitcoin_cli_readonly_request]
+    processing: [allowlist, local_node_rpc, json_sanitize]
+    outgoing: [blockchain_info, mempool_info, block_or_tx_json]

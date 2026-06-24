@@ -1,0 +1,62 @@
+[
+  {
+    "path": "bin/create-jules-bridge-lxc.sh",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "path": "bin/gitlab-fetch-jules-pr.sh",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "path": "bin/gitlab-github-mirror-check.sh",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "path": "bin/issue-one-time-token.sh",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "path": "bin/jules-api.sh",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "path": "bin/jules-task.sh",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "path": "bin/lib.sh",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "path": "bin/lxd-dev-env.sh",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "path": "bin/rhiz-control.sh",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "path": "bin/verify-gateway.sh",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "path": "bin/verify-stack.sh",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "path": "bin/agent-graph-orchestrator.py",
+    "exit": 0,
+    "stderr": ""
+  }
+]

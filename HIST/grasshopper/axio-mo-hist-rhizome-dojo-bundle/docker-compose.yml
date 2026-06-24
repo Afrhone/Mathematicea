@@ -1,0 +1,13 @@
+services:
+  dojo:
+    image: node:20-bookworm
+    container_name: axio-mo-hist-dojo
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    env_file:
+      - .env
+    volumes:
+      - ./server:/app
+    ports:
+      - "${DOJO_PORT:-7150}:7150"
+    restart: unless-stopped

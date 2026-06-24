@@ -1,0 +1,64 @@
+geometry:
+  vertical_axis: authority_depth
+  hyperbolic_axis: branching_abstraction
+  elliptic_axis: cyclic_phase
+  euclidean_axis: resource_feasibility
+
+node_types:
+  - repo.gitlab
+  - repo.github_mirror
+  - jules.source
+  - jules.session
+  - lxd.host
+  - lxd.container
+  - lxd.vm
+  - gateway
+  - swarm.service
+  - mcp.service
+  - model.endpoint
+  - token
+  - directive
+  - invariant
+  - rollout
+
+edge_types:
+  mirror: {cost: 1, risk: 1, phase: ingest}
+  create_session: {cost: 2, risk: 2, phase: plan}
+  fetch_pr: {cost: 1, risk: 1, phase: integrate}
+  launch_lxc: {cost: 3, risk: 3, phase: materialize}
+  issue_token: {cost: 2, risk: 4, phase: gate}
+  validate: {cost: 1, risk: -3, phase: verify}
+  promote: {cost: 4, risk: 8, phase: release}
+  rollback: {cost: 3, risk: -5, phase: recover}
+
+quasi_invariants:
+  authority_separation:
+    tolerance: 0
+    violation: reject
+  no_secret_export:
+    tolerance: 0
+    violation: reject
+  no_token_url:
+    tolerance: 0
+    violation: reject
+  control_ports_private:
+    tolerance: 0
+    violation: reject
+  source_alive_until_validated:
+    tolerance: 0
+    violation: reject
+  local_first_with_trace:
+    tolerance: 1
+    violation: warn
+  readiness_score:
+    tolerance: 70
+    violation: hold
+
+scoring:
+  progress_weight: 1.0
+  euclidean_cost_weight: 0.6
+  hyperbolic_branch_weight: 0.4
+  elliptic_phase_weight: 0.3
+  invariant_drift_weight: 2.0
+  blast_radius_weight: 1.8
+  secret_risk_weight: 3.0

@@ -1,0 +1,20 @@
+{
+  "name": "entwine-paradigm-flowfield-functor-bundle",
+  "created": "2026-05-28T16:06:58Z",
+  "ports": {
+    "ui": 8120,
+    "api": 8121,
+    "sdr_bridge": 8122,
+    "agent": 8123
+  },
+  "features": [
+    "FLOWFIELD simulation",
+    "Year 0 / 0-point mark",
+    "hypergraph paradigm UI",
+    "SDR bridge for factau-rhiz",
+    "quasi-invariant scoring",
+    "mixed geometry model",
+    "afrho.net root presentation scaffold"
+  ],
+  "safety": "Simulation, visualization, and signal analysis only."
+}

@@ -1,0 +1,20 @@
+{
+  "name": "niurk-mcp-hub-infrasys-webgl",
+  "type": "native-js-webgl",
+  "entry": "index.html",
+  "features": [
+    "webgl2 3d weighted force-directed graph",
+    "camera orbit / zoom / pan",
+    "gamepad controls",
+    "canvas 2d overlay labels",
+    "graph theory rules: isomorphism, commutativity, inflexion",
+    "fields / interference / noise",
+    "cluster topology dataset from LXD output",
+    "MCP hub overlay manifest",
+    "alpha-attention routing layer",
+    "bitcoin mempool particle stream placeholder",
+    "Ceph/LXD health surface layer"
+  ],
+  "run": "python3 -m http.server 8080",
+  "mcp_holography_manifest": "mcp-holography.manifest.json"
+}

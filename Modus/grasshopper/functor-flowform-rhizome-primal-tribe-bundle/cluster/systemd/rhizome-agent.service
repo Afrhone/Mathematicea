@@ -1,0 +1,10 @@
+[Unit]
+Description=RHIZOME Metrology Agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/functor-flowform-rhizome-metrology
+EnvironmentFile=-/opt/functor-flowform-rhizome-metrology/.env
+ExecStart=/usr/bin/python3 /opt/functor-flowform-rhizome-metrology/agent/rhizome_agent.py

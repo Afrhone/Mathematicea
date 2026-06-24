@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Uniphi — Numéral-Phonème Cipher (Zeroth)</title>
+  <style>
+    :root{color-scheme:dark; --bg:#06070a; --panel:rgba(0,0,0,.45); --line:rgba(255,255,255,.12); --text:#e8e9ee; --muted:rgba(232,233,238,.72); --r:18px;}
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+    #wrap{position:fixed;inset:0;display:grid;grid-template-columns:460px 1fr;gap:10px;padding:12px;box-sizing:border-box}
+    @media(max-width:980px){#wrap{grid-template-columns:1fr;grid-template-rows:auto 1fr;position:static}}
+    .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 12px 32px rgba(0,0,0,.35);padding:14px;overflow:auto}
+    h1{font-size:16px;margin:0 0 10px;font-weight:850}
+    h2{font-size:12px;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+    label{display:block;font-size:12px;margin:8px 0 4px;color:var(--muted)}
+    input,select,button,textarea{width:100%;box-sizing:border-box;font-size:13px;padding:9px 10px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text)}
+    textarea{min-height:90px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .tiny{font-size:11px;line-height:1.35;color:var(--muted)}
+    .stage{border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:rgba(0,0,0,.22);position:relative}
+    canvas{width:100%;height:100%;display:block}
+    pre{margin:0;white-space:pre-wrap;word-break:break-word;font-size:12px;color:rgba(232,233,238,.86)}
+    .pill{display:inline-block;padding:3px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);margin:2px 4px 0 0;font-size:12px}
+    .hr{height:1px;background:var(--line);margin:10px 0}
+  </style>
+</head>
+<body>
+<div id="wrap">
+  <div class="panel">
+    <h1>Numéral ↔ Phonème ↔ Graphème (Zeroth Cipher)</h1>
+    <div class="tiny">
+      FR → phonèmes → ids → entier (mixed radix) → pointeurs KV/VRAM → invariants snapshot.
+      <br/>Cipher sémiotique (transcodage), pas une promesse crypto.
+    </div>
+
+    <h2>Entrée</h2>
+    <label>Texte français</label>
+    <textarea id="text">Le monde est un théâtre, la physique une scène.</textarea>
+
+    <div class="row">
+      <div>
+        <label>Clé (seed)</label>
+        <input id="key" value="uniphi-zeroth-key" />
+      </div>
+      <div>
+        <label>Mode</label>
+        <select id="mode">
+          <option value="auto" selected>auto (g2p-lite)</option>
+          <option value="ipa">IPA (tokens séparés par espaces)</option>
+        </select>
+      </div>
+    </div>
+
+    <label>IPA (optionnel)</label>
+    <input id="ipa" placeholder="ʃ a t o ʁ ..." />
+
+    <div class="row">
+      <div><label>Zeroth t0</label><input id="t0" type="number" value="0" /></div>
+      <div><label>System ID</label><input id="sid" value="zeroth" /></div>
+    </div>
+
+    <div class="row">
+      <button id="btnEncode">Encoder</button>
+      <button id="btnSchemas">Voir schemas</button>
+    </div>
+
+    <div class="hr"></div>
+
+    <h2>Phonèmes</h2>
+    <div id="toks"></div>
+
+    <h2>Entier + registres</h2>
+    <pre id="out">—</pre>
+  </div>
+
+  <div class="stage">
+    <canvas id="c"></canvas>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const c = $('c');
+const g = c.getContext('2d');
+
+function fit() {
+  const dpr = Math.min(2, window.devicePixelRatio||1);
+  const r = c.getBoundingClientRect();
+  c.width = Math.max(2, Math.floor(r.width*dpr));
+  c.height = Math.max(2, Math.floor(r.height*dpr));
+  g.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener('resize', fit);
+fit();
+
+function clear(alpha=0.12){
+  const r = c.getBoundingClientRect();
+  g.fillStyle = `rgba(6,7,10,${alpha})`;
+  g.fillRect(0,0,r.width,r.height);
+}
+
+function drawGrapheme(graph) {
+  if(!graph || !graph.pts) return;
+  const pts = graph.pts;
+  const r = c.getBoundingClientRect();
+  const w=r.width,h=r.height;
+  clear(0.22);
+
+  let minx=1e9,maxx=-1e9,miny=1e9,maxy=-1e9;
+  for (const p of pts){ minx=Math.min(minx,p[0]); maxx=Math.max(maxx,p[0]); miny=Math.min(miny,p[1]); maxy=Math.max(maxy,p[1]); }
+  const cx=0.5*(minx+maxx), cy=0.5*(miny+maxy);
+  const span=Math.max(1e-9, Math.max(maxx-minx, maxy-miny));
+  const s=0.44*Math.min(w,h)/span;
+
+  g.strokeStyle="rgba(232,233,238,0.55)";
+  g.lineWidth=1.2;
+  g.beginPath();
+  for (let i=0;i<pts.length;i++){
+    const x = w/2 + (pts[i][0]-cx)*s;
+    const y = h/2 - (pts[i][1]-cy)*s;
+    if(i===0) g.moveTo(x,y); else g.lineTo(x,y);
+  }
+  g.stroke();
+
+  const last = pts[pts.length-1];
+  g.fillStyle="rgba(139,232,197,0.85)";
+  g.beginPath();
+  g.arc(w/2 + (last[0]-cx)*s, h/2 - (last[1]-cy)*s, 4, 0, Math.PI*2);
+  g.fill();
+}
+
+function showTokens(tokens){
+  const el = $('toks');
+  el.innerHTML = '';
+  for (const t of tokens){
+    const s = document.createElement('span');
+    s.className = 'pill';
+    s.textContent = t;
+    el.appendChild(s);
+  }
+}
+
+$('btnEncode').onclick = async () => {
+  const req = {
+    key: $('key').value,
+    text: $('text').value,
+    ipa: $('ipa').value,
+    mode: $('mode').value,
+    zeroth: { t0: Number($('t0').value||0), system_id: $('sid').value, anchor_symbol: "Ø" },
+    export: { include_graph: true, include_manifold: true, include_decision_tree: true }
+  };
+
+  $('out').textContent = "…";
+  const res = await fetch('/api/encode', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(req) });
+  const data = await res.json();
+
+  showTokens(data.ipa_tokens);
+
+  const view = {
+    integer_base10: data.integer_base10,
+    integer_base16: data.integer_base16,
+    magnitude_bits: data.magnitude_bits,
+    radix: data.radix,
+    pointers: data.pointers,
+    metrics: data.metrics,
+    invariants: data.invariants,
+    note: "KV ptr / VRAM ptr are 64-bit blake2b-derived addresses from the integer payload."
+  };
+  $('out').textContent = JSON.stringify(view, null, 2);
+  drawGrapheme(data.graph);
+};
+
+$('btnSchemas').onclick = async () => {
+  const res = await fetch('/api/schemas');
+  const data = await res.json();
+  $('out').textContent = JSON.stringify(data, null, 2);
+};
+</script>
+</body>
+</html>

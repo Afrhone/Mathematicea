@@ -1,0 +1,1 @@
+{"routes":[{"name":"llama-cpp-cuda","baseUrl":"http://llama-cpp:8080/v1","models":["local-llama-gpu"]},{"name":"ollama","baseUrl":"http://ollama:11434/v1","models":["llama3.1","qwen2.5-coder"]},{"name":"vllm","baseUrl":"http://vllm:8000/v1","models":["Qwen/Qwen2.5-Coder-1.5B-Instruct"]}]}

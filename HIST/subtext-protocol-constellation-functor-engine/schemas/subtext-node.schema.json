@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SubtextNode",
+  "type": "object",
+  "required": [
+    "id",
+    "root",
+    "surface",
+    "provenance",
+    "rank"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "root": {
+      "type": "string"
+    },
+    "surface": {
+      "type": "string"
+    },
+    "tier": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5
+    },
+    "operators": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "provenance": {
+      "type": "object"
+    },
+    "rank": {
+      "type": "object"
+    }
+  }
+}

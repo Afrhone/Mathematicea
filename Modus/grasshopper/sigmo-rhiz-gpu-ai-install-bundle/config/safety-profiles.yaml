@@ -1,0 +1,21 @@
+profiles:
+  normal:
+    enabled_by_default: true
+    notes: Standard assistant/coding use.
+  code:
+    enabled_by_default: true
+    notes: Code assistant; no destructive automation without explicit gated approval.
+  creative:
+    enabled_by_default: true
+    notes: Creative writing and art ideation.
+  image:
+    enabled_by_default: true
+    notes: Image generation lane.
+  risky-disabled:
+    enabled_by_default: false
+    requires_env: ENABLE_RISKY_MODEL_PROFILES=true
+    notes: Catalogued for operator awareness; not auto-pulled, not auto-routed.
+  reference-only-risky-disabled:
+    enabled_by_default: false
+    requires_env: ENABLE_RISKY_MODEL_PROFILES=true
+    notes: External repo reference; not cloned unless explicitly requested.

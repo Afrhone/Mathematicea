@@ -1,0 +1,15 @@
+{
+  "attestor": "YETI-715",
+  "game": "axiom-stem-raven",
+  "phrase": "YETI gates the stem, Raven tastes sweet, axiom before retry, rhizome remembers, entropy bows to proof.",
+  "sha256_no_newline": "17ecf51f7114c52a384d0d048165459159688e74aeaaf745cafa683bfefebea1",
+  "rule": "sha256(exact UTF-8 phrase, newline=false, trim=false, lowercase=false)",
+  "narrative": {
+    "YETI": "humbled gatekeeper",
+    "stem": "root + flow-check + derivation lineage",
+    "Raven tastes sweet": "tribal reminder phrase",
+    "axiom before retry": "principle-constrained operations",
+    "rhizome remembers": "distributed cluster memory",
+    "entropy bows to proof": "gates reduce chaos"
+  }
+}

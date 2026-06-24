@@ -1,0 +1,14 @@
+[Unit]
+Description=iPhone XR LimeSDR Observatory Lab
+After=docker.service network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/iphone-xr-limesdr-radiotelescope-lab
+ExecStart=/usr/bin/docker compose -f compose/docker-compose.yml --env-file .env up -d
+ExecStop=/usr/bin/docker compose -f compose/docker-compose.yml --env-file .env down
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

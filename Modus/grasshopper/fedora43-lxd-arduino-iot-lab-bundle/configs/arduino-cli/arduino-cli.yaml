@@ -1,0 +1,8 @@
+board_manager:
+  additional_urls: []
+directories:
+  data: /root/.arduino15
+  downloads: /root/.arduino15/staging
+  user: /opt/arduino-iot-lab/firmware
+logging:
+  level: info

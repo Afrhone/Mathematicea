@@ -1,0 +1,31 @@
+{
+  "schema": "exosys.eno8303.mcp-cloud-cpu-hub.v1",
+  "node": "exosys-rhiz",
+  "interface": "eno8303",
+  "lanes": [
+    "switchlink",
+    "swap",
+    "dump",
+    "cpu_tasks",
+    "google_agents",
+    "ibm_quantum",
+    "substack",
+    "gamelab"
+  ],
+  "gates": [
+    "interface_exists",
+    "rollback_saved",
+    "apply_flag_required",
+    "admin_token_required",
+    "swap_space_check",
+    "cloud_calls_disabled_by_default",
+    "cpu_queue_sink_required"
+  ],
+  "fallbacks": {
+    "network_apply_fail": "restore nmconnection backup",
+    "cloud_unavailable": "queue job locally",
+    "ibm_quantum_unavailable": "local simulator stub",
+    "substack_unavailable": "write draft markdown",
+    "lxd_create_disabled": "emit dry-run command"
+  }
+}

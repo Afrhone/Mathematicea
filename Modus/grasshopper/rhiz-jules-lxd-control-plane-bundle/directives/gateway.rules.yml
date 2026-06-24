@@ -1,0 +1,38 @@
+gateway:
+  role: cryptographic_integration_boundary
+  expose_public:
+    - 443/tcp
+    - 51872/udp
+  deny_public:
+    - 2377/tcp
+    - 7946/tcp
+    - 7946/udp
+    - 4789/udp
+    - 11434/tcp
+    - docker.sock
+    - lxd-api
+    - ceph-mon
+    - ceph-mgr
+    - ceph-osd
+    - mcp-direct
+
+bootstrap_flow:
+  - one_time_token
+  - jwt_or_oauth_exchange
+  - signed_directives
+  - node_env
+  - wireguard_peer
+  - cluster_join
+  - swarm_join_optional
+  - mcp_agent_start
+  - complete_callback
+
+security:
+  token_in_url: forbidden
+  one_time_token_store: hash_only
+  one_time_token_ttl_seconds: 900
+  jwt_ttl_seconds: 900
+  redact_authorization_headers: true
+  docker_socket_proxy_preferred: true
+  secrets_backend: docker_secrets_or_root_600_files
+  revoke_by_node_id: true

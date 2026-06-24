@@ -1,0 +1,16 @@
+niurk MCP Hub Bundle regenerated at 2026-05-02T13:01:27Z
+
+Validated:
+- dependency-free Node stdio MCP-style server
+- selftest entrypoint
+- read-only/default safety gates
+- Bitcoin RPC allowlist boundary
+- LXD/Ceph cluster preflight scripts
+- standalone infrasys WebGL dashboard payload
+
+Primary entrypoints:
+- mcp-hub/src/hub.mjs
+- bin/hub-selftest.sh
+- bin/cluster-preflight.sh
+- bin/render-client-config.sh
+- dashboard/infrasys-webgl/index.html

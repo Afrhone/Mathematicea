@@ -1,0 +1,34 @@
+{
+  "default": "llama-3.2-3b",
+  "routes": [
+    {
+      "id": "llama_gpu_openai",
+      "type": "openai",
+      "base_url": "${LLAMA_GPU_OPENAI_BASE_URL}",
+      "models": [
+        "llama-3.2-3b",
+        "crow-9b",
+        "hauhau-qwen-9b"
+      ]
+    },
+    {
+      "id": "gpu_compute_openai",
+      "type": "openai",
+      "base_url": "${GPU_COMPUTE_OPENAI_BASE_URL}",
+      "models": [
+        "qwen-heretic",
+        "mistral-medium",
+        "glm-flash"
+      ]
+    },
+    {
+      "id": "google_adk",
+      "type": "adk",
+      "project": "${GOOGLE_CLOUD_PROJECT}",
+      "region": "${GOOGLE_CLOUD_REGION}",
+      "models": [
+        "${GEMINI_MODEL}"
+      ]
+    }
+  ]
+}

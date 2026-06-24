@@ -1,0 +1,27 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: docker/web-export/Dockerfile
+    ports:
+      - "${WEB_PORT:-8088}:80"
+    volumes:
+      - ./assets/html-animation:/usr/share/nginx/html:ro
+    depends_on:
+      - sdr-server
+
+  sdr-server:
+    build:
+      context: .
+      dockerfile: docker/sdr-server/Dockerfile
+    environment:
+      SDR_MODE: ${SDR_MODE:-synthetic}
+      SDR_CENTER_FREQ: ${SDR_CENTER_FREQ:-100000000}
+      SDR_SAMPLE_RATE: ${SDR_SAMPLE_RATE:-2048000}
+      SDR_FFT_SIZE: ${SDR_FFT_SIZE:-1024}
+      SDR_FPS: ${SDR_FPS:-12}
+    ports:
+      - "${SDR_PORT:-8090}:8090"
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    privileged: false

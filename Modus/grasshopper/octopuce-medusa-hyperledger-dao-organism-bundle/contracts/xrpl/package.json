@@ -1,0 +1,14 @@
+{
+  "name": "octopuce-xrpl-private-lab",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "wallet": "node scripts/create_wallet.js",
+    "escrow": "node scripts/conditional_escrow.js",
+    "nft": "node scripts/nft_mint_private.js",
+    "server-info": "node scripts/server_info.js"
+  },
+  "dependencies": {
+    "xrpl": "^4.0.0"
+  }
+}

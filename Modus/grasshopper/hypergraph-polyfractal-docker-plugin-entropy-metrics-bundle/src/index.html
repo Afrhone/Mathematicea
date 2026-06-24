@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hypergraph Polyfractal Plugin</title>
+    <style>
+      :root { color-scheme: dark; }
+      html, body { margin:0; padding:0; height:100%; background:#07080b; color:#e8e9ee; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; overflow:hidden; }
+      #ui {
+        position: fixed; top: 12px; left: 12px; right: 12px;
+        display: grid; grid-template-columns: 430px 1fr; gap: 10px;
+        pointer-events: none;
+      }
+      #panel, #hud { pointer-events: auto; }
+      #panel {
+        border: 1px solid rgba(255,255,255,0.10);
+        background: rgba(0,0,0,0.45);
+        border-radius: 18px;
+        padding: 14px;
+        box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+      }
+      #hud {
+        border: 1px solid rgba(255,255,255,0.10);
+        background: rgba(0,0,0,0.30);
+        border-radius: 18px;
+        padding: 14px;
+        max-height: calc(100vh - 24px);
+        overflow: auto;
+      }
+      h1 { font-size: 16px; margin: 0 0 10px; font-weight: 650; }
+      h2 { font-size: 12px; opacity: .85; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: .08em; }
+      label { display:block; font-size: 12px; opacity: .9; margin: 8px 0 4px; }
+      input, select, button, textarea {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 13px;
+        padding: 9px 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.05);
+        color: #e8e9ee;
+      }
+      button { cursor:pointer; background: rgba(255,255,255,0.08); }
+      button:hover { background: rgba(255,255,255,0.11); }
+      .row { display:grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .tiny { font-size: 11px; opacity: .72; line-height: 1.35; }
+      .hr { height:1px; background: rgba(255,255,255,0.10); margin: 10px 0; }
+      #canvas { position: fixed; inset:0; display:block; }
+      pre { margin:0; white-space: pre-wrap; word-break: break-word; font-size: 12px; opacity: .9; }
+      .badge { display:inline-block; padding: 3px 10px; border-radius: 999px; border:1px solid rgba(255,255,255,0.14); margin-right:6px; font-size: 11px; opacity:.9; }
+      .metricline { display:flex; justify-content: space-between; gap: 10px; font-size: 12px; }
+      .metricline b { font-weight: 650; }
+      .meter { height: 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); overflow:hidden; }
+      .meter > div { height: 100%; width: 0%; background: rgba(139, 232, 197, 0.65); }
+      @media (max-width: 980px) {
+        #ui { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <div id="ui">
+      <div id="panel">
+        <h1><span class="badge">Docker Module</span><span class="badge">Entropy</span><span class="badge">Plugin Loader</span> Hypergraph Polyfractal</h1>
+        <div class="tiny">
+          Polyfractal shader backdrop + hypergraph explorer (incidence-graph for hyperedges). Live <b>entropy + KL drift</b> metrics from <code>/api/metrics</code>.
+        </div>
+
+        <h2>Polyfractal</h2>
+        <div class="row">
+          <div>
+            <label>Zoom</label>
+            <input id="zoom" type="range" min="0.5" max="6.0" step="0.01" value="2.2"/>
+          </div>
+          <div>
+            <label>Iterations</label>
+            <input id="iters" type="range" min="8" max="180" step="1" value="78"/>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Entropy</label>
+            <input id="entropy" type="range" min="0" max="1" step="0.001" value="0.33"/>
+          </div>
+          <div>
+            <label>Palette shift</label>
+            <input id="pal" type="range" min="0" max="6.283" step="0.001" value="2.0"/>
+          </div>
+        </div>
+
+        <h2>Graph</h2>
+        <div class="row">
+          <button id="refresh">Fetch graph</button>
+          <button id="reset">Reset demo</button>
+        </div>
+        <label>Import graph JSON</label>
+        <textarea id="import" rows="5" placeholder='{"nodes":[...],"links":[...],"hyperedges":[...]}'></textarea>
+        <div class="row">
+          <button id="applyImport">Apply import</button>
+          <button id="export">Export to clipboard</button>
+        </div>
+
+        <h2>Plugins</h2>
+        <label>Plugin</label>
+        <select id="pluginSelect"></select>
+        <div class="row">
+          <button id="loadPlugin">Load + apply</button>
+          <button id="reload">Reload list</button>
+        </div>
+
+        <h2>Ecosystem</h2>
+        <div class="row">
+          <button id="refreshModules">Probe modules</button>
+          <button id="refreshWorkflow">Load workflow</button>
+        </div>
+        <div class="row">
+          <button id="refreshBi">BI summary</button>
+          <button id="loadCipherSchema">Cipher schema</button>
+        </div>
+        <label>Admin token (gated monitoring/admin)</label>
+        <input id="adminToken" type="password" placeholder="x-admin-token"/>
+        <div class="row">
+          <button id="gatedMonitoring">Run gated monitoring</button>
+          <button id="resetGates">Reset gates</button>
+        </div>
+        <label>Admin gate module</label>
+        <select id="gateModule"></select>
+        <label>Gate reason (optional)</label>
+        <input id="gateReason" type="text" placeholder="why this gate changed"/>
+        <div class="row">
+          <button id="gateEnable">Enable module</button>
+          <button id="gateDisable">Disable module</button>
+        </div>
+
+        <h2>Cipher Validation</h2>
+        <label>Payload JSON (request or response)</label>
+        <textarea id="cipherPayload" rows="5" placeholder='{\"key\":\"seed\",\"mode\":\"auto\",\"text\":\"bonjour\"}'></textarea>
+        <button id="validateCipher">Validate payload</button>
+
+        <h2>Shockwave Risk</h2>
+        <label>Risk telemetry JSON</label>
+        <textarea id="riskPayload" rows="4" placeholder='{\"telemetry\":{\"volatility\":0.2,\"anomaly\":0.1,\"exposure\":0.4}}'></textarea>
+        <div class="row">
+          <button id="runRisk">Run predictive risk</button>
+          <button id="computeDiffusion">Diffusion hash</button>
+        </div>
+
+        <h2>Quantum Query</h2>
+        <label>Quantum payload JSON</label>
+        <textarea id="quantumPayload" rows="4" placeholder='{\"provider\":\"ibm\",\"shots\":1024,\"circuit\":{\"name\":\"demo\"}}'></textarea>
+        <div class="row">
+          <button id="saveQuantumState">Save quantum state</button>
+          <button id="queryQuantum">Query quantum</button>
+        </div>
+
+        <div class="hr"></div>
+        <div class="tiny">
+          <b>Interpretation:</b> higher diversity (kind/degree entropy) + moderate compressibility → rich structure. KL drift flags big “paradigm shifts”.
+        </div>
+      </div>
+
+      <div id="hud">
+        <h2>Entropy Index</h2>
+        <div class="meter"><div id="entropyBar"></div></div>
+        <div style="height:8px"></div>
+        <div class="metricline"><span>Index</span><b id="entropyIdx">—</b></div>
+        <div class="metricline"><span>Kind H</span><b id="kindH">—</b></div>
+        <div class="metricline"><span>Degree H</span><b id="degH">—</b></div>
+        <div class="metricline"><span>Compress</span><b id="compR">—</b></div>
+        <div class="metricline"><span>KL drift</span><b id="klD">—</b></div>
+        <div class="metricline"><span>Stable</span><b id="stable">—</b></div>
+
+        <h2>Live</h2>
+        <pre id="log">boot…</pre>
+
+        <h2>Raw metrics</h2>
+        <pre id="rawMetrics">—</pre>
+
+        <h2>Ecosystem status</h2>
+        <pre id="rawEcosystem">—</pre>
+
+        <h2>Workflow</h2>
+        <pre id="rawWorkflow">—</pre>
+
+        <h2>BI summary</h2>
+        <pre id="rawBi">—</pre>
+
+        <h2>Gated monitoring</h2>
+        <pre id="rawMonitoring">—</pre>
+
+        <h2>Cipher schema / validation</h2>
+        <pre id="rawCipher">—</pre>
+
+        <h2>Shockwave risk / quantum</h2>
+        <pre id="rawRisk">—</pre>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

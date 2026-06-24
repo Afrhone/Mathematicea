@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Solar System — Small Bodies, Risk, Zoom, Particles, Dilation, Fields & Time</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #05060a; overflow: hidden;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
+  canvas { display: block; width: 100vw; height: 100vh; cursor: grab; }
+  canvas.dragging { cursor: grabbing; }
+
+  /* HUD bottom */
+  #hud {
+    position: fixed; left: 10px; right: 10px; bottom: 10px;
+    display: grid; grid-template-columns: auto 1fr auto; gap: .75rem 1rem; align-items: center;
+    padding: .6rem .8rem; border-radius: .8rem; color: #bcd1ea; font-size: 12px;
+    background: rgba(12,16,24,.55); backdrop-filter: blur(4px);
+    border: 1px solid rgba(120,175,235,.15);
+  }
+  #toggles { display: flex; gap: .9rem; flex-wrap: wrap; max-width: min(62vw, 1000px); }
+  .chk { display: inline-flex; align-items: center; gap: .4rem; }
+  .spacer { height: 1px; background: linear-gradient(90deg, transparent, rgba(120,175,235,.4), transparent); grid-column: 1/-1; }
+  input[type="range"] { width: 100%; }
+  #legend { justify-self: end; opacity: .85 }
+
+  /* View & time controls (top-left) */
+  #viewbox{ position:fixed; top:10px; left:10px; padding:.6rem .7rem; border-radius:.8rem;
+    background: rgba(10,14,22,.55); border:1px solid rgba(120,175,235,.18); color:#d7e6ff; font-size:12px; backdrop-filter: blur(4px); width: 340px; }
+  #viewbox .row{ display:grid; grid-template-columns:auto 1fr auto; gap:.5rem; align-items:center; margin:.35rem 0; }
+  #viewbox button{ padding:.25rem .5rem; border-radius:.5rem; border:1px solid rgba(120,175,235,.28); background:#0b1321; color:#cfe3ff; cursor:pointer; }
+  #viewbox strong{ font-weight:600; }
+  #viewbox select, #viewbox input[type="number"], #viewbox input[type="date"]{ width:100%; background:#0b1321; color:#cfe3ff; border:1px solid rgba(120,175,235,.28); border-radius:.4rem; padding:.2rem .35rem; }
+  #viewbox small{ opacity:.8 }
+
+  /* Data panel (right-middle) */
+  #databox{ position:fixed; top:50%; right:10px; transform:translateY(-50%);
+    min-width: 300px; max-width: 380px; color:#d7e6ff; background: rgba(10,14,22,.6);
+    border:1px solid rgba(120,175,235,.18); border-radius:.9rem; padding:.7rem .8rem; font-size: 12px; backdrop-filter: blur(4px); }
+  #databox h3{ margin:.1rem 0 .5rem; font-size:12px; color:#9ec7ff; letter-spacing:.3px; }
+  #databox .kv{ display:grid; grid-template-columns:auto 1fr; gap:.25rem .6rem; align-items:baseline; }
+  #databox .kv div:nth-child(odd){ opacity:.8; }
+  #databox .row{ display:flex; gap:.5rem; align-items:center; margin-top:.4rem; flex-wrap: wrap; }
+  #copyBtn{ padding:.25rem .5rem; border-radius:.5rem; border:1px solid rgba(120,175,235,.28); background:#0b1321; color:#cfe3ff; cursor:pointer; }
+  #eqbox{ margin-top:.6rem; padding:.5rem; background:rgba(120,175,235,.06); border:1px solid rgba(120,175,235,.18); border-radius:.6rem; line-height:1.35; }
+  #eqbox code{ background:rgba(10,14,22,.5); padding:.05rem .25rem; border-radius:.3rem; }
+
+  /* Risk & timeline (top-right) */
+  #stack{ position:fixed; top:10px; right:10px; display:flex; flex-direction:column; gap:.6rem; }
+  #riskbox, #timelinebox{
+    min-width: 260px; max-width: 380px; color:#d7e6ff; background: rgba(10,14,22,.6);
+    border:1px solid rgba(120,175,235,.18); border-radius:.9rem; padding:.7rem .8rem; font-size: 12px; backdrop-filter: blur(4px);
+  }
+  #riskbox h3, #timelinebox h3 { margin:0 0 .4rem; font-size: 12px; letter-spacing:.3px; color:#9ec7ff }
+  #risklist { max-height: 28vh; overflow:auto; }
+  .riskitem { padding:.35rem .4rem; border-radius:.5rem; margin:.25rem 0; display:grid; grid-template-columns: 1fr auto; gap:.5rem; align-items:center; }
+  .riskitem .when { opacity:.85 }
+  .watch  { background: rgba(255, 214, 102, .10); border:1px solid rgba(255,214,102,.22); }
+  .warn   { background: rgba(255, 145,  94, .10); border:1px solid rgba(255,145, 94,.22); }
+  .alert  { background: rgba(239,  71, 111, .10); border:1px solid rgba(239, 71,111,.28); }
+  .ok     { background: rgba( 90, 200, 160, .10); border:1px solid rgba( 90,200,160,.18); }
+
+  #timeline{ max-height: 24vh; overflow:auto; }
+  .ev{ display:grid; grid-template-columns:auto 1fr auto; gap:.4rem; align-items:center; padding:.25rem .35rem; border-radius:.45rem; margin:.2rem 0; background: rgba(120,175,235,.05); }
+  .ev .tag{ font-size:10px; opacity:.8; padding:.05rem .35rem; border:1px solid rgba(120,175,235,.25); border-radius:.35rem; }
+
+  /* Galactic compass */
+  #gcomp{ position:fixed; top:10px; left:50%; transform:translateX(-50%); width:180px; height:84px;
+    color:#d7e6ff; font-size: 11px; pointer-events:none; text-align:center; }
+</style>
+<body>
+<canvas id="sky"></canvas>
+
+<!-- View, time, particles, observer -->
+<div id="viewbox">
+  <!-- Time controls -->
+  <div class="row">
+    <strong>Time</strong>
+    <div style="display:flex; gap:.4rem; align-items:center; flex-wrap:wrap;">
+      <button id="playBtn">▶ Play</button>
+      <button id="stepBack">⟲ Step−</button>
+      <button id="stepFwd">Step＋</button>
+    </div>
+    <span></span>
+  </div>
+  <div class="row">
+    <strong>Step</strong>
+    <input id="stepDays" type="number" min="0.01" step="0.01" value="1" />
+    <small>days</small>
+  </div>
+  <div class="row"><strong>Zoom</strong><input id="zoom" type="range" min="0.35" max="6" step="0.01" value="1"><span id="zoomv">1.00×</span></div>
+  <div class="row"><strong>Time warp</strong><input id="timewarp" type="range" min="0.05" max="20" step="0.05" value="1"><span id="timev">1.00×</span></div>
+  <div class="row"><label class="chk"><input id="tieTZ" type="checkbox" checked> Tie speed to zoom (÷zoom)</label><button id="resetView">Reset</button><span></span></div>
+  <div class="row"><strong>Particles</strong><input id="particleDensity" type="range" min="0" max="1" step="0.01" value="0.6"><span id="pdv">60%</span></div>
+  <div class="row"><label class="chk"><input id="showParticles" type="checkbox" checked> Cosmic particles</label><span></span><span></span></div>
+  <div class="row">
+    <strong>Calendar</strong>
+    <input id="epochYear" type="number" step="1" value="2025" />
+    <span id="calendarLabel">2025.00</span>
+  </div>
+  <div class="row">
+    <strong>Jump</strong>
+    <select id="eventSel"></select>
+    <button id="jumpBtn">Go</button>
+  </div>
+  <div class="row"><strong>Observer</strong>
+    <select id="observerSel"></select>
+    <span id="obsBadge">Earth</span>
+  </div>
+</div>
+
+<!-- Bottom HUD -->
+<div id="hud">
+  <div id="toggles">
+    <label class="chk"><input id="showOrbits" type="checkbox" checked> Orbits</label>
+    <label class="chk"><input id="showMoonOrbits" type="checkbox" checked> Moon orbits</label>
+    <label class="chk"><input id="showLabels" type="checkbox" checked> Labels</label>
+    <label class="chk"><input id="showKuiper" type="checkbox" checked> Kuiper Belt</label>
+    <label class="chk"><input id="showOort" type="checkbox" checked> Oort Cloud</label>
+    <label class="chk"><input id="showCraft" type="checkbox" checked> Spacecraft</label>
+    <label class="chk"><input id="showCraftPaths" type="checkbox" checked> Space Paths</label>
+    <label class="chk"><input id="compressAU" type="checkbox" checked> Compress &gt; 50 AU</label>
+    <label class="chk"><input id="showAsteroids" type="checkbox" checked> Asteroids</label>
+    <label class="chk"><input id="showDwarfs" type="checkbox" checked> Dwarf planets</label>
+    <label class="chk"><input id="showComets" type="checkbox" checked> Comets</label>
+    <label class="chk"><input id="showTrails" type="checkbox" checked> Trails</label>
+    <label class="chk"><input id="showPredict" type="checkbox" checked> Predict paths</label>
+    <label class="chk"><input id="showRisk" type="checkbox" checked> Collision risk</label>
+    <label class="chk"><input id="showGravField" type="checkbox"> Grav field</label>
+    <label class="chk"><input id="showEquip" type="checkbox"> Equipotentials</label>
+    <label class="chk"><input id="showParker" type="checkbox"> Parker spiral</label>
+  </div>
+  <div class="spacer"></div>
+  <div style="display:grid; gap:.25rem;">
+    <strong>Base Speed</strong>
+    <input id="speed" type="range" min="0.1" max="6" step="0.1" value="1" />
+  </div>
+  <div style="display:grid; gap:.25rem; width: min(340px, 24vw);">
+    <strong>Horizon (years)</strong>
+    <input id="horizon" type="range" min="1" max="200" step="1" value="50" />
+  </div>
+  <div id="legend">☉ Sun • ◎ Rings • ● Moons • ▲ Spacecraft • ✹ Small body</div>
+</div>
+
+<!-- Stack top-right: risk + timeline -->
+<div id="stack">
+  <div id="riskbox" hidden>
+    <h3>Collision Risk Forecast</h3>
+    <div id="riskmeta" style="margin-bottom:.4rem"></div>
+    <div id="risklist"></div>
+    <div style="opacity:.7; margin-top:.4rem">Thresholds: <span class="ok">&nbsp;safe&nbsp;</span> ≥0.02 AU · <span class="watch">watch</span> &lt;0.02 AU · <span class="warn">warn</span> &lt;0.005 AU · <span class="alert">alert</span> &lt;0.0026 AU (≈ lunar distance)</div>
+  </div>
+  <div id="timelinebox">
+    <h3>Special Events Timeline</h3>
+    <div id="timeline"></div>
+  </div>
+</div>
+
+<!-- Physics + properties panel -->
+<div id="databox">
+  <h3>Atomic Clock & Observer Dilation (illustrative)</h3>
+  <div class="kv" id="physkv"></div>
+  <h3 style="margin-top:.6rem">Selected Object</h3>
+  <div class="kv" id="selkv"></div>
+  <div class="row"><button id="copyBtn">Copy JSON</button><span id="copiedMsg" style="opacity:.7"></span></div>
+  <div id="eqbox">
+    <h3>Field Equations (used here)</h3>
+    <div>
+      <div>Vis-viva: <code>v = √(μ ( 2/r − 1/a ))</code></div>
+      <div>SR Lorentz: <code>γ = 1 / √(1 − v²/c²)</code></div>
+      <div>GR redshift (Schwarzschild): <code>√(1 − 2GM/(rc²))</code></div>
+      <div>Combined (approx): <code>dt_local/dt_atomic ≈ √(1 − 2GM/(rc²) − v²/c²)</code></div>
+      <div>Gravity field: <code>g(r) = GM/r²</code> · Potential: <code>Φ(r) = −GM/r</code></div>
+      <div>Parker spiral (stylized): <code>r(θ) = (v_sw/Ω_☉) (θ − θ₀)</code></div>
+    </div>
+  </div>
+</div>
+
+<!-- Galactic compass -->
+<div id="gcomp"></div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('sky');
+  const ctx = canvas.getContext('2d', { alpha: true });
+  // Global sim clock (hoisted early)
+  var simTime = 0;
+
+  // === HUD ELEMS ===
+  const speedSlider = document.getElementById('speed');
+  const showOrbits = document.getElementById('showOrbits');
+  const showMoonOrbits = document.getElementById('showMoonOrbits');
+  const showLabels = document.getElementById('showLabels');
+  const showKuiper = document.getElementById('showKuiper');
+  const showOort = document.getElementById('showOort');
+  const showCraft = document.getElementById('showCraft');
+  const showCraftPaths = document.getElementById('showCraftPaths');
+  const compressAU = document.getElementById('compressAU');
+  const showAsteroids = document.getElementById('showAsteroids');
+  const showDwarfs = document.getElementById('showDwarfs');
+  const showComets = document.getElementById('showComets');
+  const showPredict = document.getElementById('showPredict');
+  const showTrails = document.getElementById('showTrails');
+  const showRisk = document.getElementById('showRisk');
+  const showGravField = document.getElementById('showGravField');
+  const showEquip = document.getElementById('showEquip');
+  const showParker = document.getElementById('showParker');
+  const horizon = document.getElementById('horizon');
+
+  const riskbox = document.getElementById('riskbox');
+  const risklist = document.getElementById('risklist');
+  const riskmeta = document.getElementById('riskmeta');
+
+  // View + time controls
+  const zoomSlider = document.getElementById('zoom');
+  const zoomVal = document.getElementById('zoomv');
+  const timewarp = document.getElementById('timewarp');
+  const timeVal = document.getElementById('timev');
+  const tieTZ = document.getElementById('tieTZ');
+  const resetView = document.getElementById('resetView');
+  const particleDensity = document.getElementById('particleDensity');
+  const pdv = document.getElementById('pdv');
+  const showParticles = document.getElementById('showParticles');
+  const playBtn = document.getElementById('playBtn');
+  const stepBack = document.getElementById('stepBack');
+  const stepFwd = document.getElementById('stepFwd');
+  const stepDays = document.getElementById('stepDays');
+  const epochYear = document.getElementById('epochYear');
+  const calendarLabel = document.getElementById('calendarLabel');
+  const eventSel = document.getElementById('eventSel');
+  const jumpBtn = document.getElementById('jumpBtn');
+
+  // Data panel
+  const physkv = document.getElementById('physkv');
+  const selkv = document.getElementById('selkv');
+  const copyBtn = document.getElementById('copyBtn');
+  const copiedMsg = document.getElementById('copiedMsg');
+  const observerSel = document.getElementById('observerSel');
+  const obsBadge = document.getElementById('obsBadge');
+
+  // Galactic compass
+  const gcomp = document.getElementById('gcomp');
+
+  // Dimensions & scaling
+  const TAU = Math.PI * 2;
+  const D2R = Math.PI / 180;
+  // Hoist galactic offset early to avoid TDZ in drawGalacticCompass()
+  var ECL_TO_GAL = 60 * D2R; // visual-only rotation offset
+  const margin = 28;
+
+  // Physical constants (km, s)
+  const C = 299792.458; // km/s
+  const MU_SUN = 1.32712440018e11; // km^3/s^2
+  const AU_KM = 149597870.7; // km
+  const OMEGA_SUN = 2.865e-6; // rad/s, solar rotation (approx)
+  const V_SW = 400; // km/s solar wind (approx)
+
+  // Orbital layout units (px before viewport scale)
+  const ORBIT = {
+    MERCURY:  35,
+    VENUS:    48,
+    EARTH:    70,
+    MARS:    100,
+    ASTS:    165,
+    JUPITER: 170,
+    SATURN:  220,
+    URANUS:  260,
+    NEPTUNE: 290,
+    PLUTO:   310,
+    KUIPER_INNER: 360,
+    KUIPER_OUTER: 520
+  };
+
+  // Useful AU→diagram scaling (Neptune ≈ 30 AU)
+  const PX_PER_AU = ORBIT.NEPTUNE / 30; // ≈ 9.67 px per AU at native scale
+
+  // In this sim: 1 Earth year == 12 simTime units
+  const YEAR_UNIT = 12; // sim units per year
+
+  // Planets + moons (stylized)
+  const planets = [
+    { name:'Mercury', orbit: ORBIT.MERCURY, size: 3.0, color:'#9f5e26', period:  5, moons: [] },
+    { name:'Venus',   orbit: ORBIT.VENUS,   size: 5.5, color:'#beb768', period:  8, moons: [] },
+    { name:'Earth',   orbit: ORBIT.EARTH,   size: 5.0, color:'#3aa0ff', period: 12,
+      moons: [ { name:'Moon', orbit: 12, size: 2.0, color:'#d8d8d8', period: 2.0 } ]
+    },
+    { name:'Mars',    orbit: ORBIT.MARS, size: 4.5, color:'#c56a3e', period: 20,
+      moons: [ { name:'Phobos', orbit:  9, size: 1.2, color:'#c9b39e', period: 0.7 },
+               { name:'Deimos', orbit: 14, size: 1.0, color:'#d2c8b9', period: 1.8 } ] },
+    { name:'Jupiter', orbit: ORBIT.JUPITER, size: 10.0, color:'#e0b080', period: 30,
+      moons: [ { name:'Io',       orbit: 14, size: 1.6, color:'#ffd88a', period: 1.5 },
+               { name:'Europa',   orbit: 18, size: 1.5, color:'#e9edf1', period: 2.2 },
+               { name:'Ganymede', orbit: 22, size: 2.0, color:'#cdbaa6', period: 3.5 },
+               { name:'Callisto', orbit: 28, size: 1.8, color:'#b8a08c', period: 5.0 } ] },
+    { name:'Saturn',  orbit: ORBIT.SATURN, size: 8.0, color:'#dfd3a9', period: 60, ring: true,
+      moons: [ { name:'Mimas', orbit: 11, size: 0.9, color:'#f2efe8', period: 0.9 },
+               { name:'Enceladus', orbit: 14, size: 1.1, color:'#ffffff', period: 1.1 },
+               { name:'Tethys', orbit: 16, size: 1.2, color:'#f3efe6', period: 1.5 },
+               { name:'Dione',  orbit: 19, size: 1.3, color:'#efe6da', period: 2.0 },
+               { name:'Rhea',   orbit: 22, size: 1.5, color:'#e8dfd0', period: 2.8 },
+               { name:'Titan',  orbit: 30, size: 2.2, color:'#d1a46f', period: 4.8 },
+               { name:'Iapetus',orbit: 38, size: 1.4, color:'#cbbfb1', period: 8.5 } ] },
+    { name:'Uranus',  orbit: ORBIT.URANUS, size: 6.0, color:'#82b3d1', period: 70, moons: [] },
+    { name:'Neptune', orbit: ORBIT.NEPTUNE, size: 6.0, color:'#2a5af4', period:100, moons: [] },
+    { name:'Pluto',   orbit: ORBIT.PLUTO,   size: 3.5, color:'#c1498e', period:120, moons: [] }
+  ];
+
+  // Sun visual params
+  const sun = { r: 20, glow: 110 };
+
+  // Small bodies (approximate)
+  const smallBodies = [
+    { name:'Ceres',   kind:'asteroid', color:'#d9c9ae', a:2.77, e:0.08, i:10.6, Ω:80,  ω:73,  M0:0, P:4.60, size:1.8 },
+    { name:'Vesta',   kind:'asteroid', color:'#e6d2b3', a:2.36, e:0.09, i:7.1,  Ω:103, ω:151, M0:0, P:3.63, size:1.6 },
+    { name:'Pallas',  kind:'asteroid', color:'#ccbca3', a:2.77, e:0.23, i:34.8, Ω:173, ω:310, M0:0, P:4.62, size:1.5 },
+    { name:'Hygiea',  kind:'asteroid', color:'#c8c0b3', a:3.14, e:0.12, i:3.8,  Ω:44,  ω:312, M0:0, P:5.50, size:1.4 },
+
+    { name:'Eris',     kind:'dwarf', color:'#ffd1f0', a:67.7, e:0.44, i:44.0, Ω:36,  ω:151, M0:0, P:558, size:2.2 },
+    { name:'Haumea',   kind:'dwarf', color:'#ccf0ff', a:43.1, e:0.19, i:28.2, Ω:121, ω:240, M0:0, P:284, size:2.0 },
+    { name:'Makemake', kind:'dwarf', color:'#f7d6a2', a:45.7, e:0.16, i:29.0, Ω:79,  ω:294, M0:0, P:306, size:2.0 },
+    { name:'Quaoar',   kind:'dwarf', color:'#f2b4b4', a:43.7, e:0.04, i:8.0,  Ω:189, ω:163, M0:0, P:287, size:1.9 },
+    { name:'Orcus',    kind:'dwarf', color:'#b4d1f2', a:39.2, e:0.22, i:20.6, Ω:268, ω:73,  M0:0, P:247, size:1.8 },
+    { name:'Sedna',    kind:'dwarf', color:'#ffadad', a:518,  e:0.85, i:11.9, Ω:144, ω:311, M0:0, P:11400, size:2.6 },
+    { name:'Gonggong', kind:'dwarf', color:'#e6a2f7', a:67,   e:0.50, i:30.7, Ω:336, ω:207, M0:0, P:553, size:1.9 },
+
+    { name:'1P/Halley',     kind:'comet', color:'#66f7ff', a:17.8,  e:0.967, i:162.3, Ω:58,  ω:111, M0:0, P:75.3, size:1.8 },
+    { name:'2P/Encke',      kind:'comet', color:'#9af7ff', a:2.22,  e:0.85,  i:11.8,  Ω:334, ω:186, M0:0, P:3.30, size:1.5 },
+    { name:'67P/Churyumov', kind:'comet', color:'#b7ffff', a:3.46,  e:0.64,  i:7.0,   Ω:50,  ω:12,  M0:0, P:6.45, size:1.5 },
+    { name:'C/1995 O1',     kind:'comet', label:'Hale–Bopp', color:'#c6f7ff', a:186, e:0.995, i:89, Ω:281, ω:130, M0:0, P:2533, size:2.0 }
+  ];
+
+  // Earth (for physics)
+  const earthEl = { name:'Earth', kind:'planet', color:'#3aa0ff', a:1.000, e:0.0167, i:0, Ω:0, ω:102.9, M0:0, P:1 };
+
+  // Belts (visual noise fields)
+  const mainBelt = []; const kuiperBelt = [];
+  function seedBelt(store, n, innerR, outerR, sizeMin, sizeMax, alphaMin, alphaMax) {
+    store.length = 0;
+    for (let i=0;i<n;i++) {
+      const a = Math.random() * TAU;
+      const r = innerR + Math.random() * (outerR - innerR);
+      const s = sizeMin + Math.random() * (sizeMax - sizeMin);
+      const alpha = alphaMin + Math.random() * (alphaMax - alphaMin);
+      const tint = 180 + (Math.random()*60|0);
+      store.push({ a, r, s, alpha, tint });
+    }
+  }
+
+  // Starfield (offscreen)
+  let starsCanvas, starsCtx;
+  function buildStars() {
+    starsCanvas = document.createElement('canvas');
+    starsCtx = starsCanvas.getContext('2d');
+    starsCanvas.width = Math.max(1, Math.round(w * dpr));
+    starsCanvas.height = Math.max(1, Math.round(h * dpr));
+    const sctx = starsCtx;
+    sctx.setTransform(dpr,0,0,dpr,0,0);
+    sctx.clearRect(0,0,w,h);
+    const count = Math.round((w*h)/2400);
+    for (let i=0;i<count;i++){
+      const x = Math.random()*w, y = Math.random()*h;
+      const r = Math.random()*1.3 + 0.2;
+      const tone = 200 + (Math.random()*55|0);
+      const g = sctx.createRadialGradient(x,y,0,x,y,r);
+      g.addColorStop(0, `rgba(${tone},${tone},${tone},1)`);
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      sctx.fillStyle = g;
+      sctx.beginPath(); sctx.arc(x,y,r,0,TAU); sctx.fill();
+    }
+  }
+
+  // Cosmic particles
+  let cosmic = [];
+  function rebuildParticles(){
+    const dens = parseFloat(particleDensity.value);
+    const base = (w*h)/8000; // baseline
+    const N = Math.round(base * (0.2 + dens*1.8));
+    cosmic = new Array(N).fill(0).map(()=>{
+      const R = 30 + Math.random() * (ORBIT.KUIPER_OUTER*1.2);
+      const th = Math.random() * TAU;
+      const d = 0.5 + Math.random()*2.5; // depth/parallax
+      const w0 = (Math.random()*0.6 + 0.2) * (Math.random()<0.5?-1:1);
+      const jitter = Math.random()*0.02;
+      const size = 0.6 + Math.random()*1.8;
+      const hue = 190 + Math.random()*60;
+      return { R, th, d, w0, jitter, size, hue };
+    });
+  }
+
+  function drawParticles(dt, timeFactor){
+    if (!showParticles.checked || cosmic.length===0) return;
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    const s = scale; // current overall scale
+    for (const p of cosmic){
+      p.th += (p.w0 / p.d) * dt * timeFactor;
+      const rj = p.R * (1 + p.jitter*Math.sin(p.th*3 + simTime*0.25));
+      const x = vx + Math.cos(p.th) * (rj * s);
+      const y = vy + Math.sin(p.th) * (rj * s);
+      const r = Math.max(0.25, p.size * s * (1.2 - 0.15*p.d));
+      const g = ctx.createRadialGradient(x,y,0,x,y,r*2);
+      const a = 0.06 * (2.8 - p.d);
+      g.addColorStop(0, `rgba(${p.hue|0},${(p.hue+20)|0},255,${a*3})`);
+      g.addColorStop(1, `rgba(${p.hue|0},${(p.hue+20)|0},255,0)`);
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x,y,r*1.5,0,TAU); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // Spacecraft
+  const spacecraft = [
+    { name:'Voyager 1',  color:'#ffd166', baseAU:163, headingDeg:  35, spin:  0.02 },
+    { name:'Voyager 2',  color:'#06d6a0', baseAU:136, headingDeg: 220, spin: -0.018 },
+    { name:'Pioneer 10', color:'#ef476f', baseAU:132, headingDeg:  85, spin:  0.016 },
+    { name:'Pioneer 11', color:'#f78c6b', baseAU:103, headingDeg: 310, spin: -0.015 },
+    { name:'New Horizons',color:'#118ab2',baseAU: 60, headingDeg: 290, spin:  0.010 }
+  ];
+
+  function auToPxNative(rAU) { return rAU * PX_PER_AU; }
+
+  function compressPxRadius(px) {
+    const a = ORBIT.KUIPER_INNER; // keep linear up to inner Kuiper
+    const b = ORBIT.KUIPER_OUTER - 10;
+    if (px <= a) return px;
+    const pxMax = 3000;
+    const t = Math.log(1 + (px - a)) / Math.log(1 + (pxMax - a));
+    return a + t * (b - a);
+  }
+
+  // Kepler helpers
+  function normPI(a){ a%=TAU; return a>Math.PI?a-TAU:(a<-Math.PI?a+TAU:a); }
+  function keplerE(M, e){ let E=M; for(let k=0;k<7;k++){ const f=E-e*Math.sin(E)-M; E-= f/(1-e*Math.cos(E)); } return E; }
+  function elementsToAU(el, years){
+    const n = TAU / el.P;
+    const M = normPI((el.M0||0) + n * (years - (el.epoch||0)));
+    const e = el.e;
+    const E = keplerE(M, e);
+    const nu = 2*Math.atan2(Math.sqrt(1+e)*Math.sin(E/2), Math.sqrt(1-e)*Math.cos(E/2));
+    const r = el.a * (1 - e * Math.cos(E));
+    const u = (el.ω||el.w||0) * D2R + nu;
+    const Ω = (el.Ω||0) * D2R; const i = (el.i||0) * D2R;
+    const cosΩ=Math.cos(Ω), sinΩ=Math.sin(Ω), cosi=Math.cos(i), sini=Math.sin(i);
+    const cosu=Math.cos(u), sinu=Math.sin(u);
+    const x = r * ( cosΩ*cosu - sinΩ*sinu*cosi );
+    const y = r * ( sinΩ*cosu + cosΩ*sinu*cosi );
+    const z = r * ( sinu*sini );
+    return { x, y, z, r, nu };
+  }
+
+  function AUVecToPx(xAU, yAU){
+    const rAU = Math.hypot(xAU, yAU);
+    const native = auToPxNative(rAU);
+    const comp = compressAU.checked ? compressPxRadius(native) : native;
+    const f = native > 0 ? comp / native : 1;
+    return { x: vx + (xAU * PX_PER_AU) * f * scale, y: vy + (yAU * PX_PER_AU) * f * scale };
+  }
+
+  // State + dilation
+  function stateFor(el, years){
+    const st = elementsToAU(el, years);
+    const r_km = st.r * AU_KM;
+    const a_km = (el.a||st.r) * AU_KM;
+    const v_kms = Math.sqrt(Math.max(0, MU_SUN * Math.max(0, (2/r_km - 1/Math.max(a_km,1))))); // km/s
+    return { ...st, r_km, a_km, v_kms };
+  }
+  function srFactor(v_kms){ const beta = v_kms / C; const inside = Math.max(0, 1 - beta*beta); return 1/Math.sqrt(inside || 1e-12); }
+  function grFactor(r_km){ const x = Math.max(1, r_km); const inside = Math.max(0, 1 - (2*MU_SUN)/(x*C*C)); return Math.sqrt(inside || 1e-12); }
+  function combinedRatio(v_kms, r_km){ const inside = Math.max(0, 1 - (2*MU_SUN)/(r_km*C*C) - (v_kms*v_kms)/(C*C)); return Math.sqrt(inside || 1e-12); }
+
+  let observer = earthEl; // default
+  function setObserverFromSelected(sel){ if (!sel) return; if (sel.name) { observer = { ...sel }; obsBadge.textContent = sel.label||sel.name; observerSel.value = sel.name; } }
+
+  function formatRatio(x){ if (x>=0.9999999999) return '0.9999999999'; if (x>0.99999) return x.toFixed(10); return x.toPrecision(5); }
+
+  // === Resize & view state ===
+  let dpr, w, h, cx, cy, scaleBase, scale, vx, vy, userZoom=1, panX=0, panY=0;
+  function resize(){
+    dpr = Math.max(1, window.devicePixelRatio || 1);
+    w = Math.floor(window.innerWidth);
+    h = Math.floor(window.innerHeight);
+    canvas.width = Math.max(1, Math.round(w * dpr));
+    canvas.height = Math.max(1, Math.round(h * dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    cx = w/2; cy = h/2;
+    const usable = Math.min(w,h)/2 - margin;
+    scaleBase = Math.max(0.2, Math.min(1, usable / (ORBIT.KUIPER_OUTER + 20)));
+    updateViewScale();
+    buildStars();
+    seedBelt(mainBelt,  800, ORBIT.ASTS-18, ORBIT.ASTS+22, 0.6, 1.8, 0.25, 0.55);
+    seedBelt(kuiperBelt,1200, ORBIT.KUIPER_INNER, ORBIT.KUIPER_OUTER, 0.5, 1.4, 0.15, 0.45);
+    rebuildParticles();
+    drawGalacticCompass();
+  }
+
+  function updateViewScale(){
+    scale = scaleBase * userZoom;
+    vx = cx + panX; vy = cy + panY;
+    zoomVal.textContent = userZoom.toFixed(2) + '×';
+  }
+
+  window.addEventListener('resize', resize, { passive:true });
+  resize();
+
+  // === Interaction: zoom & pan ===
+  function setZoomAround(mx,my,newZ){
+    newZ = Math.min(6, Math.max(0.35, newZ));
+    const oldZ = userZoom; if (newZ===oldZ) return;
+    panX = (panX - (mx - cx)) * (newZ/oldZ) + (mx - cx);
+    panY = (panY - (my - cy)) * (newZ/oldZ) + (my - cy);
+    userZoom = newZ; updateViewScale();
+  }
+
+  canvas.addEventListener('wheel', (e)=>{
+    const speed = (e.deltaMode === 1 ? 0.1 : 0.0015);
+    const sgn = (e.deltaY>0? -1 : 1);
+    const factor = Math.exp(sgn * 120 * speed * (e.ctrlKey?1.8:1));
+    setZoomAround(e.clientX, e.clientY, userZoom * factor);
+    e.preventDefault();
+  }, { passive:false });
+
+  let dragging=false, lastX=0, lastY=0;
+  let hoverX=0, hoverY=0, selected = null, lastHoverCandidate=null;
+  canvas.addEventListener('pointerdown', (e)=>{ dragging=true; lastX=e.clientX; lastY=e.clientY; canvas.classList.add('dragging'); canvas.setPointerCapture(e.pointerId); });
+  canvas.addEventListener('pointermove', (e)=>{ if(!dragging) { hoverX=e.clientX; hoverY=e.clientY; return; } panX += (e.clientX-lastX); panY += (e.clientY-lastY); lastX=e.clientX; lastY=e.clientY; updateViewScale(); });
+  canvas.addEventListener('pointerup',   (e)=>{ dragging=false; canvas.classList.remove('dragging'); canvas.releasePointerCapture(e.pointerId); });
+  canvas.addEventListener('dblclick', (e)=>{ panX=0; panY=0; setZoomAround(cx, cy, 1); });
+  resetView.addEventListener('click', ()=>{ panX=0; panY=0; setZoomAround(cx, cy, 1); });
+  zoomSlider.addEventListener('input', ()=>{ setZoomAround(cx, cy, parseFloat(zoomSlider.value)||1); });
+  canvas.addEventListener('click', ()=>{ if (lastHoverCandidate) { selected = lastHoverCandidate; updateDatabox(selected, simTime/YEAR_UNIT); setObserverFromSelected(selected); }});
+
+  timewarp.addEventListener('input', ()=>{ timeVal.textContent = (parseFloat(timewarp.value)||1).toFixed(2)+'×'; });
+  particleDensity.addEventListener('input', ()=>{ pdv.textContent = Math.round(parseFloat(particleDensity.value)*100)+'%'; rebuildParticles(); });
+  pdv.textContent = Math.round(parseFloat(particleDensity.value)*100)+'%';
+  timeVal.textContent = (parseFloat(timewarp.value)||1).toFixed(2)+'×';
+
+  // Time control logic
+  let paused = false;
+  playBtn.addEventListener('click', ()=>{ paused = !paused; playBtn.textContent = paused ? '▶ Play' : '⏸ Pause'; });
+  function stepSim(dir){ const days = Math.max(0.0001, parseFloat(stepDays.value)||1); const yrs = days/365.25; simTime += dir * yrs * YEAR_UNIT; }
+  stepBack.addEventListener('click', ()=> stepSim(-1));
+  stepFwd.addEventListener('click', ()=> stepSim(+1));
+  jumpBtn.addEventListener('click', ()=>{ const idx = parseInt(eventSel.value); if (!isNaN(idx) && lastEvents[idx]) { stepSim(lastEvents[idx].t / (1/365.25) /* convert yr to days factor inside stepSim? no direct add */); simTime += lastEvents[idx].t * YEAR_UNIT; } });
+
+  // === Animation ===
+  let last = performance.now();
+  function loop(now){
+    const dt = (now - last) / 1000; last = now;
+    const base = (parseFloat(speedSlider.value) || 1);
+    const warp = (parseFloat(timewarp.value) || 1);
+    const tz = tieTZ.checked ? (1/Math.max(0.35, userZoom)) : 1;
+    let timeFactor = base * warp * tz;
+    if (paused) timeFactor = 0;
+    simTime += dt * timeFactor;
+
+    // Background
+    const bg = ctx.createRadialGradient(vx, vy, 0, vx, vy, Math.max(w, h)*0.7);
+    bg.addColorStop(0, '#111824'); bg.addColorStop(1, '#060910');
+    ctx.fillStyle = bg; ctx.fillRect(0,0,w,h);
+    ctx.drawImage(starsCanvas, 0, 0, starsCanvas.width/dpr, starsCanvas.height/dpr);
+
+    // Cosmic particles
+    drawParticles(dt, timeFactor);
+
+    // Field overlays
+    if (showEquip.checked) drawEquipotentials();
+    if (showGravField.checked) drawGravField();
+    if (showParker.checked) drawParkerSpiral();
+
+    // Oort Cloud
+    if (showOort.checked) drawOortCloud();
+
+    // Orbits
+    if (showOrbits.checked) {
+      ctx.strokeStyle = 'rgba(110,168,235,0.12)'; ctx.lineWidth = 1;
+      for (const p of planets) { ctx.beginPath(); ctx.arc(vx, vy, p.orbit * scale, 0, TAU); ctx.stroke(); }
+      ctx.beginPath(); ctx.arc(vx, vy, ORBIT.ASTS * scale, 0, TAU); ctx.stroke();
+      if (showKuiper.checked) {
+        ctx.setLineDash([4,4]); ctx.lineDashOffset = -simTime*2; ctx.strokeStyle = 'rgba(120,180,255,0.12)';
+        ctx.beginPath(); ctx.arc(vx, vy, ORBIT.KUIPER_INNER*scale, 0, TAU); ctx.stroke();
+        ctx.beginPath(); ctx.arc(vx, vy, ORBIT.KUIPER_OUTER*scale, 0, TAU); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    drawBelt(mainBelt, (simTime/60) * TAU);
+    if (showKuiper.checked) { drawBelt(kuiperBelt, (simTime/400) * TAU, true); if (showLabels.checked) label(vx + (ORBIT.KUIPER_OUTER+10)*scale, vy, 'Kuiper Belt'); }
+
+    // Planets
+    for (const p of planets) {
+      const ang = (simTime / p.period) * TAU;
+      const px = vx + Math.cos(ang) * (p.orbit * scale);
+      const py = vy + Math.sin(ang) * (p.orbit * scale);
+      drawPlanet(px, py, p.size * scale, p.color);
+      if (p.ring) drawSaturnRing(px, py, scale);
+      if (showLabels.checked) label(px + 8, py - 8, p.name);
+      if (p.moons && p.moons.length) for (const m of p.moons) {
+        const ma = (simTime / m.period) * TAU;
+        const mx = px + Math.cos(ma) * (m.orbit * scale);
+        const my = py + Math.sin(ma) * (m.orbit * scale);
+        if (showMoonOrbits.checked) { ctx.strokeStyle = 'rgba(110,168,235,0.10)'; ctx.beginPath(); ctx.arc(px, py, m.orbit * scale, 0, TAU); ctx.stroke(); }
+        drawMoon(mx, my, m.size * scale, m.color);
+        if (showLabels.checked && m.size * scale >= 1.0) label(mx + 4, my - 4, m.name, 10);
+      }
+    }
+
+    // Spacecraft
+    if (showCraft.checked) drawSpacecraftLayer();
+
+    // Small bodies + dilation spots
+    const years = simTime / YEAR_UNIT;
+    let hoverCandidate = null; let hoverDistPx = 1e9; lastHoverCandidate = null;
+    if (showAsteroids.checked || showDwarfs.checked || showComets.checked) {
+      const horizonY = parseFloat(horizon.value) || 50;
+      const steps = Math.max(60, Math.min(360, Math.round(horizonY * 6)));
+
+      for (const b of smallBodies) {
+        if (b.kind==='asteroid' && !showAsteroids.checked) continue;
+        if (b.kind==='dwarf'    && !showDwarfs.checked) continue;
+        if (b.kind==='comet'    && !showComets.checked) continue;
+
+        const P = elementsToAU(b, years);
+        const pos = AUVecToPx(P.x, P.y);
+
+        // Prediction path + dilation hotspot
+        let best = { ratio: 1, x: pos.x, y: pos.y, t: 0 };
+        if (showPredict.checked) {
+          ctx.save(); const dotted = (b.i||0) > 90; if (dotted) ctx.setLineDash([3,3]);
+          ctx.globalAlpha = 0.75; ctx.strokeStyle = b.color; ctx.lineWidth = 1; ctx.beginPath();
+          for (let s=0; s<=steps; s++) { const t = years + (s/steps)*horizonY; const st = stateFor(b, t); const ratio = combinedRatio(st.v_kms, st.r_km); const q = AUVecToPx(st.x, st.y); if (s===0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y); if (ratio < best.ratio){ best = { ratio, x:q.x, y:q.y, t:(t-years) }; } }
+          ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+          label(best.x + 6, best.y - 6, `⏱×${formatRatio(best.ratio)} @ ${best.t.toFixed(1)}yr`, 10);
+        }
+
+        // Tail (comets)
+        if (showTrails.checked && b.kind==='comet') {
+          const trailSteps = 40; ctx.save(); ctx.globalAlpha = 0.6; ctx.strokeStyle = shade(b.color, -10); ctx.beginPath();
+          for (let s=0; s<=trailSteps; s++) { const t = years - (s/trailSteps) * Math.min(5, b.P*0.25); const Q = elementsToAU(b, t); const q = AUVecToPx(Q.x, Q.y); if (s===0) ctx.moveTo(pos.x, pos.y); else ctx.lineTo(q.x, q.y); }
+          ctx.stroke(); ctx.restore();
+        }
+
+        // Glyph
+        const rpx = Math.max(0.9, (b.size||1.5) * scale);
+        const g = ctx.createRadialGradient(pos.x - rpx*0.35, pos.y - rpx*0.35, rpx*0.1, pos.x, pos.y, rpx);
+        g.addColorStop(0, 'rgba(255,255,255,.9)'); g.addColorStop(0.25, b.color); g.addColorStop(1, 'rgba(0,0,0,.8)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(pos.x, pos.y, rpx, 0, TAU); ctx.fill();
+        if (showLabels.checked) label(pos.x + 5, pos.y - 5, b.label || b.name, 10);
+
+        // Hover pick
+        const dx = pos.x - hoverX, dy = pos.y - hoverY, d2 = dx*dx + dy*dy;
+        if (d2 < hoverDistPx) { hoverDistPx = d2; hoverCandidate = { ...b, pos:pos, state:P }; }
+      }
+    }
+
+    // Sun
+    drawSun(vx, vy, sun.r * scale, sun.glow * scale);
+    if (showLabels.checked) label(vx + 10, vy - 10, 'Sun');
+
+    // Hover crosshair + store
+    if (hoverCandidate && Math.sqrt(hoverDistPx) < 16) {
+      ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.arc(hoverCandidate.pos.x, hoverCandidate.pos.y, 8, 0, TAU); ctx.stroke(); ctx.restore();
+      lastHoverCandidate = hoverCandidate;
+    } else {
+      lastHoverCandidate = null;
+    }
+
+    // Panels
+    if (showRisk.checked) { computeAndRenderRisk(years); riskbox.hidden = false; } else { riskbox.hidden = true; }
+    updatePhysbox(years);
+    updateDatabox(lastHoverCandidate, years);
+    updateTimeline(years);
+    drawGalacticCompass();
+
+    // Calendar label
+    const epoch = parseFloat(epochYear.value)||2025; const cal = epoch + years; calendarLabel.textContent = cal.toFixed(2);
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // Drawing helpers
+  function drawBelt(belts, rot=0, bluish=false){
+    ctx.save(); ctx.translate(vx, vy); ctx.rotate(rot);
+    for (const b of belts) { const x = Math.cos(b.a) * (b.r * scale); const y = Math.sin(b.a) * (b.r * scale); ctx.globalAlpha = b.alpha; ctx.fillStyle = bluish ? `rgba(${b.tint},${b.tint+10},255,1)` : `rgba(${b.tint},${b.tint},${b.tint},1)`; ctx.beginPath(); ctx.arc(x, y, Math.max(0.25, b.s * scale), 0, TAU); ctx.fill(); }
+    ctx.globalAlpha = 1; ctx.restore();
+  }
+
+  function drawPlanet(x, y, r, color){ const halo = ctx.createRadialGradient(x, y, 0, x, y, r * 2.2); halo.addColorStop(0, color); halo.addColorStop(0.75, color); halo.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(x, y, r * 1.35, 0, TAU); ctx.fill(); const body = ctx.createRadialGradient(x - r*0.45, y - r*0.45, r*0.1, x, y, r); body.addColorStop(0.0, 'rgba(255,255,255,0.85)'); body.addColorStop(0.25, color); body.addColorStop(1.0, shade(color, -35)); ctx.fillStyle = body; ctx.beginPath(); ctx.arc(x,y,r,0,TAU); ctx.fill(); }
+  function drawMoon(x, y, r, color){ const g = ctx.createRadialGradient(x - r*0.4, y - r*0.4, r*0.05, x, y, r); g.addColorStop(0, 'rgba(255,255,255,0.9)'); g.addColorStop(0.25, color); g.addColorStop(1, shade(color, -40)); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, Math.max(0.9, r), 0, TAU); ctx.fill(); }
+  function drawSaturnRing(x, y, s){ ctx.save(); ctx.translate(x, y); ctx.rotate(-0.6); ctx.lineWidth = Math.max(1, 6 * s); ctx.strokeStyle = 'rgba(223,211,169,0.88)'; ctx.beginPath(); ctx.ellipse(0, 0, 14 * s, 7 * s, 0, 0, TAU); ctx.stroke(); ctx.lineWidth = Math.max(1, 2.5 * s); ctx.strokeStyle = 'rgba(200,190,150,0.65)'; ctx.beginPath(); ctx.ellipse(0, 0, 11.5 * s, 5.8 * s, 0, 0, TAU); ctx.stroke(); ctx.restore(); }
+  function drawSun(x, y, r, glow){ const outer = ctx.createRadialGradient(x, y, 0, x, y, glow); outer.addColorStop(0, 'rgba(255,210,60,0.65)'); outer.addColorStop(1, 'rgba(255,160,30,0)'); ctx.fillStyle = outer; ctx.beginPath(); ctx.arc(x, y, glow, 0, TAU); ctx.fill(); const core = ctx.createRadialGradient(x, y, 0, x, y, r * 2.2); core.addColorStop(0, '#ffd24a'); core.addColorStop(0.4, '#f9b700'); core.addColorStop(1, '#e06317'); ctx.fillStyle = core; ctx.beginPath(); ctx.arc(x, y, r * 1.6, 0, TAU); ctx.fill(); ctx.fillStyle = '#ffd24a'; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); }
+  function drawOortCloud(){ const inner = ORBIT.KUIPER_OUTER * scale * 1.05; const outer = Math.min(Math.min(w, h)/2 - margin*0.5, ORBIT.KUIPER_OUTER*scale*1.8); const g = ctx.createRadialGradient(vx, vy, inner, vx, vy, outer); g.addColorStop(0.00, 'rgba(173,216,255,0.02)'); g.addColorStop(0.40, 'rgba(120,180,255,0.05)'); g.addColorStop(1.00, 'rgba(120,180,255,0.00)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(vx, vy, outer, 0, TAU); ctx.fill(); if (showLabels.checked) label(vx + inner + 20, vy + 10, 'Oort Cloud'); }
+  function label(x, y, text, size=11){ ctx.save(); ctx.font = `500 ${size}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto`; ctx.fillStyle = 'rgba(210,230,255,0.9)'; ctx.strokeStyle = 'rgba(5,10,20,0.6)'; ctx.lineWidth = 3; ctx.strokeText(text, x, y); ctx.fillText(text, x, y); ctx.restore(); }
+  function shade(hex, amt){ let c = hex.replace('#',''); if (c.length === 3) c = c.split('').map(x => x+x).join(''); const n = parseInt(c, 16); let r = (n>>16)+amt, g=((n>>8)&255)+amt, b=(n&255)+amt; r = Math.max(0,Math.min(255,r)); g = Math.max(0,Math.min(255,g)); b = Math.max(0,Math.min(255,b)); return `rgb(${r},${g},${b})`; }
+
+  function drawSpacecraftLayer(){
+    for (const s of spacecraft) {
+      const ang = (s.headingDeg * Math.PI/180) + s.spin * simTime;
+      const nativePx = auToPxNative(s.baseAU);
+      const rNative = compressAU.checked ? compressPxRadius(nativePx) : nativePx;
+      const rx = vx + Math.cos(ang) * (rNative * scale);
+      const ry = vy + Math.sin(ang) * (rNative * scale);
+      if (showCraftPaths.checked) { ctx.save(); ctx.setLineDash([6,6]); ctx.lineDashOffset = -simTime*8; ctx.strokeStyle = s.color; ctx.globalAlpha = 0.7; ctx.beginPath(); ctx.moveTo(vx, vy); ctx.lineTo(rx, ry); ctx.stroke(); ctx.setLineDash([]); ctx.restore(); }
+      ctx.save(); ctx.translate(rx, ry); ctx.rotate(ang); ctx.fillStyle = s.color; ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.lineWidth = 1.5; const k = Math.max(0.75, 1.2 * scale); ctx.beginPath(); ctx.moveTo( 6*k, 0); ctx.lineTo(-6*k, -3*k); ctx.lineTo(-4*k,  0); ctx.lineTo(-6*k,  3*k); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+      if (showLabels.checked) label(rx + 8, ry - 6, `${s.name} — ~${Math.round(s.baseAU)} AU`);
+    }
+  }
+
+  // Physics & data panel updates
+  function updatePhysbox(years){
+    const st = stateFor(observer, years);
+    const sr = srFactor(st.v_kms);
+    const gr = grFactor(st.r_km);
+    const comb = combinedRatio(st.v_kms, st.r_km);
+    const g_kms2 = (MU_SUN / (st.r_km*st.r_km)); // km/s^2
+    const g_ms2 = g_kms2 * 1000;
+    const parts = [
+      ['Atomic t (sim years)', (simTime/YEAR_UNIT).toFixed(3)],
+      ['Observer', observer.name || '—'],
+      ['r (AU)', st.r.toFixed(6)],
+      ['v (km/s)', (st.v_kms).toFixed(3)],
+      ['SR γ', sr.toPrecision(12)],
+      ['GR √(1-2GM/rc²)', gr.toPrecision(12)],
+      ['dt_local / dt_atomic', comb.toPrecision(12) + ' (approx)'],
+      ['g(r)', g_ms2.toExponential(3) + ' m/s²'],
+      ['Φ(r)/μ', (-1/st.r).toFixed(6) + ' (−1/r)']
+    ];
+    physkv.innerHTML = parts.map(p=>`<div>${p[0]}</div><div><strong>${p[1]}</strong></div>`).join('');
+  }
+
+  // Close-approach & perihelion helpers
+  function computeCloseApproachFor(body, years, horizonY){
+    const steps = Math.max(120, Math.min(1200, Math.round(horizonY * 12)));
+    let dmin = 1e9, tmin = 0;
+    for (let s=0; s<=steps; s++){
+      const t = years + (s/steps)*horizonY;
+      const E = elementsToAU(earthEl, t);
+      const Q = elementsToAU(body, t);
+      const d = Math.hypot(Q.x-E.x, Q.y-E.y, (Q.z||0));
+      if (d < dmin){ dmin = d; tmin = t - years; }
+    }
+    return { dmin, tmin };
+  }
+
+  function updateDatabox(hoverCandidate=null, years){
+    const horizonY = parseFloat(horizon.value) || 50;
+    let sel = selected || hoverCandidate || earthEl;
+    const hasEl = (sel.a != null);
+    let st = hasEl ? stateFor(sel, years) : stateFor(earthEl, years);
+    const peri = findPerihelionWithin(sel, years, horizonY);
+    const ca = hasEl ? computeCloseApproachFor(sel, years, horizonY) : null;
+
+    const kv = [];
+    kv.push(['Name', sel.label || sel.name || '—']);
+    kv.push(['Kind', sel.kind || '—']);
+    if (hasEl){
+      kv.push(['a (AU)', (sel.a||0).toFixed(5)]);
+      kv.push(['e', (sel.e||0).toFixed(5)]);
+      kv.push(['i (°)', (sel.i||0).toFixed(2)]);
+      kv.push(['Ω (°)', (sel.Ω||0).toFixed(2)]);
+      kv.push(['ω (°)', (sel.ω||sel.w||0).toFixed(2)]);
+      kv.push(['P (yr)', (sel.P||0).toFixed(3)]);
+    }
+    kv.push(['r now (AU)', st.r.toFixed(6)]);
+    kv.push(['v now (km/s)', (st.v_kms).toFixed(3)]);
+    if (ca){ kv.push(['Closest in', ca.tmin.toFixed(2)+' yr']); kv.push(['Min dist (AU)', ca.dmin.toFixed(5)]); }
+    if (peri){ kv.push(['Next perihelion', (peri.t!=null?peri.t.toFixed(2)+' yr':'—')]); kv.push(['q (AU)', peri.q.toFixed(5)]); }
+
+    selkv.innerHTML = kv.map(p=>`<div>${p[0]}</div><div><strong>${p[1]}</strong></div>`).join('');
+
+    copyBtn.onclick = async ()=>{
+      try{
+        const payload = { name: sel.name, label: sel.label, kind: sel.kind, elements: { a: sel.a, e: sel.e, i: sel.i, Omega: sel.Ω, omega: sel.ω||sel.w, P: sel.P }, state: { r_AU: st.r, v_kms: st.v_kms }, closest_approach: ca, perihelion: peri };
+        await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+        copiedMsg.textContent = 'Copied!'; setTimeout(()=>copiedMsg.textContent='', 1500);
+      }catch(e){ copiedMsg.textContent = 'Copy failed'; setTimeout(()=>copiedMsg.textContent='', 1500); }
+    };
+  }
+
+  function findPerihelionWithin(body, years, horizonY){
+    if (body.a == null) return null;
+    const steps = Math.max(120, Math.min(1200, Math.round(horizonY * 10)));
+    let rmin = 1e9, tmin = null, q = null;
+    for (let s=0; s<=steps; s++){
+      const t = years + (s/steps)*horizonY;
+      const st = elementsToAU(body, t);
+      if (st.r < rmin){ rmin = st.r; tmin = t - years; }
+    }
+    if (rmin < 1e-6) return null;
+    q = body.a * (1 - (body.e||0));
+    return { t: tmin, q };
+  }
+
+  // Risk forecast
+  function computeAndRenderRisk(years){
+    const horizonY = parseFloat(horizon.value) || 50;
+    const steps = Math.max(100, Math.min(600, Math.round(horizonY * 8)));
+    let items = [];
+    for (const b of smallBodies) {
+      if (b.kind==='asteroid' && !showAsteroids.checked) continue;
+      if (b.kind==='dwarf'    && !showDwarfs.checked) continue;
+      if (b.kind==='comet'    && !showComets.checked) continue;
+      let dmin = 1e9, tmin = 0;
+      for (let s=0; s<=steps; s++){
+        const t = years + (s/steps)*horizonY;
+        const E = elementsToAU(earthEl, t);
+        const Q = elementsToAU(b, t);
+        const d = Math.hypot(Q.x-E.x, Q.y-E.y, (Q.z||0));
+        if (d < dmin){ dmin = d; tmin = t - years; }
+      }
+      const status = (dmin < 0.0026) ? 'alert' : (dmin < 0.005) ? 'warn' : (dmin < 0.02) ? 'watch' : 'ok';
+      items.push({ name:b.label||b.name, kind:b.kind, color:b.color, dmin, tmin, status });
+    }
+    items.sort((a,b)=> a.dmin-b.dmin);
+
+    riskmeta.textContent = `Scanning ${items.length} objects out to ${horizonY} years (Earth-relative, illustrative).`;
+    risklist.innerHTML = '';
+    for (const it of items){
+      const el = document.createElement('div'); el.className = `riskitem ${it.status}`;
+      const dist = it.dmin.toFixed(4);
+      const when = (it.tmin>=0)? `${it.tmin.toFixed(1)} yr` : `now`;
+      el.innerHTML = `<div><strong style="color:${it.color}">✹ ${it.name}</strong> <span style="opacity:.7">(${it.kind})</span><br><span class="when">Closest in ${when}</span></div><div><strong>${dist} AU</strong></div>`;
+      risklist.appendChild(el);
+    }
+  }
+
+  // Special events timeline
+  let lastEvents = [];
+  let lastEventsKey = '';
+  function updateTimeline(years){
+    const horizonY = parseFloat(horizon.value) || 50;
+    const events = [];
+    for (const b of smallBodies){
+      const peri = findPerihelionWithin(b, years, horizonY); if (peri && peri.t != null) events.push({ t: peri.t, tag:'peri', name: b.label||b.name, color:b.color, detail:`q=${peri.q.toFixed(3)} AU` });
+      const ca = computeCloseApproachFor(b, years, horizonY); if (ca){ const st = (ca.dmin < 0.0026)?'alert':(ca.dmin<0.005?'warn':(ca.dmin<0.02?'watch':null)); if (st) events.push({ t: ca.tmin, tag: st, name:b.label||b.name, color:b.color, detail:`${ca.dmin.toFixed(4)} AU` }); }
+    }
+    events.sort((a,b)=> a.t-b.t);
+
+    const timeline = document.getElementById('timeline'); timeline.innerHTML = '';
+    for (const ev of events.slice(0, 40)){
+      const div = document.createElement('div'); div.className='ev';
+      div.innerHTML = `<span class="tag" style="border-color:${ev.color}; color:${ev.color}">${ev.tag}</span><div><strong>${ev.name}</strong><br><span style="opacity:.75">in ${ev.t.toFixed(2)} yr — ${ev.detail}</span></div><div></div>`;
+      timeline.appendChild(div);
+    }
+
+    // refresh jump selector if changed
+    const key = events.slice(0,15).map(e=>`${e.tag}:${e.name}:${e.t.toFixed(2)}`).join('|');
+    if (key !== lastEventsKey){
+      lastEventsKey = key; lastEvents = events.slice(0,15);
+      eventSel.innerHTML = lastEvents.map((e,i)=>`<option value="${i}">${e.tag} • ${e.name} • in ${e.t.toFixed(2)} yr</option>`).join('');
+    }
+  }
+
+  // Galactic compass (stylized)
+  // ECL_TO_GAL defined earlier (hoisted)
+  function drawGalacticCompass(){
+    const r = 36; const cx0 = 90; const cy0 = 44; // inside #gcomp
+    const ang = (simTime / 12) * TAU; // Earth's visual angle
+    const galAng = ang + ECL_TO_GAL;
+    gcomp.innerHTML = `<svg width="180" height="84" viewBox="0 0 180 84" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" stroke="rgba(158,199,255,0.65)" stroke-width="1">
+        <circle cx="${cx0}" cy="${cy0}" r="${r}"/>
+        <line x1="${cx0}" y1="${cy0-r}" x2="${cx0}" y2="${cy0+r}" stroke-dasharray="2 3"/>
+        <line x1="${cx0-r}" y1="${cy0}" x2="${cx0+r}" y2="${cy0}" stroke-dasharray="2 3"/>
+      </g>
+      <g>
+        <path d="M ${cx0} ${cy0} L ${cx0 + r*Math.cos(galAng)} ${cy0 + r*Math.sin(galAng)}" stroke="#ffd166" stroke-width="2"/>
+        <circle cx="${cx0}" cy="${cy0}" r="2" fill="#ffd166"/>
+      </g>
+      <text x="${cx0}" y="16" text-anchor="middle" fill="#cfe3ff" font-size="11">Galactic compass (stylized)</text>
+      <text x="${cx0}" y="76" text-anchor="middle" fill="#9ec7ff" font-size="10">GC → arrow · l≈${((galAng)%(TAU)+TAU)%TAU * 180/Math.PI | 0}°, b≈0°</text>
+    </svg>`;
+  }
+
+  // Observer list
+  function populateObserverSel(){
+    const options = [earthEl, ...smallBodies];
+    observerSel.innerHTML = options.map(o=>`<option value="${o.name}">${o.label||o.name}</option>`).join('');
+    observerSel.value = 'Earth';
+  }
+  observerSel.addEventListener('change', ()=>{
+    const name = observerSel.value; const found = (name==='Earth')? earthEl : smallBodies.find(b=>b.name===name);
+    if (found){ observer = found; obsBadge.textContent = found.label||found.name; }
+  });
+  populateObserverSel();
+
+  // === Field overlay renderers ===
+  function drawEquipotentials(){
+    ctx.save(); ctx.strokeStyle = 'rgba(120,180,255,0.15)'; ctx.lineWidth = 1; ctx.setLineDash([2,3]);
+    const radii = [0.4,0.7,1,1.5,2,3,5,8,13,21,34];
+    for (const rAU of radii){
+      const p = AUVecToPx(rAU, 0); // use x=r,y=0 to get scaled radius in px
+      const R = Math.hypot(p.x - vx, p.y - vy);
+      ctx.beginPath(); ctx.arc(vx, vy, R, 0, TAU); ctx.stroke();
+      if (showLabels.checked){ label(vx + R + 6, vy + 12, `Φ∝−1/r @ ${rAU} AU`, 10); }
+    }
+    ctx.setLineDash([]); ctx.restore();
+  }
+
+  function drawGravField(){
+    ctx.save(); ctx.strokeStyle = 'rgba(255,230,160,0.25)'; ctx.fillStyle = 'rgba(255,230,160,0.35)';
+    const rings = [0.5, 0.8, 1, 1.5, 2, 3, 5, 8, 13, 21, 34];
+    for (const rAU of rings){
+      const Rpx = Math.hypot(AUVecToPx(rAU,0).x - vx, AUVecToPx(rAU,0).y - vy);
+      const N = Math.max(8, Math.round(24 * Math.sqrt(rAU)));
+      for (let k=0;k<N;k++){
+        const th = (k/N) * TAU;
+        const x = vx + Math.cos(th) * Rpx;
+        const y = vy + Math.sin(th) * Rpx;
+        const L = Math.max(4, 18 / (rAU*rAU));
+        const tx = x - Math.cos(th) * L;
+        const ty = y - Math.sin(th) * L;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(tx, ty); ctx.stroke();
+        // arrow head
+        const ah = 3; const ang = Math.atan2(ty-y, tx-x);
+        ctx.beginPath(); ctx.moveTo(tx, ty);
+        ctx.lineTo(tx + Math.cos(ang+2.7)*ah, ty + Math.sin(ang+2.7)*ah);
+        ctx.lineTo(tx + Math.cos(ang-2.7)*ah, ty + Math.sin(ang-2.7)*ah);
+        ctx.closePath(); ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawParkerSpiral(){
+    ctx.save(); ctx.strokeStyle = 'rgba(100,220,255,0.25)'; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
+    const arms = 6; const phase = simTime * 0.2;
+    for (let a=0;a<arms;a++){
+      const th0 = (a/arms) * TAU + phase*0.3;
+      ctx.beginPath();
+      let moved=false;
+      for (let th=th0; th<th0+6.5; th+=0.02){
+        const r_km = (V_SW / OMEGA_SUN) * (th - th0); // km
+        const r_AU = r_km / AU_KM;
+        if (r_AU > 120) break; // limit
+        const q = AUVecToPx(r_AU*Math.cos(th), r_AU*Math.sin(th));
+        if (!moved){ ctx.moveTo(q.x, q.y); moved=true; } else ctx.lineTo(q.x, q.y);
+      }
+      ctx.stroke();
+    }
+    ctx.setLineDash([]); ctx.restore();
+    if (showLabels.checked) label(vx + 10, vy + 16, 'Parker spiral (stylized)');
+  }
+
+})();
+</script>
+</body>
+</html>

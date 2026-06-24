@@ -1,0 +1,33 @@
+# WireGuard Ceph fabric configuration — RHIZ-UETH (Fedora 43)
+# Self-peer removed intentionally.
+interface:
+  name: ceph-operator
+  listen_port: 54730
+  mtu: 1420
+  address: 10.42.0.2/24
+  never_default: true
+
+peers:
+  - name: exosystem
+    public_key: REPLACE_EXOSYSTEM_PUBLIC_KEY
+    endpoint: 192.168.0.46:54725
+    allowed_ips: 10.42.0.1/32
+    persistent_keepalive: 25
+
+  - name: eliosys-rhiz
+    public_key: REPLACE_ELIOSYS_RHIZ_PUBLIC_KEY
+    endpoint: 192.168.0.7:54742
+    allowed_ips: 10.42.0.22/32
+    persistent_keepalive: 25
+
+  - name: rhiz-woute
+    public_key: REPLACE_RHIZ_WOUTE_PUBLIC_KEY
+    endpoint: 192.168.0.33:56745
+    allowed_ips: 10.42.0.33/32
+    persistent_keepalive: 25
+
+  - name: factau-rhiz
+    public_key: REPLACE_FACTAU_RHIZ_PUBLIC_KEY
+    endpoint: 192.168.0.4:54715
+    allowed_ips: 10.42.0.4/32
+    persistent_keepalive: 25

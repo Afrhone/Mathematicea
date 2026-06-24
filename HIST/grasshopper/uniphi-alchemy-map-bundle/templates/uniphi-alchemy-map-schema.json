@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Uniphi Alchemy Map",
+  "type": "object",
+  "required": [
+    "project",
+    "date",
+    "phase",
+    "intent",
+    "axioms",
+    "ingredients",
+    "operations"
+  ],
+  "properties": {
+    "project": {
+      "type": "string",
+      "minLength": 1
+    },
+    "date": {
+      "type": "string",
+      "description": "ISO date (YYYY-MM-DD)"
+    },
+    "phase": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 6
+    },
+    "intent": {
+      "type": "string"
+    },
+    "axioms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0,
+      "maxItems": 8
+    },
+    "ingredients": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "rating",
+          "note"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "enum": [
+              "aether",
+              "mercurius",
+              "sulfur",
+              "sal",
+              "vessel",
+              "catalyst",
+              "noise",
+              "guardian",
+              "witness"
+            ]
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "operations": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "notes"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "enum": [
+              "calcination",
+              "dissolution",
+              "separation",
+              "conjunction",
+              "fermentation",
+              "distillation",
+              "coagulation"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "archetypes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "cosmic_chemist",
+          "net_weaver",
+          "vault_guardian",
+          "trickster_debugger",
+          "archivist",
+          "poet_witness"
+        ]
+      }
+    },
+    "shadow_loop": {
+      "type": "string",
+      "enum": [
+        "complexity_armor",
+        "security_trance",
+        "abstraction_no_ground",
+        "release_shyness",
+        "none"
+      ]
+    },
+    "counter_spell": {
+      "type": "string"
+    },
+    "balance_next_step": {
+      "type": "string"
+    },
+    "ritual": {
+      "type": "object",
+      "required": [
+        "anchor",
+        "stake",
+        "spell",
+        "paragraph"
+      ],
+      "properties": {
+        "anchor": {
+          "type": "string"
+        },
+        "stake": {
+          "type": "string"
+        },
+        "spell": {
+          "type": "string"
+        },
+        "paragraph": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

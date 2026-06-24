@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tensorial Phase Electrodynamics Lab</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <aside class="panel sidebar">
+      <div class="block intro">
+        <h1>Tensorial Phase Electrodynamics Lab</h1>
+        <p>
+          Animation native Canvas d’un système en couches:
+          métrique locale, phases, pseudo-champs électrodynamiques,
+          puits de potentiel, diffusion, scheduler cellulaire et particules.
+        </p>
+      </div>
+
+      <div class="block">
+        <h2>Presets</h2>
+        <div class="button-row">
+          <button data-preset="balanced">Balanced</button>
+          <button data-preset="entropy_well">Entropy Well</button>
+          <button data-preset="geodesic_drift">Geodesic Drift</button>
+        </div>
+      </div>
+
+      <div class="block">
+        <h2>Paramètres</h2>
+        <label>
+          Geometry strength
+          <span id="geometryStrengthValue" class="value"></span>
+          <input id="geometryStrength" type="range" min="0" max="1" step="0.01" value="0.48" />
+        </label>
+
+        <label>
+          Phase coupling
+          <span id="phaseCouplingValue" class="value"></span>
+          <input id="phaseCoupling" type="range" min="0" max="1" step="0.01" value="0.62" />
+        </label>
+
+        <label>
+          Potential depth
+          <span id="potentialDepthValue" class="value"></span>
+          <input id="potentialDepth" type="range" min="0" max="1" step="0.01" value="0.66" />
+        </label>
+
+        <label>
+          Diffusion rate
+          <span id="diffusionRateValue" class="value"></span>
+          <input id="diffusionRate" type="range" min="0" max="0.6" step="0.005" value="0.18" />
+        </label>
+
+        <label>
+          Scheduler bias
+          <span id="schedulerBiasValue" class="value"></span>
+          <input id="schedulerBias" type="range" min="0" max="1" step="0.01" value="0.50" />
+        </label>
+
+        <label>
+          Particle count
+          <span id="particleCountValue" class="value"></span>
+          <input id="particleCount" type="range" min="20" max="260" step="1" value="140" />
+        </label>
+
+        <label>
+          Time speed
+          <span id="timeScaleValue" class="value"></span>
+          <input id="timeScale" type="range" min="0.1" max="2.0" step="0.01" value="1.0" />
+        </label>
+      </div>
+
+      <div class="block">
+        <h2>Layers</h2>
+        <div class="checks">
+          <label><input id="showMetric" type="checkbox" checked /> Metric field</label>
+          <label><input id="showTensor" type="checkbox" checked /> Tensor anisotropy</label>
+          <label><input id="showPotential" type="checkbox" checked /> Potential wells</label>
+          <label><input id="showDiffusion" type="checkbox" checked /> Diffusion layer</label>
+          <label><input id="showScheduler" type="checkbox" checked /> Game of Life scheduler</label>
+          <label><input id="showParticles" type="checkbox" checked /> Particles</label>
+          <label><input id="showStreamlines" type="checkbox" checked /> Streamlines</label>
+        </div>
+      </div>
+
+      <div class="block">
+        <h2>Readouts</h2>
+        <div id="readouts" class="readouts"></div>
+      </div>
+
+      <div class="block">
+        <h2>Formalism</h2>
+        <p class="small">
+          Le front visualise un <em>toy model</em> différentiable sur un chart local discretisé.
+          Il ne prétend pas implémenter la QED ni la relativité générale complète.
+        </p>
+        <div class="formula">
+          g<sub>ij</sub> = δ<sub>ij</sub> + αA u<sub>i</sub>u<sub>j</sub><br />
+          Γ<sup>k</sup><sub>ij</sub> = ½ g<sup>kℓ</sup>(∂<sub>i</sub>g<sub>jℓ</sub> + ∂<sub>j</sub>g<sub>iℓ</sub> - ∂<sub>ℓ</sub>g<sub>ij</sub>)
+        </div>
+      </div>
+    </aside>
+
+    <main class="panel stage">
+      <div class="toolbar">
+        <div class="toolbar-title">Canvas phase-space animation</div>
+        <div class="toolbar-buttons">
+          <button id="playPause">Pause</button>
+          <button id="resetBtn">Reset</button>
+        </div>
+      </div>
+      <canvas id="canvas" width="1280" height="820"></canvas>
+      <div class="footer">
+        <span>Discrete grid ↔ continuous formalism</span>
+        <span>Geodesic drift • diffusion • attractors • entropy proxy • scheduler orchestration</span>
+      </div>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

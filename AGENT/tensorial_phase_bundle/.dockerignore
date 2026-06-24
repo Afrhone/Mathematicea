@@ -1,0 +1,15 @@
+.git
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.venv
+node_modules
+dist
+build
+*.csv
+*.png
+*.jpg
+*.jpeg
+*.gif
+.DS_Store

@@ -1,0 +1,60 @@
+machine: rhiz_jules_lxd_control_plane
+version: 2026.05.01
+states:
+  INIT:
+    meaning: bundle loaded; no authority assumed
+  DISCOVERED:
+    requires: [env_loaded, lxd_available, git_remote_known]
+  MIRROR_CONFIGURED:
+    requires: [gitlab_canonical, github_mirror, jules_source_connected]
+  JULES_BRIDGE_READY:
+    requires: [lxc_container_running, jules_api_key_present, sources_listable]
+  DEV_ENV_READY:
+    requires: [lxd_vm_or_container, workspace_mounted, docker_optional]
+  TASK_ISSUED:
+    requires: [jules_session_created, task_id_recorded]
+  PR_READY:
+    requires: [github_pr_detected]
+  GITLAB_MR_READY:
+    requires: [pr_branch_fetched, branch_pushed_to_gitlab]
+  GATEWAY_READY:
+    requires: [https_entry, optional_wireguard_entry, control_ports_private]
+  NODE_BOOTSTRAPPED:
+    requires: [one_time_token_used, directives_signed, vpn_joined]
+  VALIDATED:
+    requires: [health_quorum, endpoints_ok, no_secret_leak, rollback_path]
+  PROMOTION_READY:
+    requires: [operator_approval, readiness_score_minimum]
+  PROMOTED:
+    requires: [traffic_shifted, lineage_written]
+  ROLLBACK_READY:
+    requires: [previous_authority_known, restore_commands_available]
+
+transitions:
+  - [INIT, DISCOVERED, status]
+  - [DISCOVERED, MIRROR_CONFIGURED, mirror-check]
+  - [MIRROR_CONFIGURED, JULES_BRIDGE_READY, create-jules-bridge]
+  - [JULES_BRIDGE_READY, DEV_ENV_READY, create-dev-env]
+  - [JULES_BRIDGE_READY, TASK_ISSUED, jules-task]
+  - [TASK_ISSUED, PR_READY, jules-watch]
+  - [PR_READY, GITLAB_MR_READY, fetch-pr-to-gitlab]
+  - [DISCOVERED, GATEWAY_READY, gateway-verify]
+  - [GATEWAY_READY, NODE_BOOTSTRAPPED, bootstrap-node]
+  - [NODE_BOOTSTRAPPED, VALIDATED, validate]
+  - [VALIDATED, PROMOTION_READY, promotion-check]
+  - [PROMOTION_READY, PROMOTED, promote]
+  - [PROMOTED, ROLLBACK_READY, rollback-info]
+
+invariants:
+  - gitlab_is_canonical
+  - github_is_jules_adapter
+  - no_public_docker_socket
+  - no_public_lxd_api
+  - no_public_ceph_ports
+  - no_public_swarm_control_ports
+  - no_direct_public_ollama
+  - no_token_in_url
+  - token_single_use
+  - no_deploy_without_allow_deploy
+  - no_lxd_mutation_without_allow_lxd_mutation
+  - no_source_stop_without_validation_and_gate

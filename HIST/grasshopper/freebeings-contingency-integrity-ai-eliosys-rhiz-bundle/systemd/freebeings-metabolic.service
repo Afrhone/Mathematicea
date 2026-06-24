@@ -1,0 +1,10 @@
+[Unit]
+Description=Freebeings metabolic knowledge cycle
+After=network-online.target ollama.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/freebeings/bundle
+EnvironmentFile=-/opt/freebeings/bundle/env/freebeings.env
+ExecStart=/usr/bin/python3 /opt/freebeings/bundle/bin/metabolic-engine.py cycle --env /opt/freebeings/bundle/env/freebeings.env

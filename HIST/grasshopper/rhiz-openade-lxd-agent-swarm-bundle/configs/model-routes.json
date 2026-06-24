@@ -1,0 +1,29 @@
+{
+  "routes": [
+    {
+      "id": "llama-gpu-openai",
+      "type": "openai",
+      "base_url": "${LLAMA_GPU_OPENAI_BASE_URL}",
+      "priority": 10
+    },
+    {
+      "id": "llama-gpu-proxy",
+      "type": "ollama",
+      "base_url": "${LLAMA_GPU_OLLAMA_PROXY}",
+      "priority": 20
+    },
+    {
+      "id": "gpu-compute-openai",
+      "type": "openai",
+      "base_url": "${GPU_COMPUTE_OPENAI_BASE_URL}",
+      "priority": 30
+    },
+    {
+      "id": "google-adk",
+      "type": "google-adk",
+      "base_url": "adk://local",
+      "priority": 90,
+      "enabled": "${GOOGLE_ADK_ENABLED}"
+    }
+  ]
+}

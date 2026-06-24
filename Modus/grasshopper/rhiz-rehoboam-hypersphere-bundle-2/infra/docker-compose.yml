@@ -1,0 +1,48 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes: [mongo_data:/data/db]
+    ports: ["27017:27017"]
+  gateway:
+    build:
+      context: ..
+      dockerfile: services/gateway/Dockerfile
+    restart: unless-stopped
+    env_file: ../.env
+    ports: ["8787:8787"]
+    depends_on: [mongo]
+  web:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    env_file: ../.env
+    ports: ["3000:3000"]
+    depends_on: [gateway]
+  llama-cpp:
+    profiles: ["llama-cpp"]
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    restart: unless-stopped
+    ports: ["8080:8080"]
+    volumes: ["${MODEL_DIR:-/srv/models}:/models:ro"]
+    command: ["-m","${LLAMA_MODEL:-/models/model.gguf}","--host","0.0.0.0","--port","8080","--n-gpu-layers","999"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+  ollama:
+    profiles: ["ollama"]
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    ports: ["11434:11434"]
+    volumes: ["ollama:/root/.ollama"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+volumes:
+  mongo_data: {}
+  ollama: {}

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "uniphi.phoneme_cipher.encode_request.v1",
+  "title": "EncodeRequest",
+  "type": "object",
+  "properties": {
+    "text": {
+      "type": "string"
+    },
+    "ipa": {
+      "type": "string",
+      "description": "Optional IPA input; if provided, bypass g2p-lite."
+    },
+    "key": {
+      "type": "string",
+      "description": "Cipher key/seed (string)."
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "auto",
+        "ipa"
+      ],
+      "default": "auto"
+    },
+    "zeroth": {
+      "type": "object",
+      "properties": {
+        "t0": {
+          "type": "integer",
+          "default": 0
+        },
+        "system_id": {
+          "type": "string",
+          "default": "zeroth"
+        },
+        "anchor_symbol": {
+          "type": "string",
+          "default": "\u00d8"
+        }
+      }
+    },
+    "export": {
+      "type": "object",
+      "properties": {
+        "include_graph": {
+          "type": "boolean",
+          "default": true
+        },
+        "include_manifold": {
+          "type": "boolean",
+          "default": true
+        },
+        "include_decision_tree": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    }
+  },
+  "required": [
+    "key"
+  ]
+}

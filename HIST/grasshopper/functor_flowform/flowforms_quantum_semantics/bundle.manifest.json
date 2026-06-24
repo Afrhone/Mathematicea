@@ -1,0 +1,37 @@
+{
+  "name": "flowforms-quantum-semantics-bundle",
+  "version": "0.3.0",
+  "includes": [
+    "HTML5 Canvas/SVG playground",
+    "Functorial Alphabet preset",
+    "graph\u00e8me\u2192phon\u00e8me mappings",
+    "ODE/Lagrangian formalization",
+    "CMS/API preset endpoints",
+    "SSO-ready Docker Compose/Swarm",
+    "MCP-lite tool",
+    "LXD/libvirt/Fedora integration scripts",
+    "reference planches"
+  ],
+  "entrypoints": {
+    "static_web": "web/index.html",
+    "functorial_preview": "web/specimens/functorial-preset-preview.html",
+    "preset_json": "web/assets/presets/functorial-alphabet.json",
+    "api": "services/api/server.js",
+    "mcp": "services/mcp/flowforms-mcp.js",
+    "swarm": "deploy/swarm/deploy-stack.sh"
+  },
+  "validation": "python3 tests/validate_bundle.py",
+  "features": [
+    "bi-decision-tree-lab",
+    "ibm-quantum-runtime-bridge",
+    "phi-quantum-functorial-alphabet",
+    "quantum-planche-output-examples",
+    "superposed-latent-shape-inference"
+  ],
+  "quantumPreset": "web/assets/presets/phi-quantum-functorial-alphabet.json",
+  "examples": [
+    "examples/quantum-inference-output-example.json",
+    "web/specimens/quantum-bi-output-example.html",
+    "web/specimens/quantum-latent-planche.svg"
+  ]
+}

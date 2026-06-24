@@ -1,0 +1,15 @@
+[Unit]
+Description=LimeSDR USB Lab API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/limesdr-api/env
+WorkingDirectory=/opt/limesdr-api
+ExecStart=/opt/limesdr-api/.venv/bin/uvicorn app:app --host ${LIMESDR_API_BIND} --port ${LIMESDR_API_PORT}
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,74 @@
+{
+  "nodes": [
+    {
+      "id": "h0",
+      "kind": "zeroth_anchor",
+      "owner": "phiiiiv3i4",
+      "namespace": "factory-rhizome-lab-studio",
+      "hash": "db87cee52504ca5732bad49ddb1d5b8551c011c1891996d58aacae47f66585ed",
+      "state": {
+        "token": "petarado"
+      }
+    },
+    {
+      "id": "octopuce",
+      "kind": "organism_agent",
+      "owner": "dao",
+      "namespace": "medusa",
+      "hash": "e687673c0f5b7211fbb2c62449b886ceb06810b9b297f016667c59de9d6862ff",
+      "state": {
+        "arms": 8,
+        "behavior": "explore"
+      }
+    },
+    {
+      "id": "medusa",
+      "kind": "morphology_agent",
+      "owner": "dao",
+      "namespace": "medusa",
+      "hash": "823e291431cff346861d254b6919a7f81aae326620bcab48baf225b77521cfc8",
+      "state": {
+        "mode": "reactive_evolution"
+      }
+    },
+    {
+      "id": "scrubber-yeti715",
+      "kind": "twin_gate_agent",
+      "owner": "phiiiiv3i4",
+      "namespace": "yeti",
+      "hash": "6d759af636bd35d90ded3b8b75b3944b7d1ad98cd73e5c0062877eb09c38dde1",
+      "state": {
+        "law": "No retry without a gate."
+      }
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "e0",
+      "kind": "genesis",
+      "sources": [
+        "h0"
+      ],
+      "targets": [
+        "octopuce",
+        "medusa",
+        "scrubber-yeti715"
+      ],
+      "proof": {
+        "summon_hash": "64f92914b7aa9987e75e090b46d8d1fb6ca2c582f9d5cf415310697f6e3c65cb"
+      },
+      "ledger_anchor": {
+        "state_hash": "bb0e42630e84c8ac"
+      }
+    }
+  ],
+  "metagraph_edges": [
+    {
+      "id": "m0",
+      "from_edge": "e0",
+      "to_edge": "e0",
+      "kind": "self_reflexive_seed",
+      "weight": 1.0
+    }
+  ]
+}

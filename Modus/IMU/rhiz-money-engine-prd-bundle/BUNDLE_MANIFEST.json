@@ -1,0 +1,18 @@
+{
+  "name": "rhiz-money-engine-prd-bundle",
+  "created_utc": "2026-05-31T07:07:23Z",
+  "contents": [
+    "PRD",
+    "MVP spec",
+    "stack",
+    "pricing",
+    "cashflow plan",
+    "90-day elliptical plan",
+    "marketing",
+    "trading risk policy",
+    "automation workflow",
+    "templates"
+  ],
+  "financial_boundary": "Not financial advice. Trading modules are research and risk-management only.",
+  "core_invariant": "Life/cashflow first; abstraction and trading second."
+}
