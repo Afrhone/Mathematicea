@@ -1,0 +1,91 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #03030a;
+  color: #f4f1ff;
+}
+
+* { box-sizing: border-box; }
+html, body, #app { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+body { background: radial-gradient(circle at 50% 30%, #171239, #03030a 55%, #000 100%); }
+canvas { display: block; }
+
+#hud {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  width: min(430px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 18px;
+  background: rgba(4, 4, 16, .62);
+  box-shadow: 0 18px 80px rgba(0,0,0,.34);
+  backdrop-filter: blur(18px) saturate(1.4);
+}
+
+#hud h1 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  letter-spacing: .01em;
+}
+
+#hud p {
+  margin: 0 0 12px;
+  color: rgba(244,241,255,.75);
+  line-height: 1.35;
+  font-size: 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 74px;
+  gap: 8px 12px;
+  align-items: center;
+}
+
+label { font-size: 12px; color: rgba(244,241,255,.78); }
+input[type="range"] { width: 100%; accent-color: #bca8ff; }
+input[type="checkbox"] { transform: translateY(1px); accent-color: #bca8ff; }
+output, .pill {
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: rgba(244,241,255,.8);
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+}
+
+button {
+  appearance: none;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  padding: 9px 11px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+button:hover { background: rgba(255,255,255,.13); }
+
+#equation {
+  margin-top: 14px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+  font-size: 11px;
+  line-height: 1.38;
+  color: rgba(228, 244, 255, .84);
+}
+
+#footer {
+  position: fixed;
+  right: 14px;
+  bottom: 12px;
+  font-size: 11px;
+  color: rgba(244,241,255,.58);
+  background: rgba(0,0,0,.28);
+  border: 1px solid rgba(255,255,255,.08);
+  padding: 7px 10px;
+  border-radius: 999px;
+  backdrop-filter: blur(12px);
+}

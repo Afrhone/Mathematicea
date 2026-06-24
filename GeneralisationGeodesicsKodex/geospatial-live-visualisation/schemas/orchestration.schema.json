@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uniphilabs.local/schemas/geospatial-orchestration.schema.json",
+  "title": "FunctionOrchestrationDirective",
+  "type": "object",
+  "required": ["name", "sources", "compute", "visualisation"],
+  "properties": {
+    "name": { "type": "string" },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind"],
+        "properties": {
+          "kind": { "enum": ["mock", "ndjson", "websocket", "browser-geolocation"] },
+          "url": { "type": "string" },
+          "rateHz": { "type": "number", "minimum": 1 }
+        }
+      }
+    },
+    "compute": {
+      "type": "object",
+      "properties": {
+        "grid": { "type": "object", "properties": { "nx": { "type": "integer" }, "ny": { "type": "integer" } } },
+        "layers": { "type": "array", "items": { "enum": ["flux", "thermal", "kinetic", "curl", "entropy"] } }
+      }
+    },
+    "visualisation": {
+      "type": "object",
+      "properties": {
+        "projection": { "enum": ["equirect", "mercator", "orthographic"] },
+        "offlineFirst": { "type": "boolean" }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uniphilabs.local/schemas/geospatial-telemetry.schema.json",
+  "title": "GeospatialTelemetryEvent",
+  "type": "object",
+  "required": ["id", "lat", "lon"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "lat": { "type": "number", "minimum": -90, "maximum": 90 },
+    "lon": { "type": "number", "minimum": -180, "maximum": 180 },
+    "alt": { "type": "number", "description": "Altitude in meters." },
+    "temperature": { "type": "number", "exclusiveMinimum": 0, "description": "Temperature in Kelvin." },
+    "vx": { "type": "number", "description": "Local east-west velocity component." },
+    "vy": { "type": "number", "description": "Local north-south velocity component." },
+    "vz": { "type": "number", "description": "Vertical velocity component." },
+    "charge": { "type": "number", "description": "Signed abstract field channel, not physical antimatter." },
+    "quality": { "type": "number", "minimum": 0, "maximum": 1 },
+    "phase": { "type": "number" },
+    "timestamp": { "type": "number", "description": "Epoch milliseconds." }
+  },
+  "additionalProperties": true
+}

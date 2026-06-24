@@ -1,0 +1,22 @@
+{
+  "name": "prime-radi-tourbillon-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Prime Radi Tourbillon Propeller Clock compute-turn engine for spacetime/thermodynamic/standard-model-inspired visualization.",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "node tests/smoke.mjs",
+    "agent:init": "node src/agent/orchestrationAgent.js init",
+    "agent:tick": "node src/agent/orchestrationAgent.js tick",
+    "agent:dump": "node src/agent/orchestrationAgent.js dump"
+  },
+  "dependencies": {
+    "@vitejs/plugin-basic-ssl": "latest",
+    "three": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {}
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uniphilabs.local/schemas/prime-radi-tourbillon.schema.json",
+  "title": "Prime Radi Tourbillon Compute-Turn Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "width": { "type": "integer", "minimum": 16, "maximum": 1024, "default": 96 },
+    "height": { "type": "integer", "minimum": 16, "maximum": 1024, "default": 96 },
+    "blades": { "type": "integer", "minimum": 3, "maximum": 64, "default": 12 },
+    "torque": { "type": "number", "minimum": 0, "maximum": 4, "default": 1.2 },
+    "thermal": { "type": "number", "minimum": 0.01, "maximum": 2.5, "default": 0.55 },
+    "curvature": { "type": "number", "minimum": 0, "maximum": 3, "default": 1.1 },
+    "smMix": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.42 },
+    "guards": {
+      "type": "object",
+      "properties": {
+        "finiteField": { "type": "boolean", "default": true },
+        "nonNegativeEnergy": { "type": "boolean", "default": true },
+        "entropyTolerance": { "type": "number", "default": 0.9 }
+      }
+    }
+  }
+}

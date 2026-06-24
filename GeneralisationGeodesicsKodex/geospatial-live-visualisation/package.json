@@ -1,0 +1,15 @@
+{
+  "name": "geospatial-live-visualisation",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline-first geospatial live visualization bundle with compute fields, telemetry adapters, and standalone canvas renderer.",
+  "scripts": {
+    "dev": "python3 scripts/serve.py 8080",
+    "serve": "python3 scripts/serve.py 8080",
+    "agent:mock": "node agents/function-orchestration-agent.mjs --mock --count 24",
+    "test": "node scripts/smoke-test.mjs"
+  },
+  "keywords": ["geospatial", "telemetry", "canvas", "compute-engine", "field-visualization", "websocket", "ndjson"],
+  "license": "MIT"
+}
