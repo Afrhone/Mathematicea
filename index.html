@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Mathematicea web interface for exploring Copernican compute orchestration on GitHub Pages."
+    />
+    <title>Mathematicea Compute Interface</title>
+    <link rel="stylesheet" href="./src/web-styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero__copy">
+          <p class="eyebrow">Javascript tastes sweet · Uniphilab</p>
+          <h1 id="page-title">Mathematicea Compute Interface</h1>
+          <p>
+            Explore the TAX|box&lt;euclidean&gt; orchestration engine from any static host,
+            including GitHub Pages. Tune every formalism option, run the RK4 flux pipeline,
+            and export a deployable state snapshot.
+          </p>
+          <div class="hero__actions" aria-label="Primary actions">
+            <a class="button button--primary" href="#controls">Open control deck</a>
+            <a class="button button--ghost" href="./src/index.js">View engine module</a>
+          </div>
+        </div>
+        <div class="hero__panel" aria-label="Live engine status">
+          <span class="pulse" aria-hidden="true"></span>
+          <p>Current state</p>
+          <strong id="stateLabel">Awaiting run</strong>
+          <small id="descriptionLabel">Configure the deck to begin.</small>
+        </div>
+      </section>
+
+      <section id="controls" class="grid" aria-label="Compute controls and output">
+        <form class="card controls" id="controlForm">
+          <div class="card__header">
+            <p class="eyebrow">Full option deck</p>
+            <h2>Formalism controls</h2>
+          </div>
+
+          <label>
+            Input seed
+            <input id="inputSeed" name="inputSeed" type="number" step="0.001" value="1.258" />
+          </label>
+
+          <label>
+            Copernican limit
+            <input id="upperLimit" name="upperLimit" type="number" step="0.001" value="4.236" />
+          </label>
+
+          <label>
+            Field signature
+            <select id="field" name="field">
+              <option>TAX|box&lt;euclidean&gt;</option>
+              <option>Mobius|lattice&lt;hyperbolic&gt;</option>
+              <option>Phi|dirac&lt;continuous&gt;</option>
+            </select>
+          </label>
+
+          <label>
+            Quadrature array
+            <input id="quadrature" name="quadrature" value="33,45,78" />
+          </label>
+
+          <label>
+            Architecture name
+            <input id="architectureName" name="architectureName" value="EUROPA positrons" />
+          </label>
+
+          <label>
+            Manifold emphasis
+            <select id="theme" name="theme">
+              <option value="aurora">Aurora holography</option>
+              <option value="solar">Solar taxibox</option>
+              <option value="nocturne">Nocturne rhizome</option>
+            </select>
+          </label>
+
+          <div class="button-row">
+            <button class="button button--primary" type="submit">Run engine</button>
+            <button class="button button--ghost" id="copySnapshot" type="button">Copy snapshot</button>
+          </div>
+        </form>
+
+        <section class="card output" aria-live="polite">
+          <div class="card__header">
+            <p class="eyebrow">RK4 flux result</p>
+            <h2>Orchestration output</h2>
+          </div>
+          <div class="metrics">
+            <article>
+              <span>Energy</span>
+              <strong id="energyValue">—</strong>
+            </article>
+            <article>
+              <span>Flux depth</span>
+              <strong id="fluxDepth">—</strong>
+            </article>
+            <article>
+              <span>Phi</span>
+              <strong id="phiValue">—</strong>
+            </article>
+          </div>
+          <canvas id="fluxCanvas" width="720" height="280" aria-label="Flux visualisation"></canvas>
+          <pre id="snapshotOutput">Press “Run engine” to generate a snapshot.</pre>
+        </section>
+      </section>
+
+      <section class="card deploy" aria-labelledby="deploy-title">
+        <div>
+          <p class="eyebrow">GitHub Pages ready</p>
+          <h2 id="deploy-title">Hosting options</h2>
+          <p>
+            This interface is pure HTML, CSS, and JavaScript. Enable GitHub Pages for the
+            repository root or serve the same files from any static hosting provider.
+          </p>
+        </div>
+        <ol>
+          <li>Commit the root <code>index.html</code> and <code>src/web-*.css/js</code> files.</li>
+          <li>In GitHub, open <strong>Settings → Pages</strong>.</li>
+          <li>Select <strong>Deploy from a branch</strong>, choose this branch, and set the folder to <strong>/root</strong>.</li>
+        </ol>
+      </section>
+    </main>
+    <script type="module" src="./src/web-ui.js"></script>
+  </body>
+</html>
