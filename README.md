@@ -44,3 +44,22 @@ Grasshopper
 U8
 
 Pivot Dirac~Phi. COPERNICAN LIMIT | Discrete Real Continous formalism
+
+## Web UI / GitHub Pages
+
+The repository root now includes a static Mathematicea Compute Interface designed for GitHub Pages. It runs directly in the browser with native ES modules and no build step.
+
+### Local preview
+
+```bash
+npm run serve
+```
+
+Open <http://localhost:4173> to tune the formalism controls, run the orchestration agent, inspect the flux canvas, and copy a JSON snapshot.
+
+### GitHub Pages hosting
+
+1. Commit `index.html`, `src/web-ui.js`, and `src/web-styles.css` on the branch you want to publish.
+2. In GitHub, open **Settings → Pages**.
+3. Choose **Deploy from a branch**, select the current branch, and set the folder to **/root**.
+4. Save the settings; GitHub Pages will host the full static interface without extra dependencies.
