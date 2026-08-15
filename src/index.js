@@ -118,6 +118,6 @@ export {
   generateProjectModule,
 };
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (typeof process !== 'undefined' && import.meta.url === `file://${process.argv[1]}`) {
   console.log(JSON.stringify(generateProjectModule({ input: 1.258 }).sample, null, 2));
 }
